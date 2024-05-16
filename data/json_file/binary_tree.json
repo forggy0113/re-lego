@@ -1,0 +1,150 @@
+{
+    "value": "car_model",
+    "left": {
+      "value": "body_wheel_1_2",
+      "left": {
+        "value": "body_wheel_1",
+        "left": {
+          "value": "car_body",
+          "left": {
+            "value": "hold_fix1_merge",
+            "left": {
+              "value": "hold_bear_merge",
+              "left": {
+                "value": "bearing_fix_merge",
+                "left": {
+                  "value": "bearing",
+                  "left": null,
+                  "right": null
+                },
+                "right": {
+                  "value": "fixed",
+                  "left": null,
+                  "right": null
+                }
+              },
+              "right": {
+                "value": "hold_fix_merge",
+                "left": {
+                  "value": "hold",
+                  "left": null,
+                  "right": null
+                },
+                "right": {
+                  "value": "fixed",
+                  "left": null,
+                  "right": null
+                }
+              }
+            },
+            "right": {
+              "value": "fix_1_merge",
+              "left": {
+                "value": "fixed",
+                "left": null,
+                "right": null
+              },
+              "right": {
+                "value": "fixed",
+                "left": null,
+                "right": null
+              }
+            }
+          },
+          "right": {
+            "value": "fix_2_merge",
+            "left": {
+              "value": "fixed",
+              "left": null,
+              "right": null
+            },
+            "right": {
+              "value": "fixed",
+              "left": null,
+              "right": null
+            }
+          }
+        },
+        "right": {
+          "value": "car_wheel_1",
+          "left": {
+            "value": "motor_long_merge_1",
+            "left": {
+              "value": "motor",
+              "left": null,
+              "right": null
+            },
+            "right": {
+              "value": "long",
+              "left": null,
+              "right": null
+            }
+          },
+          "right": {
+            "value": "screw_wheel_merge_1",
+            "left": {
+              "value": "wheel",
+              "left": null,
+              "right": null
+            },
+            "right": {
+              "value": "screw",
+              "left": null,
+              "right": null
+            }
+          }
+        }
+      },
+      "right": {
+        "value": "car_wheel_2",
+        "left": {
+          "value": "motor_long_merge_2",
+          "left": {
+            "value": "motor",
+            "left": null,
+            "right": null
+          },
+          "right": {
+            "value": "long",
+            "left": null,
+            "right": null
+          }
+        },
+        "right": {
+          "value": "screw_wheel_merge_2",
+          "left": {
+            "value": "wheel",
+            "left": null,
+            "right": null
+          },
+          "right": {
+            "value": "screw",
+            "left": null,
+            "right": null
+          }
+        }
+      }
+    },
+    "right": {
+      "value": "car_hold",
+      "left": {
+        "value": "support_merge",
+        "left": {
+          "value": "support-11",
+          "left": null,
+          "right": null
+        },
+        "right": {
+          "value": "fixed",
+          "left": null,
+          "right": null
+        }
+      },
+      "right": {
+        "value": "fixed",
+        "left": null,
+        "right": null
+      }
+    }
+  }
+  
