@@ -10,7 +10,9 @@ class Database:
     def create_tables(self):
         self.cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            uuid TEXT PRIMARY KEY
+            uuid TEXT PRIMARY KEY not null,
+            name TEXT not null,
+            email TEXT not null 
         )
         ''')
         
@@ -39,9 +41,11 @@ class User:
     def __init__(self, db):
         self.db = db
     
-    def add_user(self):
+    def add_user(self, user_name, user_email):
         user_uuid = str(uuid.uuid4())
-        self.db.cursor.execute('INSERT INTO users (uuid) VALUES (?)', (user_uuid,))
+        self.db.cursor.execute('''
+        INSERT INTO users (uuid, name, email) VALUES (?, ?, ?)
+        ''', (user_uuid, user_name, user_email))
         self.db.conn.commit()
         return user_uuid
 
@@ -94,7 +98,9 @@ if __name__ == "__main__":
     access_control = AccessControl(db)
     
     # 添加一個新用戶
-    user_uuid = user_obj.add_user()
+    user_name = "John Doe"
+    user_email = "john.doe@example.com"
+    user_uuid = user_obj.add_user(user_name, user_email)
     print(f'New user UUID: {user_uuid}')
     
     # 添加一些權限
