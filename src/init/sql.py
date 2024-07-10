@@ -49,7 +49,7 @@ class User:
     
     def add_user(self, user_name, user_email):
         # uuid4 隨機生成器生成uuid,小機率發生碰撞
-        user_uuid = str(uuid.uuid5())
+        user_uuid = str(uuid.uuid4())
         # 插入值欄位樣貌
         self.db.cursor.execute('''
         INSERT INTO users (uuid, name, email) VALUES (?, ?, ?)
