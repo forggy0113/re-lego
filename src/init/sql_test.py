@@ -9,7 +9,7 @@ class Database:
         self.cursor = self.conn.cursor()
         self.create_tables()
 
-    # 新增資料表
+    # 新增資料表S
     def create_tables(self):
         # users
         self.cursor.execute('''
@@ -60,8 +60,10 @@ class Database:
             start_time TIMESTAMP,
             end_time TIMESTAMP,
             score INTEGER NOT NULL,
+            model_id integer not null,
             FOREIGN KEY (user_id) REFERENCES users (user_id),
-            FOREIGN KEY (script_id) REFERENCES script (script_id)
+            FOREIGN KEY (script_id) REFERENCES script (script_id),
+            FOREIGN KEY (model_id) REFERENCES model (model_id)
         )''')
         self.conn.commit()
 
@@ -99,11 +101,7 @@ class Users:
         # 提交至SQLite
         self.db.conn.commit()
         return user_id
-    # 刪除資料
-    def drop_user(self, user_id,user_name, user_email, user_password):
-        self.db.cursor.execute('''
-        drop INTO users (user_id, name, email, password, in_date) VALUES (?, ?, ?, ?, datetime('now'))
-        ''', (user_id, user_name, user_email, user_password))
+
 # 新增Permissions資料
 class Permissions:
     def __init__(self, db):
@@ -166,13 +164,51 @@ class Practice:
     def __init__(self, db):
         self.db = db
     
-    def add_practice(self, project_name, script_id, user_id, start_time, end_time, score):
+    def add_practice(self, project_name, script_id, user_id, start_time, end_time, score, model_id):
         self.db.cursor.execute('''
-        INSERT INTO practice (project_name, script_id, user_id, start_time, end_time, score) 
-        VALUES (?, ?, ?, ?, ?, ?)
-        ''', (project_name, script_id, user_id, start_time, end_time, score))
+        INSERT INTO practice (project_name, script_id, user_id, start_time, end_time, score, model_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (project_name, script_id, user_id, start_time, end_time, score, model_id))
         # 提交至SQLite
         self.db.conn.commit()
         # 获取所插入数据的主键ID值
         return self.db.cursor.lastrowid
 
+print('ok')
+
+
+# 使用示例
+db = Database()
+users_manager = Users(db)
+permissions_manager = Permissions(db)
+user_permissions_manager = UserPermissions(db)
+script_manager = Script(db)
+model_manager = Model(db)
+practice_manager = Practice(db)
+
+# 新增用户
+new_user_id = users_manager.add_user('Tim', 'Tim@example.com', 'password456')
+print(f'New user ID: {new_user_id}')
+
+# 新增權限
+new_permission_id = permissions_manager.add_permission('write')
+print(f'New permission ID: {new_permission_id}')
+
+# 分配權限
+user_permissions_manager.assign_permission(new_user_id, new_permission_id)
+
+# 查詢用戶權限
+user_permissions = user_permissions_manager.get_user_permissions(new_user_id)
+print(f'User permissions: {user_permissions}')
+
+# 新增腳本
+new_script_id = script_manager.add_script('Script B', '/path/to/brick/B')
+print(f'New script ID: {new_script_id}')
+
+# 新增模型
+new_model_id = model_manager.add_model('Model B', '/path/to/model', 456)
+print(f'New model ID: {new_model_id}')
+
+# 新增練習紀錄
+new_practice_id = practice_manager.add_practice('Project B', new_script_id, new_user_id, '2024-07-16 10:00:00', '2024-07-16 12:00:00', 90, new_model_id)
+print(f'New practice ID: {new_practice_id}')
