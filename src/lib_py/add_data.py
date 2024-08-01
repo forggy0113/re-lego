@@ -33,5 +33,5 @@ new_model_id = model_manager.add_model('Model B', '/path/to/model', 456)
 print(f'New model ID: {new_model_id}')
 
 # 新增練習紀錄
-new_practice_id = practice_manager.add_practice('Project B', new_script_id, new_user_id, '2024-07-16 10:00:00', '2024-07-16 12:00:00', 90)
+new_practice_id = practice_manager.add_practice('Project B', new_script_id, new_user_id, '2024-07-16 10:00:00', '2024-07-16 12:00:00', 90, new_model_id)
 print(f'New practice ID: {new_practice_id}')

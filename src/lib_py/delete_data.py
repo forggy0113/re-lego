@@ -1,4 +1,3 @@
-
 from sql_test import Database
 
 # Initialize the database
