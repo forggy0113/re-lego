@@ -1,19 +1,21 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget
-from sign_in_ui import Ui_Form  # 變更匯入py檔，顯示主畫面
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLineEdit
+from password_ui import Ui_MainWindow  # 確保這裡的匯入是正確的
 
-class MyApp:
+class MyMainWin:
     def __init__(self):
         # 創建應用程序對象
         self.app = QApplication(sys.argv)
-        # 設置主窗口
-        self.main_window = QWidget()
+        # 設定主窗口
+        self.main_window = QMainWindow()
         self.main_window.setObjectName("mainWindow")
-        self.ui = Ui_Form()
+        # 設置用戶介面
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self.main_window)
+        # 變更背景色
         self.main_window.setStyleSheet(
             """
-            QWidget {
+            QMainWindow {
                 background-color: #FCFAED;
             }
             QLineEdit {
@@ -22,13 +24,11 @@ class MyApp:
             """
         )
 
-    def run(self):
+    def run_main(self):
+        # 顯示介面並啟動應用程序事件循環
         self.main_window.show()
         sys.exit(self.app.exec())
 
 if __name__ == "__main__":
-    app = MyApp()
-    app.run()
-
-
-
+    main = MyMainWin()
+    main.run_main()
