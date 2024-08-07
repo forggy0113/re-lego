@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget
-from sign_in_ui import Ui_Form  # 變更匯入py檔，顯示主畫面
+from sign_in_ui_ui import Ui_Form  # 變更匯入py檔，顯示主畫面
 
 class MyApp:
     def __init__(self):
@@ -18,6 +18,9 @@ class MyApp:
             }
             QLineEdit {
                 background-color: white;
+            }
+            QPushButton{
+            background-color: white;
             }
             """
         )

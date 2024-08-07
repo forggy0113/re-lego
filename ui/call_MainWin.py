@@ -20,6 +20,7 @@ class MyMainWin:
             QLineEdit {
                 background-color: white;
             }
+
             """
         )
 
