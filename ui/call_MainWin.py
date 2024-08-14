@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLineEdit
-from main_ui import Ui_MainWindow  # 變更匯入py檔，顯示主畫面
+from login_resigert_ui import Ui_MainWindow  # 變更匯入py檔，顯示主畫面
 
 class MyMainWin:
     def __init__(self):
