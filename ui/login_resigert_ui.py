@@ -23,7 +23,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.frame = QtWidgets.QFrame(parent=self.centralwidget)
         self.frame.setStyleSheet("#frame{\n"
-"background-color:rgb(255, 255, 255);\n"
+"background-color:#f7f2ea;\n"
 "border-radius:5px;\n"
 "}\n"
 "\n"
@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addItem(spacerItem)
         self.toolButton = QtWidgets.QToolButton(parent=self.widget)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/close.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/close_window.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.toolButton.setIcon(icon)
         self.toolButton.setIconSize(QtCore.QSize(35, 35))
         self.toolButton.setObjectName("toolButton")
@@ -249,21 +249,21 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.Login_button = QtWidgets.QToolButton(parent=self.widget_6)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/login.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon2.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/login.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.Login_button.setIcon(icon2)
         self.Login_button.setIconSize(QtCore.QSize(35, 35))
         self.Login_button.setObjectName("Login_button")
         self.horizontalLayout_2.addWidget(self.Login_button)
         self.Register_button = QtWidgets.QToolButton(parent=self.widget_6)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/person_add.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon3.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/person_add.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.Register_button.setIcon(icon3)
         self.Register_button.setIconSize(QtCore.QSize(35, 35))
         self.Register_button.setObjectName("Register_button")
         self.horizontalLayout_2.addWidget(self.Register_button)
         self.password_button = QtWidgets.QToolButton(parent=self.widget_6)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/password.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon4.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/password.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.password_button.setIcon(icon4)
         self.password_button.setIconSize(QtCore.QSize(35, 35))
         self.password_button.setObjectName("password_button")

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1127</width>
-    <height>739</height>
+    <width>1091</width>
+    <height>888</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
          </property>
          <property name="styleSheet">
           <string notr="true">#A{
-background-color:rgb(47, 85, 151);
+background-color:#FFCD00;
 }
 
 QToolButton{
@@ -82,7 +82,7 @@ border:none
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/home.svg</normaloff>icon/home.svg</iconset>
+                 <normaloff>icon_0925/admin_panel.png</normaloff>icon_0925/admin_panel.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -99,7 +99,7 @@ border:none
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/settings.svg</normaloff>icon/settings.svg</iconset>
+                 <normaloff>icon_0925/settings.png</normaloff>icon_0925/settings.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -116,7 +116,7 @@ border:none
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/light-bulb-on.svg</normaloff>icon/light-bulb-on.svg</iconset>
+                 <normaloff>icon_0925/help.png</normaloff>icon_0925/help.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -133,7 +133,7 @@ border:none
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/message-text.svg</normaloff>icon/message-text.svg</iconset>
+                 <normaloff>icon_0925/message.png</normaloff>icon_0925/message.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -163,6 +163,35 @@ border:none
            </spacer>
           </item>
           <item>
+           <widget class="QPushButton" name="user">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>user name</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>icon_0925/account.png</normaloff>icon_0925/account.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>39</width>
+              <height>39</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QWidget" name="A_2" native="true">
             <property name="maximumSize">
              <size>
@@ -170,37 +199,7 @@ border:none
               <height>16777215</height>
              </size>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QPushButton" name="user">
-               <property name="minimumSize">
-                <size>
-                 <width>150</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>200</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>user name</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>icon/profile-circle.svg</normaloff>icon/profile-circle.svg</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>39</width>
-                 <height>39</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <layout class="QHBoxLayout" name="horizontalLayout_3"/>
            </widget>
           </item>
           <item>
@@ -219,7 +218,7 @@ border:none
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/min_window.svg</normaloff>icon/min_window.svg</iconset>
+                 <normaloff>icon_0925/min_window.png</normaloff>icon_0925/min_window.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -236,7 +235,7 @@ border:none
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/open_in_window.svg</normaloff>icon/open_in_window.svg</iconset>
+                 <normaloff>icon_0925/open_in_full_window.png</normaloff>icon_0925/open_in_full_window.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -253,7 +252,7 @@ border:none
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/close.svg</normaloff>icon/close.svg</iconset>
+                 <normaloff>icon_0925/close_window.png</normaloff>icon_0925/close_window.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -273,18 +272,151 @@ border:none
         <widget class="QWidget" name="B" native="true">
          <property name="styleSheet">
           <string notr="true">#B{
-background-color:rgb(47, 85, 151);
+background-color:#f7f2ea;
 }</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" name="C" native="true">
-         <property name="styleSheet">
-          <string notr="true">#C{
-background-color:rgb(47, 85, 151);
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="2" column="0">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="2">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEdit_4">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>500</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>微軟正黑體</family>
+                <pointsize>16</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>AniMe Matrix - MB_EN</family>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>小朋友班級</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <widget class="QLineEdit" name="lineEdit">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>500</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>微軟正黑體</family>
+                <pointsize>16</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLabel" name="label_2">
+              <property name="font">
+               <font>
+                <family>AniMe Matrix - MB_EN</family>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>小朋友名字</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="4">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4"/>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6"/>
+          </item>
+          <item>
+           <widget class="QWidget" name="C" native="true">
+            <property name="styleSheet">
+             <string notr="true">#C{
+background-color:#f7f2ea;
 }</string>
-         </property>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

@@ -25,7 +25,7 @@
      <widget class="QFrame" name="frame">
       <property name="styleSheet">
        <string notr="true">#frame{
-background-color:rgb(255, 255, 255);
+background-color:#f7f2ea;
 border-radius:5px;
 }
 
@@ -96,7 +96,7 @@ border:none;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icon/close.png</normaloff>icon/close.png</iconset>
+              <normaloff>icon_0925/close_window.png</normaloff>icon_0925/close_window.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -531,7 +531,7 @@ padding-left:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/login.png</normaloff>icon/login.png</iconset>
+                 <normaloff>icon_0925/login.png</normaloff>icon_0925/login.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -548,7 +548,7 @@ padding-left:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/person_add.png</normaloff>icon/person_add.png</iconset>
+                 <normaloff>icon_0925/person_add.png</normaloff>icon_0925/person_add.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -565,7 +565,7 @@ padding-left:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon/password.png</normaloff>icon/password.png</iconset>
+                 <normaloff>icon_0925/password.png</normaloff>icon_0925/password.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
