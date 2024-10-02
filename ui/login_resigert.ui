@@ -131,7 +131,7 @@ border:none;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icon.png</normaloff>icon.png</iconset>
+              <normaloff>icon_0925/icon.png</normaloff>icon_0925/icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -151,14 +151,14 @@ border:none;
             </property>
             <property name="font">
              <font>
-              <family>Segoe UI Variable Small Semibol</family>
+              <family>微軟正黑體</family>
               <pointsize>16</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
             <property name="text">
-             <string>Welcome</string>
+             <string>教師模式</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
