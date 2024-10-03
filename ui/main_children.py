@@ -155,3 +155,9 @@ class InterfaceWindow(QMainWindow):
         self.cap.release()
 
 
+
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    win = InterfaceWindow()
+    win.show()
+    sys.exit(app.exec())
