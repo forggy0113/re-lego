@@ -154,8 +154,4 @@ class InterfaceWindow(QMainWindow):
         # 釋放攝影機資源
         self.cap.release()
 
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    win = InterfaceWindow()
-    win.show()
-    sys.exit(app.exec())
+
