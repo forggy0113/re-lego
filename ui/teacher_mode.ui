@@ -188,50 +188,6 @@ border-radius:5px;
               </spacer>
              </item>
              <item>
-              <widget class="QLineEdit" name="search_line">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微軟正黑體</family>
-                </font>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-               <property name="placeholderText">
-                <string>搜尋</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="search_button">
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>icon_0925/search.png</normaloff>icon_0925/search.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>50</width>
-                 <height>50</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
               <spacer name="horizontalSpacer_3">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -833,7 +789,7 @@ background-color:#FFCD00;
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="main_page" native="true">
+           <widget class="QWidget" name="page_main" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <property name="spacing">
               <number>0</number>
@@ -851,7 +807,7 @@ background-color:#FFCD00;
               <number>0</number>
              </property>
              <item>
-              <widget class="QStackedWidget" name="stackedWidget">
+              <widget class="QStackedWidget" name="stack_change_page">
                <property name="minimumSize">
                 <size>
                  <width>30</width>
@@ -859,29 +815,430 @@ background-color:#FFCD00;
                 </size>
                </property>
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
-               <widget class="QWidget" name="database_page">
-                <layout class="QGridLayout" name="gridLayout">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label">
-                   <property name="font">
-                    <font>
-                     <family>AniMe Matrix - MB_EN</family>
-                     <pointsize>26</pointsize>
-                    </font>
+               <widget class="QWidget" name="page_database">
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QWidget" name="widget" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_5">
+                    <item>
+                     <widget class="QWidget" name="widget_3" native="true">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>100</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>100</height>
+                       </size>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_9">
+                       <item>
+                        <widget class="QLabel" name="label">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButton">
+                         <property name="text">
+                          <string>PushButton</string>
+                         </property>
+                         <property name="checkable">
+                          <bool>true</bool>
+                         </property>
+                         <property name="autoExclusive">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QWidget" name="widget_4" native="true">
+                      <layout class="QVBoxLayout" name="verticalLayout_6"/>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QWidget" name="widget_5" native="true"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_2" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>250</width>
+                     <height>0</height>
+                    </size>
                    </property>
-                   <property name="text">
-                    <string>database</string>
+                   <property name="maximumSize">
+                    <size>
+                     <width>250</width>
+                     <height>16777215</height>
+                    </size>
                    </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QStackedWidget" name="stack_create_data">
+                      <property name="styleSheet">
+                       <string notr="true">
+QToolButton {
+    border: none; /* 去掉邊框 */
+}
+QToolButton:hover {
+    background-color: #FFCD00; /* 選中時的背景顏色 */
+    border-radius: 5px; /* 圓角邊框 */
+    border: 3px solid #FFCD00; /* 邊框樣式：2px 寬的黑色實線 */
+}
+
+QToolButton:checked {
+    background-color:#FFCD00; /* 選中時的背景顏色 */
+    border-radius: 5px; /* 圓角邊框 */
+    border: 3px solid #FFCD00; /* 邊框樣式：2px 寬的黑色實線 */
+}
+
+QLineEdit{
+    background-color: white;
+    border-radius: 5px;
+    border-bottom:1px solid black;
+}
+</string>
+                      </property>
+                      <widget class="QWidget" name="page_create_new_data">
+                       <layout class="QVBoxLayout" name="verticalLayout_7">
+                        <item>
+                         <widget class="QLabel" name="label_6">
+                          <property name="text">
+                           <string/>
+                          </property>
+                          <property name="pixmap">
+                           <pixmap>icon_0925/draw.png</pixmap>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="label_7">
+                          <property name="font">
+                           <font>
+                            <family>微軟正黑體</family>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
+                          <property name="text">
+                           <string>新增單筆學生資料</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_12">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_4">
+                          <property name="spacing">
+                           <number>25</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>20</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>20</number>
+                          </property>
+                          <item>
+                           <widget class="QComboBox" name="input_sex">
+                            <property name="minimumSize">
+                             <size>
+                              <width>180</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>180</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <family>微軟正黑體</family>
+                              <pointsize>10</pointsize>
+                             </font>
+                            </property>
+                            <item>
+                             <property name="text">
+                              <string>女孩</string>
+                             </property>
+                            </item>
+                            <item>
+                             <property name="text">
+                              <string>男孩</string>
+                             </property>
+                            </item>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="input_class">
+                            <property name="minimumSize">
+                             <size>
+                              <width>180</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>180</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <family>微軟正黑體</family>
+                              <pointsize>10</pointsize>
+                             </font>
+                            </property>
+                            <property name="layoutDirection">
+                             <enum>Qt::LeftToRight</enum>
+                            </property>
+                            <property name="placeholderText">
+                             <string>學生班級</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="input_seat_number">
+                            <property name="minimumSize">
+                             <size>
+                              <width>180</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>180</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <family>微軟正黑體</family>
+                              <pointsize>10</pointsize>
+                             </font>
+                            </property>
+                            <property name="layoutDirection">
+                             <enum>Qt::LeftToRight</enum>
+                            </property>
+                            <property name="placeholderText">
+                             <string>學生座號</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="input_name">
+                            <property name="minimumSize">
+                             <size>
+                              <width>180</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>180</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <family>微軟正黑體</family>
+                              <pointsize>10</pointsize>
+                             </font>
+                            </property>
+                            <property name="layoutDirection">
+                             <enum>Qt::LeftToRight</enum>
+                            </property>
+                            <property name="placeholderText">
+                             <string>學生姓名</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_13">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_11">
+                          <item>
+                           <widget class="QToolButton" name="btn_trash">
+                            <property name="text">
+                             <string>...</string>
+                            </property>
+                            <property name="icon">
+                             <iconset>
+                              <normaloff>icon_0925/delete.png</normaloff>icon_0925/delete.png</iconset>
+                            </property>
+                            <property name="iconSize">
+                             <size>
+                              <width>35</width>
+                              <height>35</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                             <enum>QSizePolicy::Fixed</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>10</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QToolButton" name="btn_save">
+                            <property name="text">
+                             <string>...</string>
+                            </property>
+                            <property name="icon">
+                             <iconset>
+                              <normaloff>icon_0925/save.png</normaloff>icon_0925/save.png</iconset>
+                            </property>
+                            <property name="iconSize">
+                             <size>
+                              <width>35</width>
+                              <height>35</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_11">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </widget>
+                      <widget class="QWidget" name="page_create_new_file">
+                       <widget class="QLabel" name="label_8">
+                        <property name="geometry">
+                         <rect>
+                          <x>70</x>
+                          <y>90</y>
+                          <width>58</width>
+                          <height>15</height>
+                         </rect>
+                        </property>
+                        <property name="text">
+                         <string>TextLabel</string>
+                        </property>
+                       </widget>
+                       <widget class="QPushButton" name="pushButton_2">
+                        <property name="geometry">
+                         <rect>
+                          <x>60</x>
+                          <y>200</y>
+                          <width>93</width>
+                          <height>28</height>
+                         </rect>
+                        </property>
+                        <property name="text">
+                         <string>PushButton</string>
+                        </property>
+                       </widget>
+                      </widget>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="analytic_page">
+               <widget class="QWidget" name="page_analytic">
                 <layout class="QGridLayout" name="gridLayout_2">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_2">
@@ -901,7 +1258,7 @@ background-color:#FFCD00;
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="setting_page">
+               <widget class="QWidget" name="page_setting">
                 <layout class="QGridLayout" name="gridLayout_3">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_3">
@@ -921,7 +1278,7 @@ background-color:#FFCD00;
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="home_page">
+               <widget class="QWidget" name="page_home">
                 <layout class="QGridLayout" name="gridLayout_5">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_5">
@@ -941,7 +1298,7 @@ background-color:#FFCD00;
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="release_page">
+               <widget class="QWidget" name="page_release">
                 <layout class="QGridLayout" name="gridLayout_4">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_4">
@@ -1166,6 +1523,22 @@ background-color:#FFCD00;
     <hint type="destinationlabel">
      <x>28</x>
      <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>widget_2</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>582</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>760</x>
+     <y>153</y>
     </hint>
    </hints>
   </connection>

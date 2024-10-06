@@ -23,21 +23,21 @@ class teacher_window(QMainWindow):
         self.ui.min_button.clicked.connect(self.min_window)
         self.ui.max_button.clicked.connect(self.max_window)
 
-        ### 菜单栏初始化 ###
+        ### menu init ###
         self.ui.side_menu_2.hide()
-        self.ui.stackedWidget.setCurrentIndex(3)
+        self.ui.stack_change_page.setCurrentIndex(3)
         self.ui.home_button.setChecked(True)
-
-        self.ui.database_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(0))
-        self.ui.database_2_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(0))
-        self.ui.analytics_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(1))
-        self.ui.analytics_2_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(1))    
-        self.ui.setting_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(2))
-        self.ui.setting_2_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(2))
-        self.ui.home_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(3))
-        self.ui.home_2_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(3))
-        self.ui.release_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(4))
-        self.ui.release_2_button.clicked.connect(lambda: self.ui.stackedWidget.setCurrentIndex(4))
+        ### sild_menu change page ###
+        self.ui.database_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
+        self.ui.database_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
+        self.ui.analytics_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
+        self.ui.analytics_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))    
+        self.ui.setting_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
+        self.ui.setting_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
+        self.ui.home_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
+        self.ui.home_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
+        self.ui.release_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
+        self.ui.release_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
 
 
     ### 窗口關閉 縮小 放大_method ###
