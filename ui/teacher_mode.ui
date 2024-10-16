@@ -836,52 +836,440 @@ background-color:#FFCD00;
                  </property>
                  <item>
                   <widget class="QWidget" name="widget" native="true">
+                   <property name="styleSheet">
+                    <string notr="true">QComboBox{
+border:1px solid gray;
+border-radius:6px;
+padding:1px 18px 1px 3px;
+background-color:black;
+color:white;
+selection-background-color:black;
+}
+
+
+QLineEdit{
+    background-color: white;
+    border-radius: 5px;
+border:2px solid gray;
+}
+
+</string>
+                   </property>
                    <layout class="QVBoxLayout" name="verticalLayout_5">
                     <item>
-                     <widget class="QWidget" name="widget_3" native="true">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>100</height>
-                       </size>
+                     <widget class="QLabel" name="label">
+                      <property name="font">
+                       <font>
+                        <family>微軟正黑體</family>
+                        <pointsize>20</pointsize>
+                       </font>
                       </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>100</height>
-                       </size>
+                      <property name="text">
+                       <string> 學生資料</string>
                       </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_9">
-                       <item>
-                        <widget class="QLabel" name="label">
-                         <property name="text">
-                          <string>TextLabel</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="pushButton">
-                         <property name="text">
-                          <string>PushButton</string>
-                         </property>
-                         <property name="checkable">
-                          <bool>true</bool>
-                         </property>
-                         <property name="autoExclusive">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QWidget" name="widget_4" native="true">
-                      <layout class="QVBoxLayout" name="verticalLayout_6"/>
-                     </widget>
+                     <layout class="QHBoxLayout" name="horizontalLayout_9">
+                      <property name="spacing">
+                       <number>20</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>10</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>10</number>
+                      </property>
+                      <item>
+                       <widget class="QPushButton" name="btn_push_create_stu">
+                        <property name="minimumSize">
+                         <size>
+                          <width>160</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>160</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微軟正黑體</family>
+                          <pointsize>12</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">#btn_push_create_stu{
+border:none;
+border-radius :6px;
+background-color: #3795BD;
+color:white;
+}
+
+#btn_push_create_stu:hover{
+border:none;
+border-radius :6px;
+background-color: #3A6D8C;
+
+color:white;
+}
+
+#btn_push_create_stu:check{
+border:none;
+border-radius :6px;
+background-color: #3A6D8C;
+
+color:white;
+}</string>
+                        </property>
+                        <property name="text">
+                         <string>新增學生</string>
+                        </property>
+                        <property name="icon">
+                         <iconset>
+                          <normaloff>icon_0925/person_add.png</normaloff>icon_0925/person_add.png</iconset>
+                        </property>
+                        <property name="iconSize">
+                         <size>
+                          <width>30</width>
+                          <height>30</height>
+                         </size>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="autoExclusive">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="btn_import_excel">
+                        <property name="minimumSize">
+                         <size>
+                          <width>160</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>160</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微軟正黑體</family>
+                          <pointsize>12</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">#btn_import_excel{
+border:none;
+border-radius :6px;
+background-color: #629584;
+color:white;
+}
+
+#btn_import_excel:hover{
+border:none;
+border-radius :6px;
+background-color:#387478;
+color:white;
+}
+
+#btn_import_excel:check{
+border:none;
+border-radius :6px;
+background-color:#387478c;
+color:white;
+
+}</string>
+                        </property>
+                        <property name="text">
+                         <string>匯出Excel</string>
+                        </property>
+                        <property name="icon">
+                         <iconset>
+                          <normaloff>icon_0925/import_excel.png</normaloff>icon_0925/import_excel.png</iconset>
+                        </property>
+                        <property name="iconSize">
+                         <size>
+                          <width>30</width>
+                          <height>30</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="btn_import_qrcode">
+                        <property name="minimumSize">
+                         <size>
+                          <width>160</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>160</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微軟正黑體</family>
+                          <pointsize>12</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">#btn_import_qrcode{
+border:none;
+border-radius :6px;
+background-color:gray;
+color:white;
+}
+
+#btn_import_qrcode:hover{
+border:none;
+border-radius :6px;
+background-color: black;
+color:white;
+}
+
+#btn_import_qrcode:check{
+border:none;
+border-radius :6px;
+background-color:black;
+color: white;
+}</string>
+                        </property>
+                        <property name="text">
+                         <string>匯出QRcode</string>
+                        </property>
+                        <property name="icon">
+                         <iconset>
+                          <normaloff>icon_0925/import_qr_code.png</normaloff>icon_0925/import_qr_code.png</iconset>
+                        </property>
+                        <property name="iconSize">
+                         <size>
+                          <width>30</width>
+                          <height>30</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="spacer">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </item>
                     <item>
-                     <widget class="QWidget" name="widget_5" native="true"/>
+                     <layout class="QHBoxLayout" name="horizontalLayout_12">
+                      <property name="spacing">
+                       <number>20</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>5</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>5</number>
+                      </property>
+                      <item>
+                       <widget class="QComboBox" name="box_search_sex">
+                        <property name="minimumSize">
+                         <size>
+                          <width>160</width>
+                          <height>30</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>160</width>
+                          <height>60</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微軟正黑體</family>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
+                        <property name="currentText">
+                         <string>選擇性別</string>
+                        </property>
+                        <item>
+                         <property name="text">
+                          <string>選擇性別</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>男孩</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>女孩</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="box_search_class">
+                        <property name="minimumSize">
+                         <size>
+                          <width>160</width>
+                          <height>30</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>160</width>
+                          <height>60</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微軟正黑體</family>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
+                        <item>
+                         <property name="text">
+                          <string>選擇班級</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>大班</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>中班</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>小班</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="txt_search_stu">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>30</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>500</width>
+                          <height>60</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微軟正黑體</family>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
+                        <property name="placeholderText">
+                         <string>搜尋學生</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_5">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <widget class="QTableWidget" name="table_stu">
+                      <property name="font">
+                       <font>
+                        <family>微軟正黑體</family>
+                        <pointsize>12</pointsize>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QHeaderView::section{
+font-weight: bold;
+background-color: black;
+color:white;
+}
+
+QTableWidget{
+alternate-background-color: #D8D9DA;
+background-color:#FCFAED;
+}</string>
+                      </property>
+                      <property name="alternatingRowColors">
+                       <bool>true</bool>
+                      </property>
+                      <column>
+                       <property name="text">
+                        <string>班級</string>
+                       </property>
+                      </column>
+                      <column>
+                       <property name="text">
+                        <string>性別</string>
+                       </property>
+                      </column>
+                      <column>
+                       <property name="text">
+                        <string>座號</string>
+                       </property>
+                      </column>
+                      <column>
+                       <property name="text">
+                        <string>姓名</string>
+                       </property>
+                      </column>
+                      <column>
+                       <property name="text">
+                        <string>uuid</string>
+                       </property>
+                      </column>
+                      <column>
+                       <property name="text">
+                        <string>修正</string>
+                       </property>
+                      </column>
+                     </widget>
                     </item>
                    </layout>
                   </widget>
@@ -902,19 +1290,19 @@ background-color:#FFCD00;
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0">
                     <property name="spacing">
-                     <number>0</number>
+                     <number>5</number>
                     </property>
                     <property name="leftMargin">
-                     <number>0</number>
+                     <number>5</number>
                     </property>
                     <property name="topMargin">
-                     <number>0</number>
+                     <number>5</number>
                     </property>
                     <property name="rightMargin">
-                     <number>0</number>
+                     <number>5</number>
                     </property>
                     <property name="bottomMargin">
-                     <number>0</number>
+                     <number>5</number>
                     </property>
                     <item>
                      <widget class="QStackedWidget" name="stack_create_data">
@@ -945,7 +1333,7 @@ QLineEdit{
                       <widget class="QWidget" name="page_create_new_data">
                        <layout class="QVBoxLayout" name="verticalLayout_7">
                         <item>
-                         <widget class="QLabel" name="label_6">
+                         <widget class="QLabel" name="icon_create_data">
                           <property name="text">
                            <string/>
                           </property>
@@ -958,7 +1346,7 @@ QLineEdit{
                          </widget>
                         </item>
                         <item>
-                         <widget class="QLabel" name="label_7">
+                         <widget class="QLabel" name="txt_create_data">
                           <property name="font">
                            <font>
                             <family>微軟正黑體</family>
@@ -1022,12 +1410,12 @@ QLineEdit{
                             </property>
                             <item>
                              <property name="text">
-                              <string>女孩</string>
+                              <string>男孩</string>
                              </property>
                             </item>
                             <item>
                              <property name="text">
-                              <string>男孩</string>
+                              <string>女孩</string>
                              </property>
                             </item>
                            </widget>
@@ -1139,7 +1527,7 @@ QLineEdit{
                           <item>
                            <widget class="QToolButton" name="btn_trash">
                             <property name="text">
-                             <string>...</string>
+                             <string/>
                             </property>
                             <property name="icon">
                              <iconset>
@@ -1189,6 +1577,35 @@ QLineEdit{
                          </layout>
                         </item>
                         <item>
+                         <spacer name="verticalSpacer_16">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>50</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="btn_create_file">
+                          <property name="font">
+                           <font>
+                            <family>微軟正黑體</family>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
+                          <property name="text">
+                           <string>新增批量資料</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
                          <spacer name="verticalSpacer_11">
                           <property name="orientation">
                            <enum>Qt::Vertical</enum>
@@ -1204,32 +1621,143 @@ QLineEdit{
                        </layout>
                       </widget>
                       <widget class="QWidget" name="page_create_new_file">
-                       <widget class="QLabel" name="label_8">
-                        <property name="geometry">
-                         <rect>
-                          <x>70</x>
-                          <y>90</y>
-                          <width>58</width>
-                          <height>15</height>
-                         </rect>
-                        </property>
-                        <property name="text">
-                         <string>TextLabel</string>
-                        </property>
-                       </widget>
-                       <widget class="QPushButton" name="pushButton_2">
-                        <property name="geometry">
-                         <rect>
-                          <x>60</x>
-                          <y>200</y>
-                          <width>93</width>
-                          <height>28</height>
-                         </rect>
-                        </property>
-                        <property name="text">
-                         <string>PushButton</string>
-                        </property>
-                       </widget>
+                       <property name="font">
+                        <font>
+                         <family>AniMe Matrix - MB_EN</family>
+                         <pointsize>14</pointsize>
+                        </font>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_8">
+                        <item>
+                         <widget class="QLabel" name="icon_create_file">
+                          <property name="text">
+                           <string/>
+                          </property>
+                          <property name="pixmap">
+                           <pixmap>icon_0925/edit.png</pixmap>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="txt_create_file">
+                          <property name="font">
+                           <font>
+                            <family>微軟正黑體</family>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
+                          <property name="text">
+                           <string>批量新增學生資料</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_15">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="btn_download_file">
+                          <property name="font">
+                           <font>
+                            <family>微軟正黑體</family>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
+                          <property name="text">
+                           <string>下載匯入範本</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_19">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="btn_import_csvfile">
+                          <property name="font">
+                           <font>
+                            <family>微軟正黑體</family>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
+                          <property name="text">
+                           <string>匯入csv檔</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_17">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="btn_create_data">
+                          <property name="font">
+                           <font>
+                            <family>微軟正黑體</family>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
+                          <property name="text">
+                           <string>新增單筆資料</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_14">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
                       </widget>
                      </widget>
                     </item>
@@ -1527,18 +2055,18 @@ QLineEdit{
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>btn_push_create_stu</sender>
    <signal>toggled(bool)</signal>
    <receiver>widget_2</receiver>
    <slot>setHidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>582</x>
-     <y>136</y>
+     <x>331</x>
+     <y>141</y>
     </hint>
     <hint type="destinationlabel">
-     <x>760</x>
-     <y>153</y>
+     <x>1030</x>
+     <y>257</y>
     </hint>
    </hints>
   </connection>

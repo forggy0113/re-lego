@@ -1,6 +1,7 @@
 import sys
 from face_ui import Ui_MainWindow as FaceUiMainWindow
 from login_resigert_ui import Ui_MainWindow as LoginUiMainWindow
+from main_teacher import teacher_window
 from PyQt6.QtWidgets import QApplication, QMainWindow,QWidget
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QTimer 
@@ -37,9 +38,9 @@ class Login_Window(QMainWindow):
         account = self.ui.Login_account.text()
         password = self.ui.Login_password.text()
         if account == "ada" and password == "012567":
-            self.win = InterfaceWindow()
+            self.win = teacher_window()
+            self.win.show()
             self.close()
-
         else:
             print("wrong")
 
@@ -71,8 +72,8 @@ class InterfaceWindow(QMainWindow):
         self.ui = FaceUiMainWindow()
         self.ui.setupUi(self)
         ###視窗設定###
-        # self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
-        # self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
 
         ### 切換至教師登入介面 ###  
         self.ui.teacher.clicked.connect(self.open_to_login)  # 連結到switch_to_login method
@@ -80,8 +81,8 @@ class InterfaceWindow(QMainWindow):
     
         ### 切換字體 ###
         # 設定字體類型
-        self.font_id_1 = QtGui.QFontDatabase.addApplicationFont("font/BpmfGenSenRounded-R.ttf")
-        self.font_id_2 = QtGui.QFontDatabase.addApplicationFont("font/FakePearl-Regular.ttf")
+        self.font_id_1 = QtGui.QFontDatabase.addApplicationFont("ui/font/BpmfGenSenRounded-R.ttf")
+        self.font_id_2 = QtGui.QFontDatabase.addApplicationFont("ui/font/FakePearl-Regular.ttf")
         self.font_family_1 = QtGui.QFontDatabase.applicationFontFamilies(self.font_id_1)
         self.font_family_2 = QtGui.QFontDatabase.applicationFontFamilies(self.font_id_2)
         # 設置初始字體

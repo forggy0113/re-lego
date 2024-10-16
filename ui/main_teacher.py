@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QStackedWidg
 from PyQt6 import QtWidgets
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtGui import QImage, QPixmap
+from func_sql import CreateDatabase, Stus
 
 
 class teacher_window(QMainWindow):
@@ -11,13 +12,21 @@ class teacher_window(QMainWindow):
         super().__init__()
         self.ui = teacher_mode()
         self.ui.setupUi(self)
-
+        ### 初始化資料庫 ###
+        self.create_db = CreateDatabase()
+        # 只回傳 db 和 ui
+        self.stu_manager = Stus(self.create_db, self.ui)
+        ## 連接保存和刪除按鈕
+        self.ui.btn_save.clicked.connect(self.add_stu_data)
+        self.ui.btn_trash.clicked.connect(self.clear_stu_data)
+        self.update_student_display()
         ### 無邊框 ###
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
         self.m_flag = False
         self.resizeing = False
         self.border_width = 1
+
         ### 窗口控制 ###
         self.ui.close_button.clicked.connect(self.close_window)
         self.ui.min_button.clicked.connect(self.min_window)
@@ -38,7 +47,21 @@ class teacher_window(QMainWindow):
         self.ui.home_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
         self.ui.release_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
         self.ui.release_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
+        ### 新增學生資料切換頁面 ###
+        self.ui.btn_create_data.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(0))
+        self.ui.btn_create_file.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(1))
+        ### 引用 UI 中的 table_stu ###
+        
 
+    def add_stu_data(self):
+        self.stu_manager.add_stu()
+        self.stu_manager.clear_edit()
+        self.update_student_display()
+
+    def update_student_display(self):
+        self.stu_manager.display_students()
+    def clear_stu_data(self):
+        self.stu_manager.clear_edit()
 
     ### 窗口關閉 縮小 放大_method ###
     def close_window(self):

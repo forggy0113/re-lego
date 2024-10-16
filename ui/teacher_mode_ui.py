@@ -320,40 +320,233 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.setSpacing(0)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.widget = QtWidgets.QWidget(parent=self.page_database)
+        self.widget.setStyleSheet("QComboBox{\n"
+"border:1px solid gray;\n"
+"border-radius:6px;\n"
+"padding:1px 18px 1px 3px;\n"
+"background-color:black;\n"
+"color:white;\n"
+"selection-background-color:black;\n"
+"}\n"
+"\n"
+"\n"
+"QLineEdit{\n"
+"    background-color: white;\n"
+"    border-radius: 5px;\n"
+"border:2px solid gray;\n"
+"}\n"
+"\n"
+"")
         self.widget.setObjectName("widget")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.widget_3 = QtWidgets.QWidget(parent=self.widget)
-        self.widget_3.setMinimumSize(QtCore.QSize(0, 100))
-        self.widget_3.setMaximumSize(QtCore.QSize(16777215, 100))
-        self.widget_3.setObjectName("widget_3")
-        self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.widget_3)
-        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
-        self.label = QtWidgets.QLabel(parent=self.widget_3)
+        self.label = QtWidgets.QLabel(parent=self.widget)
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(20)
+        self.label.setFont(font)
         self.label.setObjectName("label")
-        self.horizontalLayout_9.addWidget(self.label)
-        self.pushButton = QtWidgets.QPushButton(parent=self.widget_3)
-        self.pushButton.setCheckable(True)
-        self.pushButton.setAutoExclusive(True)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_9.addWidget(self.pushButton)
-        self.verticalLayout_5.addWidget(self.widget_3)
-        self.widget_4 = QtWidgets.QWidget(parent=self.widget)
-        self.widget_4.setObjectName("widget_4")
-        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.widget_4)
-        self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.verticalLayout_5.addWidget(self.widget_4)
-        self.widget_5 = QtWidgets.QWidget(parent=self.widget)
-        self.widget_5.setObjectName("widget_5")
-        self.verticalLayout_5.addWidget(self.widget_5)
+        self.verticalLayout_5.addWidget(self.label)
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setContentsMargins(-1, 10, -1, 10)
+        self.horizontalLayout_9.setSpacing(20)
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
+        self.btn_push_create_stu = QtWidgets.QPushButton(parent=self.widget)
+        self.btn_push_create_stu.setMinimumSize(QtCore.QSize(160, 40))
+        self.btn_push_create_stu.setMaximumSize(QtCore.QSize(160, 40))
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.btn_push_create_stu.setFont(font)
+        self.btn_push_create_stu.setStyleSheet("#btn_push_create_stu{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: #3795BD;\n"
+"color:white;\n"
+"}\n"
+"\n"
+"#btn_push_create_stu:hover{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: #3A6D8C;\n"
+"\n"
+"color:white;\n"
+"}\n"
+"\n"
+"#btn_push_create_stu:check{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: #3A6D8C;\n"
+"\n"
+"color:white;\n"
+"}")
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/person_add.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.btn_push_create_stu.setIcon(icon9)
+        self.btn_push_create_stu.setIconSize(QtCore.QSize(30, 30))
+        self.btn_push_create_stu.setCheckable(True)
+        self.btn_push_create_stu.setAutoExclusive(True)
+        self.btn_push_create_stu.setObjectName("btn_push_create_stu")
+        self.horizontalLayout_9.addWidget(self.btn_push_create_stu)
+        self.btn_import_excel = QtWidgets.QPushButton(parent=self.widget)
+        self.btn_import_excel.setMinimumSize(QtCore.QSize(160, 40))
+        self.btn_import_excel.setMaximumSize(QtCore.QSize(160, 40))
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.btn_import_excel.setFont(font)
+        self.btn_import_excel.setStyleSheet("#btn_import_excel{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: #629584;\n"
+"color:white;\n"
+"}\n"
+"\n"
+"#btn_import_excel:hover{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#387478;\n"
+"color:white;\n"
+"}\n"
+"\n"
+"#btn_import_excel:check{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#387478c;\n"
+"color:white;\n"
+"\n"
+"}")
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/import_excel.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.btn_import_excel.setIcon(icon10)
+        self.btn_import_excel.setIconSize(QtCore.QSize(30, 30))
+        self.btn_import_excel.setObjectName("btn_import_excel")
+        self.horizontalLayout_9.addWidget(self.btn_import_excel)
+        self.btn_import_qrcode = QtWidgets.QPushButton(parent=self.widget)
+        self.btn_import_qrcode.setMinimumSize(QtCore.QSize(160, 40))
+        self.btn_import_qrcode.setMaximumSize(QtCore.QSize(160, 40))
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.btn_import_qrcode.setFont(font)
+        self.btn_import_qrcode.setStyleSheet("#btn_import_qrcode{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:gray;\n"
+"color:white;\n"
+"}\n"
+"\n"
+"#btn_import_qrcode:hover{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: black;\n"
+"color:white;\n"
+"}\n"
+"\n"
+"#btn_import_qrcode:check{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:black;\n"
+"color: white;\n"
+"}")
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/import_qr_code.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.btn_import_qrcode.setIcon(icon11)
+        self.btn_import_qrcode.setIconSize(QtCore.QSize(30, 30))
+        self.btn_import_qrcode.setObjectName("btn_import_qrcode")
+        self.horizontalLayout_9.addWidget(self.btn_import_qrcode)
+        spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem12)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_9)
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setContentsMargins(-1, 5, -1, 5)
+        self.horizontalLayout_12.setSpacing(20)
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        self.box_search_sex = QtWidgets.QComboBox(parent=self.widget)
+        self.box_search_sex.setMinimumSize(QtCore.QSize(160, 30))
+        self.box_search_sex.setMaximumSize(QtCore.QSize(160, 60))
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(10)
+        self.box_search_sex.setFont(font)
+        self.box_search_sex.setObjectName("box_search_sex")
+        self.box_search_sex.addItem("")
+        self.box_search_sex.addItem("")
+        self.box_search_sex.addItem("")
+        self.horizontalLayout_12.addWidget(self.box_search_sex)
+        self.box_search_class = QtWidgets.QComboBox(parent=self.widget)
+        self.box_search_class.setMinimumSize(QtCore.QSize(160, 30))
+        self.box_search_class.setMaximumSize(QtCore.QSize(160, 60))
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(10)
+        self.box_search_class.setFont(font)
+        self.box_search_class.setObjectName("box_search_class")
+        self.box_search_class.addItem("")
+        self.box_search_class.addItem("")
+        self.box_search_class.addItem("")
+        self.box_search_class.addItem("")
+        self.horizontalLayout_12.addWidget(self.box_search_class)
+        self.txt_search_stu = QtWidgets.QLineEdit(parent=self.widget)
+        self.txt_search_stu.setMinimumSize(QtCore.QSize(0, 30))
+        self.txt_search_stu.setMaximumSize(QtCore.QSize(500, 60))
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(10)
+        self.txt_search_stu.setFont(font)
+        self.txt_search_stu.setObjectName("txt_search_stu")
+        self.horizontalLayout_12.addWidget(self.txt_search_stu)
+        spacerItem13 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem13)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_12)
+        self.table_stu = QtWidgets.QTableWidget(parent=self.widget)
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.table_stu.setFont(font)
+        self.table_stu.setStyleSheet("QHeaderView::section{\n"
+"font-weight: bold;\n"
+"background-color: black;\n"
+"color:white;\n"
+"}\n"
+"\n"
+"QTableWidget{\n"
+"alternate-background-color: #D8D9DA;\n"
+"background-color:#FCFAED;\n"
+"}")
+        self.table_stu.setAlternatingRowColors(True)
+        self.table_stu.setObjectName("table_stu")
+        self.table_stu.setColumnCount(6)
+        self.table_stu.setRowCount(0)
+        item = QtWidgets.QTableWidgetItem()
+        self.table_stu.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.table_stu.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.table_stu.setHorizontalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.table_stu.setHorizontalHeaderItem(3, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.table_stu.setHorizontalHeaderItem(4, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.table_stu.setHorizontalHeaderItem(5, item)
+        self.verticalLayout_5.addWidget(self.table_stu)
         self.horizontalLayout_8.addWidget(self.widget)
         self.widget_2 = QtWidgets.QWidget(parent=self.page_database)
         self.widget_2.setMinimumSize(QtCore.QSize(250, 0))
         self.widget_2.setMaximumSize(QtCore.QSize(250, 16777215))
         self.widget_2.setObjectName("widget_2")
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.widget_2)
-        self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_10.setSpacing(0)
+        self.horizontalLayout_10.setContentsMargins(5, 5, 5, 5)
+        self.horizontalLayout_10.setSpacing(5)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.stack_create_data = QtWidgets.QStackedWidget(parent=self.widget_2)
         self.stack_create_data.setStyleSheet("\n"
@@ -383,22 +576,22 @@ class Ui_MainWindow(object):
         self.page_create_new_data.setObjectName("page_create_new_data")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.page_create_new_data)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.label_6 = QtWidgets.QLabel(parent=self.page_create_new_data)
-        self.label_6.setText("")
-        self.label_6.setPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/draw.png"))
-        self.label_6.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.label_6.setObjectName("label_6")
-        self.verticalLayout_7.addWidget(self.label_6)
-        self.label_7 = QtWidgets.QLabel(parent=self.page_create_new_data)
+        self.icon_create_data = QtWidgets.QLabel(parent=self.page_create_new_data)
+        self.icon_create_data.setText("")
+        self.icon_create_data.setPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/draw.png"))
+        self.icon_create_data.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.icon_create_data.setObjectName("icon_create_data")
+        self.verticalLayout_7.addWidget(self.icon_create_data)
+        self.txt_create_data = QtWidgets.QLabel(parent=self.page_create_new_data)
         font = QtGui.QFont()
         font.setFamily("微軟正黑體")
         font.setPointSize(14)
-        self.label_7.setFont(font)
-        self.label_7.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.label_7.setObjectName("label_7")
-        self.verticalLayout_7.addWidget(self.label_7)
-        spacerItem12 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
-        self.verticalLayout_7.addItem(spacerItem12)
+        self.txt_create_data.setFont(font)
+        self.txt_create_data.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.txt_create_data.setObjectName("txt_create_data")
+        self.verticalLayout_7.addWidget(self.txt_create_data)
+        spacerItem14 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.verticalLayout_7.addItem(spacerItem14)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setContentsMargins(20, -1, 20, -1)
         self.verticalLayout_4.setSpacing(25)
@@ -445,38 +638,91 @@ class Ui_MainWindow(object):
         self.input_name.setObjectName("input_name")
         self.verticalLayout_4.addWidget(self.input_name)
         self.verticalLayout_7.addLayout(self.verticalLayout_4)
-        spacerItem13 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
-        self.verticalLayout_7.addItem(spacerItem13)
+        spacerItem15 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.verticalLayout_7.addItem(spacerItem15)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.btn_trash = QtWidgets.QToolButton(parent=self.page_create_new_data)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.btn_trash.setIcon(icon9)
+        self.btn_trash.setText("")
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.btn_trash.setIcon(icon12)
         self.btn_trash.setIconSize(QtCore.QSize(35, 35))
         self.btn_trash.setObjectName("btn_trash")
         self.horizontalLayout_11.addWidget(self.btn_trash)
-        spacerItem14 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.horizontalLayout_11.addItem(spacerItem14)
+        spacerItem16 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem16)
         self.btn_save = QtWidgets.QToolButton(parent=self.page_create_new_data)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/save.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.btn_save.setIcon(icon10)
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/save.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.btn_save.setIcon(icon13)
         self.btn_save.setIconSize(QtCore.QSize(35, 35))
         self.btn_save.setObjectName("btn_save")
         self.horizontalLayout_11.addWidget(self.btn_save)
         self.verticalLayout_7.addLayout(self.horizontalLayout_11)
-        spacerItem15 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
-        self.verticalLayout_7.addItem(spacerItem15)
+        spacerItem17 = QtWidgets.QSpacerItem(20, 50, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.verticalLayout_7.addItem(spacerItem17)
+        self.btn_create_file = QtWidgets.QPushButton(parent=self.page_create_new_data)
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(14)
+        self.btn_create_file.setFont(font)
+        self.btn_create_file.setObjectName("btn_create_file")
+        self.verticalLayout_7.addWidget(self.btn_create_file)
+        spacerItem18 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        self.verticalLayout_7.addItem(spacerItem18)
         self.stack_create_data.addWidget(self.page_create_new_data)
         self.page_create_new_file = QtWidgets.QWidget()
+        font = QtGui.QFont()
+        font.setFamily("AniMe Matrix - MB_EN")
+        font.setPointSize(14)
+        self.page_create_new_file.setFont(font)
         self.page_create_new_file.setObjectName("page_create_new_file")
-        self.label_8 = QtWidgets.QLabel(parent=self.page_create_new_file)
-        self.label_8.setGeometry(QtCore.QRect(70, 90, 58, 15))
-        self.label_8.setObjectName("label_8")
-        self.pushButton_2 = QtWidgets.QPushButton(parent=self.page_create_new_file)
-        self.pushButton_2.setGeometry(QtCore.QRect(60, 200, 93, 28))
-        self.pushButton_2.setObjectName("pushButton_2")
+        self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.page_create_new_file)
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
+        self.icon_create_file = QtWidgets.QLabel(parent=self.page_create_new_file)
+        self.icon_create_file.setText("")
+        self.icon_create_file.setPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/edit.png"))
+        self.icon_create_file.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.icon_create_file.setObjectName("icon_create_file")
+        self.verticalLayout_8.addWidget(self.icon_create_file)
+        self.txt_create_file = QtWidgets.QLabel(parent=self.page_create_new_file)
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(14)
+        self.txt_create_file.setFont(font)
+        self.txt_create_file.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.txt_create_file.setObjectName("txt_create_file")
+        self.verticalLayout_8.addWidget(self.txt_create_file)
+        spacerItem19 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.verticalLayout_8.addItem(spacerItem19)
+        self.btn_download_file = QtWidgets.QPushButton(parent=self.page_create_new_file)
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(14)
+        self.btn_download_file.setFont(font)
+        self.btn_download_file.setObjectName("btn_download_file")
+        self.verticalLayout_8.addWidget(self.btn_download_file)
+        spacerItem20 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.verticalLayout_8.addItem(spacerItem20)
+        self.btn_import_csvfile = QtWidgets.QPushButton(parent=self.page_create_new_file)
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(14)
+        self.btn_import_csvfile.setFont(font)
+        self.btn_import_csvfile.setObjectName("btn_import_csvfile")
+        self.verticalLayout_8.addWidget(self.btn_import_csvfile)
+        spacerItem21 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.verticalLayout_8.addItem(spacerItem21)
+        self.btn_create_data = QtWidgets.QPushButton(parent=self.page_create_new_file)
+        font = QtGui.QFont()
+        font.setFamily("微軟正黑體")
+        font.setPointSize(14)
+        self.btn_create_data.setFont(font)
+        self.btn_create_data.setObjectName("btn_create_data")
+        self.verticalLayout_8.addWidget(self.btn_create_data)
+        spacerItem22 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        self.verticalLayout_8.addItem(spacerItem22)
         self.stack_create_data.addWidget(self.page_create_new_file)
         self.horizontalLayout_10.addWidget(self.stack_create_data)
         self.horizontalLayout_8.addWidget(self.widget_2)
@@ -553,7 +799,7 @@ class Ui_MainWindow(object):
         self.release_2_button.toggled['bool'].connect(self.release_button.setChecked) # type: ignore
         self.home_button.toggled['bool'].connect(self.home_2_button.setChecked) # type: ignore
         self.home_2_button.toggled['bool'].connect(self.home_button.setChecked) # type: ignore
-        self.pushButton.toggled['bool'].connect(self.widget_2.setHidden) # type: ignore
+        self.btn_push_create_stu.toggled['bool'].connect(self.widget_2.setHidden) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -568,18 +814,43 @@ class Ui_MainWindow(object):
         self.analytics_2_button.setText(_translate("MainWindow", "學習分析"))
         self.setting_2_button.setText(_translate("MainWindow", "設定細節"))
         self.release_2_button.setText(_translate("MainWindow", "版本更新"))
-        self.label.setText(_translate("MainWindow", "TextLabel"))
-        self.pushButton.setText(_translate("MainWindow", "PushButton"))
-        self.label_7.setText(_translate("MainWindow", "新增單筆學生資料"))
-        self.input_sex.setItemText(0, _translate("MainWindow", "女孩"))
-        self.input_sex.setItemText(1, _translate("MainWindow", "男孩"))
+        self.label.setText(_translate("MainWindow", " 學生資料"))
+        self.btn_push_create_stu.setText(_translate("MainWindow", "新增學生"))
+        self.btn_import_excel.setText(_translate("MainWindow", "匯出Excel"))
+        self.btn_import_qrcode.setText(_translate("MainWindow", "匯出QRcode"))
+        self.box_search_sex.setCurrentText(_translate("MainWindow", "選擇性別"))
+        self.box_search_sex.setItemText(0, _translate("MainWindow", "選擇性別"))
+        self.box_search_sex.setItemText(1, _translate("MainWindow", "男孩"))
+        self.box_search_sex.setItemText(2, _translate("MainWindow", "女孩"))
+        self.box_search_class.setItemText(0, _translate("MainWindow", "選擇班級"))
+        self.box_search_class.setItemText(1, _translate("MainWindow", "大班"))
+        self.box_search_class.setItemText(2, _translate("MainWindow", "中班"))
+        self.box_search_class.setItemText(3, _translate("MainWindow", "小班"))
+        self.txt_search_stu.setPlaceholderText(_translate("MainWindow", "搜尋學生"))
+        item = self.table_stu.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "班級"))
+        item = self.table_stu.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "性別"))
+        item = self.table_stu.horizontalHeaderItem(2)
+        item.setText(_translate("MainWindow", "座號"))
+        item = self.table_stu.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "姓名"))
+        item = self.table_stu.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "uuid"))
+        item = self.table_stu.horizontalHeaderItem(5)
+        item.setText(_translate("MainWindow", "修正"))
+        self.txt_create_data.setText(_translate("MainWindow", "新增單筆學生資料"))
+        self.input_sex.setItemText(0, _translate("MainWindow", "男孩"))
+        self.input_sex.setItemText(1, _translate("MainWindow", "女孩"))
         self.input_class.setPlaceholderText(_translate("MainWindow", "學生班級"))
         self.input_seat_number.setPlaceholderText(_translate("MainWindow", "學生座號"))
         self.input_name.setPlaceholderText(_translate("MainWindow", "學生姓名"))
-        self.btn_trash.setText(_translate("MainWindow", "..."))
         self.btn_save.setText(_translate("MainWindow", "..."))
-        self.label_8.setText(_translate("MainWindow", "TextLabel"))
-        self.pushButton_2.setText(_translate("MainWindow", "PushButton"))
+        self.btn_create_file.setText(_translate("MainWindow", "新增批量資料"))
+        self.txt_create_file.setText(_translate("MainWindow", "批量新增學生資料"))
+        self.btn_download_file.setText(_translate("MainWindow", "下載匯入範本"))
+        self.btn_import_csvfile.setText(_translate("MainWindow", "匯入csv檔"))
+        self.btn_create_data.setText(_translate("MainWindow", "新增單筆資料"))
         self.label_2.setText(_translate("MainWindow", "學習分析"))
         self.label_3.setText(_translate("MainWindow", "設定細節"))
         self.label_5.setText(_translate("MainWindow", "home Page"))
