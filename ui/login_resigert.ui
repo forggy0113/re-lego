@@ -548,7 +548,7 @@ padding-left:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/person_add.png</normaloff>icon_0925/person_add.png</iconset>
+                 <normaloff>icon_0925/login_add.png</normaloff>icon_0925/login_add.png</iconset>
                </property>
                <property name="iconSize">
                 <size>

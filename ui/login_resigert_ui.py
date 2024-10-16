@@ -256,7 +256,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.Login_button)
         self.Register_button = QtWidgets.QToolButton(parent=self.widget_6)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/person_add.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon3.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/login_add.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.Register_button.setIcon(icon3)
         self.Register_button.setIconSize(QtCore.QSize(35, 35))
         self.Register_button.setObjectName("Register_button")
