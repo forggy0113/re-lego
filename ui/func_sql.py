@@ -38,12 +38,12 @@ class Stus:
         try:
             stu_seat_num = int(self.ui.input_seat_number.text()) if self.ui.input_seat_number.text() else 0  # 默认座位号为 0
         except ValueError:
-            stu_seat_num = 0  # 如果输入无效，则设为0
-            print("座位号输入无效，已设为默认值 0。")
+            stu_seat_num = 0  # 如果輸入無效，默認為0
+            print("座位號無效，默認值 0。")
         
-        stu_sex = self.ui.input_sex.currentText()  # 访问下拉选单
+        stu_sex = self.ui.input_sex.currentText()  # 訪問下拉選單
         
-        # 插入数据到数据库
+        # 插入數據到數據庫
         try:
             self.db.cursor.execute('''
             INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_id, in_date) VALUES (?, ?, ?, ?, ?, datetime('now'))
@@ -55,15 +55,15 @@ class Stus:
     def display_students(self):
         self.ui.table_stu.setRowCount(0)  # 清空现有行
 
-        # 从数据库获取所有学生数据
+        # 從資料庫獲取學生資料
         try:
             self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name, stu_id FROM Students")
             rows = self.db.cursor.fetchall()
         except Exception as e:
-            print(f"获取学生数据失败: {e}")
+            print(f"獲取學生資料失敗: {e}")
             return
 
-    # 设置表格行数
+    # 設置表格行數
         self.ui.table_stu.setRowCount(len(rows))
 
         for row_index, row in enumerate(rows):
@@ -72,23 +72,25 @@ class Stus:
                     qtablewidgetitem = QtWidgets.QTableWidgetItem(str(item))
                     self.ui.table_stu.setItem(row_index, column_index, qtablewidgetitem)
                 except Exception as e:
-                    print(f"设置表格项失败: {e}")
+                    print(f"設置表格項失敗: {e}")
 
-        # 添加按钮到最后一列
+        # 添加按紐到最后一列
         for row_index in range(len(rows)):
             button_widget = QtWidgets.QWidget()
             layout = QtWidgets.QHBoxLayout(button_widget)
             
             button1 = QtWidgets.QPushButton(f"Button 1-{row_index + 1}")
             button2 = QtWidgets.QPushButton(f"Button 2-{row_index + 1}")
+            button3 = QtWidgets.QPushButton(f"Button 3-{row_index + 1}")
             layout.addWidget(button1)
             layout.addWidget(button2)
+            layout.addWidget(button3)
             
             layout.setSpacing(10)
             layout.setContentsMargins(0, 0, 0, 0)
             self.ui.table_stu.setCellWidget(row_index, 5, button_widget)
 
-    # 自动调整行高
+    # 自动調整行高
         self.ui.table_stu.resizeRowsToContents()
 
 
