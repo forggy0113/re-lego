@@ -34,6 +34,7 @@ class teacher_window(QMainWindow):
 
         ### menu init ###
         self.ui.side_menu_2.hide()
+
         self.ui.stack_change_page.setCurrentIndex(3)
         self.ui.home_button.setChecked(True)
         ### sild_menu change page ###

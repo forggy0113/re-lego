@@ -789,16 +789,16 @@ class Ui_MainWindow(object):
         self.stack_change_page.setCurrentIndex(0)
         self.open_menu_button.toggled['bool'].connect(self.side_menu_1.setVisible) # type: ignore
         self.open_menu_button.toggled['bool'].connect(self.side_menu_2.setHidden) # type: ignore
+        self.home_button.toggled['bool'].connect(self.home_2_button.setChecked) # type: ignore
         self.database_button.toggled['bool'].connect(self.database_2_button.setChecked) # type: ignore
         self.analytics_button.toggled['bool'].connect(self.analytics_2_button.setChecked) # type: ignore
         self.setting_button.toggled['bool'].connect(self.setting_2_button.setChecked) # type: ignore
         self.release_button.toggled['bool'].connect(self.release_2_button.setChecked) # type: ignore
+        self.home_2_button.toggled['bool'].connect(self.home_button.setChecked) # type: ignore
         self.database_2_button.toggled['bool'].connect(self.database_button.setChecked) # type: ignore
         self.analytics_2_button.toggled['bool'].connect(self.analytics_button.setChecked) # type: ignore
         self.setting_2_button.toggled['bool'].connect(self.setting_button.setChecked) # type: ignore
         self.release_2_button.toggled['bool'].connect(self.release_button.setChecked) # type: ignore
-        self.home_button.toggled['bool'].connect(self.home_2_button.setChecked) # type: ignore
-        self.home_2_button.toggled['bool'].connect(self.home_button.setChecked) # type: ignore
         self.btn_push_create_stu.toggled['bool'].connect(self.widget_2.setHidden) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
