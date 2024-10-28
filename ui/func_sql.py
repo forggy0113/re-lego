@@ -3,6 +3,7 @@ import uuid
 from teacher_mode_ui import Ui_MainWindow as teacher_mode
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
+from PyQt6 import QtGui, QtCore
 
 class CreateDatabase:
     # 創建資料庫
@@ -79,15 +80,80 @@ class Stus:
             button_widget = QtWidgets.QWidget()
             layout = QtWidgets.QHBoxLayout(button_widget)
             
-            button1 = QtWidgets.QPushButton(f"Button 1-{row_index + 1}")
-            button2 = QtWidgets.QPushButton(f"Button 2-{row_index + 1}")
-            button3 = QtWidgets.QPushButton(f"Button 3-{row_index + 1}")
+            button1 = QtWidgets.QPushButton()
+            button2 = QtWidgets.QPushButton()
+            button3 = QtWidgets.QPushButton()
             layout.addWidget(button1)
             layout.addWidget(button2)
             layout.addWidget(button3)
-            
+            icon14 = QtGui.QIcon()
+            icon14.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/qr_code.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+            button1.setIcon(icon14)
+            button1.setIconSize(QtCore.QSize(35, 35))
+            button1.setObjectName("btn_database_qrcode")
+            button1.setStyleSheet("#btn_database_qrcode{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#EEEEEE;\n"
+"}\n"
+"\n"
+"#btn_database_qrcode:hover{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#B7B7B7;\n"
+"}\n"
+"\n"
+"#btn_database_qrcode:check{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#B7B7B7;\n"
+"}")
+            icon15 = QtGui.QIcon()
+            icon15.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/modify_data.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+            button2.setIcon(icon15)
+            button2.setIconSize(QtCore.QSize(35, 35))
+            button2.setObjectName("btn_database_modify_data")
+            button2.setStyleSheet("#btn_database_modify_data{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#FFCF9D;\n"
+"}\n"
+"\n"
+"#btn_database_modify_data:hover{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: #DE8F5F;\n"
+"}\n"
+"\n"
+"#btn_database_modify_data:check{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#DE8F5F;\n"
+"}")
+            icon16 = QtGui.QIcon()
+            icon16.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+            button3.setIcon(icon16)
+            button3.setIconSize(QtCore.QSize(35, 35))
+            button3.setObjectName("btn_database_delect")
+            button3.setStyleSheet("#btn_database_delect{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: #ffeb9a;\n"
+"}\n"
+"\n"
+"#btn_database_delect:hover{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color:#FFCD00;\n"
+"}\n"
+"\n"
+"#btn_database_delect:check{\n"
+"border:none;\n"
+"border-radius :6px;\n"
+"background-color: #FFCD00;\n"
+"}")
             layout.setSpacing(10)
-            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setContentsMargins(2, 2, 2, 2)
             self.ui.table_stu.setCellWidget(row_index, 5, button_widget)
 
     # 自动調整行高

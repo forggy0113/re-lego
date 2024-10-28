@@ -34,7 +34,6 @@ class teacher_window(QMainWindow):
 
         ### menu init ###
         self.ui.side_menu_2.hide()
-
         self.ui.stack_change_page.setCurrentIndex(3)
         self.ui.home_button.setChecked(True)
         ### sild_menu change page ###
@@ -51,9 +50,8 @@ class teacher_window(QMainWindow):
         ### 新增學生資料切換頁面 ###
         self.ui.btn_create_data.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(0))
         self.ui.btn_create_file.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(1))
-        ### 引用 UI 中的 table_stu ###
         
-
+    ### 引用 UI 中的 table_stu ###
     def add_stu_data(self):
         self.stu_manager.add_stu()
         self.stu_manager.clear_edit()
