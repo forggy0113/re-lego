@@ -81,19 +81,25 @@ class InterfaceWindow(QMainWindow):
     
         ### 切換字體 ###
         # 設定字體類型
-        self.font_id_1 = QtGui.QFontDatabase.addApplicationFont("ui/font/BpmfGenSenRounded-R.ttf")
-        self.font_id_2 = QtGui.QFontDatabase.addApplicationFont("ui/font/FakePearl-Regular.ttf")
+        init_font_size = 25
+        self.font_id_1 = QtGui.QFontDatabase.addApplicationFont("font/BpmfGenSenRounded-R.ttf")
+        self.font_id_2 = QtGui.QFontDatabase.addApplicationFont("font/FakePearl-Regular.ttf")
         self.font_family_1 = QtGui.QFontDatabase.applicationFontFamilies(self.font_id_1)
         self.font_family_2 = QtGui.QFontDatabase.applicationFontFamilies(self.font_id_2)
         # 設置初始字體
         if self.font_family_1:
-            self.current_font = QtGui.QFont(self.font_family_1[0], 25)
+            self.current_font = QtGui.QFont(self.font_family_1[0], init_font_size)
             self.set_all_fonts(self.current_font)
             print(f"初始字體: {self.font_family_1[0]}")
         # 初始化字體狀態
         self.is_font_1 = True
+        # 默認調整字型大小為25
+        self.ui.slider_font_size.setRange(10,32)
+        self.ui.slider_font_size.setValue(init_font_size)
         # 點擊按鈕切換字體
         self.ui.language.clicked.connect(self.change_font)
+        self.ui.slider_font_size.valueChanged.connect(self.change_font_size)
+        self.ui.txt_font_size.setText(f"字形大小:{init_font_size}")
 
         ### 影片讀取 ###
         # 影片捕捉對象 (0 表示攝影機)
@@ -118,38 +124,66 @@ class InterfaceWindow(QMainWindow):
 
     ### 切換字體_part2 ###
     def change_font(self):
+        init_font_size = 25
         if self.is_font_1:
             if self.font_family_2:
-                new_font = QtGui.QFont(self.font_family_2[0], 25)
+                new_font = QtGui.QFont(self.font_family_2[0], init_font_size)
                 self.set_all_fonts(new_font)
                 print(f"切換到新字體:{self.font_family_2[0]}")
             else:
                 print("無法加載新字體")
         else:
             if self.font_family_1:
-                orginal_font = QtGui.QFont(self.font_family_1[0],25)
+                orginal_font = QtGui.QFont(self.font_family_1[0], init_font_size)
                 self.set_all_fonts(orginal_font)
                 print(f"切回原字體:{self.font_family_1[0]}")
             else:
                 print("無法加載原字體")
         self.is_font_1 = not self.is_font_1
+    #改變字體大小
+    def change_font_size(self, value):
+        
+        if self.is_font_1:
+            font_family = self.font_family_1
+        else:
+            font_family = self.font_family_2
+        
+        if font_family:
+            current_font = QtGui.QFont(font_family[0], value)
+            print(f"當前字體: {font_family[0]}, 大小: {value}")
+            self.ui.txt.setFont(current_font)
+            
+            # 僅更新 txt_font_size 的顯示文本，不改變其字體大小
+            self.ui.txt_font_size.setText(f"字形大小: {value}")
+
 
     ### 影片讀取_part1 ###
     def updata_frame(self):
         ret, frame = self.cap.read()
-
         if ret:
-            # 轉換顏色，opencv BGR 轉為 RGB
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            
-            h, w, ch = rgb_frame.shape
-            # 計算每一行圖像所占像素(像素點*通道)
-            bytes_per_line = ch * w
-            qimg = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
-
-            # 在 QLabel 上顯示圖片
-            self.video_label.setPixmap(QPixmap.fromImage(qimg))
-
+            image_with_crosshair = self.draw_cercent(frame)
+            self.display_image(image_with_crosshair)
+    
+    # 繪製十字線
+    def draw_cercent(self, image):
+        height, width, _ = image.shape
+        center_x, center_y = width//2, height//2
+        # 繪製水平線
+        cv2.line(image, (0, center_y), (width, center_y), (255,255,255),1)
+        # 繪製垂直線
+        cv2.line(image, (center_x,0), (center_x, height), (255,255,255),1)
+        return image
+    # 顯示影像
+    def display_image(self, image):
+        # BGR轉RGB
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        h,w,ch = rgb_image.shape
+        # 計算每一行圖像所占像素(像素點*通道)
+        bytes_pre_line = ch*w
+        qimg = QImage(rgb_image.data, w, h, bytes_pre_line, QImage.Format.Format_RGB888)
+        # 在 QLabel 上顯示圖片
+        self.video_label.setPixmap(QPixmap.fromImage(qimg))
+    
     ### 影片讀取_part2 ###
     def closeEvent(self, event):
         # 釋放攝影機資源
