@@ -300,23 +300,55 @@ padding-left:5px;
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="Login_correct">
-                   <property name="minimumSize">
-                    <size>
-                     <width>35</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <family>微軟正黑體</family>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>登入</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <item>
+                    <widget class="QPushButton" name="Login_correct">
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>50</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微軟正黑體</family>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>登入</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_find_password">
+                     <property name="minimumSize">
+                      <size>
+                       <width>150</width>
+                       <height>50</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>150</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微軟正黑體</family>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="contextMenuPolicy">
+                      <enum>Qt::DefaultContextMenu</enum>
+                     </property>
+                     <property name="text">
+                      <string>忘記密碼</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>
@@ -558,23 +590,6 @@ padding-left:5px;
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QToolButton" name="password_button">
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>icon_0925/password.png</normaloff>icon_0925/password.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>35</width>
-                 <height>35</height>
-                </size>
-               </property>
-              </widget>
-             </item>
             </layout>
            </widget>
           </item>
@@ -637,8 +652,212 @@ padding-left:5px;
               <height>50</height>
              </size>
             </property>
-            <widget class="QWidget" name="page"/>
-            <widget class="QWidget" name="page_2"/>
+            <property name="currentIndex">
+             <number>10</number>
+            </property>
+            <widget class="QWidget" name="page_register_correct_0">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QLabel" name="label_register_correct">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>成功，註冊成功</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_1">
+             <layout class="QHBoxLayout" name="horizontalLayout_13"/>
+            </widget>
+            <widget class="QWidget" name="page_register_account_err_2">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QLabel" name="label_register_account">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>帳號已存在，請更換另一個</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_register_pwd_err_3">
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QLabel" name="label_register_pwd">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>密碼不同</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_register_lost_4">
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QLabel" name="label_register_lost">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>失敗，註冊失敗</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_hint_login_correct_5">
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_login_correct">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>成功，登入成功</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_hint_login_pwd_account_6">
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_login_pwd_account">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>帳號密碼錯誤</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_hint_login_pwd_7">
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_login_pwd">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>密碼錯誤</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_hint_login_pwd_lock_8">
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <widget class="QLabel" name="label_login_pwd_lock">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>密碼錯誤達三次，鎖定五分鐘</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_hint_login_lost_9">
+             <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <item>
+               <widget class="QLabel" name="label_login_lost">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>失敗，登入失敗</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_login_10">
+             <layout class="QHBoxLayout" name="horizontalLayout_15">
+              <item>
+               <widget class="QLabel" name="label_lock">
+                <property name="font">
+                 <font>
+                  <family>微軟正黑體</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
          </layout>

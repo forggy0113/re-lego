@@ -1,9 +1,13 @@
 import sqlite3
 import uuid
 from teacher_mode_ui import Ui_MainWindow as teacher_mode
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QFileDialog, QMessageBox,QMainWindow
 from PyQt6 import QtWidgets
 from PyQt6 import QtGui, QtCore
+import pandas as pd
+import os
+import qrcode
+from PIL import Image, ImageDraw, ImageFont
 
 class CreateDatabase:
     # 創建資料庫
@@ -165,4 +169,81 @@ class Stus:
         self.ui.input_name.clear()  # 清空姓名输入框
         self.ui.input_class.clear()  # 清空班级输入框
         self.ui.input_seat_number.clear()  # 清空座位号输入框
-        self.ui.input_sex.setCurrentIndex(0)  # 重置性别下拉框到第一个选项
+        self.ui.input_sex.setCurrentIndex(0)  # 重置性別下拉框到第一個選項
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+
+        # 创建Qrcode实例并传入主窗口作为父窗口
+        self.qrcode = Qrcode(parent=self)
+
+class Qrcode:
+    def __init__(self, db_name, folder_path):
+        self.db_name = db_name
+        self.folder_path = folder_path
+    def all_qrcode(self):
+        # 確保資料夾存在
+        if not os.path.exists(self.folder_path):
+            os.makedirs(self.folder_path)
+        # 連接資料庫
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        # 查詢所有uuid
+        try:
+            cursor.execute("select stu_id, stu_class, stu_seat_num, stu_name from Students")
+            rows = cursor.fetchall()
+        except Exception as e:
+            print(f"獲取uuid失敗:{e}")
+            return
+        for uuid_row,stu_class_row, stu_seat_num_row, stu_name_row  in rows:
+            uuid_str =uuid_row #取得uuid字串
+            class_str = stu_class_row
+            seat_num_str = stu_seat_num_row 
+            name_str = stu_name_row
+            # 生成qrcode
+            qr = qrcode.make(uuid_str)
+            qr_image = qr.convert("RGB")
+            # 繪製qrcode
+            draw = ImageDraw.Draw(qr_image)
+            try:
+                font = ImageFont.truetype("font\BpmfGenSenRounded-R.ttf", size=20)
+            except IOError:
+                # 加載默認字體
+                font = ImageFont.load_default()
+            text = f"{class_str}_{seat_num_str}_{name_str}"
+            text_bbox = draw.textbbox((0,0), text, font=font)
+            text_width = text_bbox[2] - text_bbox[0] # 右邊界 - 左邊界
+            text_height = text_bbox[3] - text_bbox[1] # 下邊界 - 上邊界
+            
+            qr_width, qr_height = qr_image.size
+            text_x = (qr_width - text_width) //2
+            text_y = (qr_height-text_height)-10 # 留底部空間
+            # 繪製文字
+            draw.text((text_x, text_y), text, fill='black', font=font)
+            # 圖片名
+            qr_filename = os.path.join(self.folder_path,f"{class_str}_{seat_num_str}_{name_str}.png")
+            qr_image.save(qr_filename)
+            print(f"生成qrcode:{qr_filename}")
+        QMessageBox.information(None, '成功', '學生QRcode已生成')
+    
+        conn.close()
+
+
+
+def import_csv_to_db(self, file_name):
+    try:
+        db_path = 'test_database.db'
+        table_path = 'Students'
+        df = pd.read_csv(file_name, encoding='utf-8-sig')
+        if 'stu_id' not in df.columns:
+            df['stu_id'] = [str(uuid.uuid4()) for _ in range(len(df))]
+
+        conn = sqlite3.connect(db_path)
+        df.to_sql(table_path, conn, if_exists='append', index=False)
+        
+        conn.close()
+        QMessageBox.information(self, '成功', 'csv文件已成功導入數據庫')
+        
+    except Exception as e:
+        QMessageBox.critical(self, '錯誤', f"導入失敗:{str(e)}")

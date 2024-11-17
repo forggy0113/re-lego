@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
         MainWindow.setMinimumSize(QtCore.QSize(1280, 720))
-        MainWindow.setMaximumSize(QtCore.QSize(1920, 1080))
+        MainWindow.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -24,7 +24,6 @@ class Ui_MainWindow(object):
         self.teacher_mode = QtWidgets.QWidget(parent=self.centralwidget)
         self.teacher_mode.setStyleSheet("#teacher_mode{\n"
 "background-color:#FCFAED;\n"
-"border-radius:10px;\n"
 "}")
         self.teacher_mode.setObjectName("teacher_mode")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.teacher_mode)

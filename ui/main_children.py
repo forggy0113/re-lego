@@ -8,12 +8,15 @@ from PyQt6.QtCore import QTimer
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtGui import QImage, QPixmap
 import cv2
+from func.win_move_zoom import mouseMoveEvent, mousePressEvent, mouseReleaseEvent
+from creat_sql import *
 
 class Login_Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = LoginUiMainWindow()  
         self.ui.setupUi(self)
+                
         # 設置窗口屬性 frameless 無邊框窗口
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         # 自定義外觀窗口 背景為透明
@@ -22,49 +25,46 @@ class Login_Window(QMainWindow):
         self.is_moving = False
         # 儲存滑鼠位置
         self.mouse_position = None
-
+        self.mouseMoveEvent = lambda event:mouseMoveEvent(self, event)
+        self.mousePressEvent = lambda event:mousePressEvent(self, event)
+        self.mouseReleaseEvent = lambda event:mouseReleaseEvent(self, event)
         # 設定滑鼠點擊切換頁面方式
-        self.ui.toolButton.clicked.connect(self.close_window)
+        self.ui.toolButton.clicked.connect(lambda: self.close())
         # stackedWidget_2為多頁面 
         # setCurrentIndex 為頁面索引至哪裡
         self.ui.Login_button.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(0))
-        self.ui.password_button.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(1))
+        self.ui.btn_find_password.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(1))
         self.ui.Register_button.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(2))
-        self.ui.Login_correct.clicked.connect(self.Login)
+        
+        self.db = CreateDatabase()
+        self.User = Users(db=self.db, ui=self.ui, main_window=self)
+        
+        self.ui.register_correct.clicked.connect(self.register_user)
+        
+        self.ui.Login_correct.clicked.connect(self.login_user)
+        self.close_window()
 
-        self.show()
+    def register_user(self):
+        self.User.register_user()
+    def login_user(self):
+        self.User.login_user()
+        
+    
+        
+        
     # 登入帳號密碼
-    def Login(self):
-        account = self.ui.Login_account.text()
-        password = self.ui.Login_password.text()
-        if account == "ada" and password == "012567":
-            self.win = teacher_window()
-            self.win.show()
-            self.close()
-        else:
-            print("wrong")
+    # def Login(self):
+    #     account = self.ui.Login_account.text()
+    #     password = self.ui.Login_password.text()
+    #     if account == "ada" and password == "012567":
+    #         self.win = teacher_window()
+    #         self.win.show()
+    #         self.close()
+    #     else:
+    #         print("wrong")
 
     def close_window(self):
         self.close()
-    # 實現無邊框窗口移動方式
-    # 按下滑鼠左鍵，觸發窗口是否移動
-    def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
-            self.is_moving = True
-            # 滑鼠位置 - 窗口左上角座標。 計算相對座標
-            self.mouse_position = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
-            event.accept()
-    # 移動位置
-    def mouseMoveEvent(self, event):
-        if self.is_moving:
-            # 計算新窗口位置
-            self.move(event.globalPosition().toPoint() - self.mouse_position)
-            event.accept()
-    # 離開長按左鍵，結束觸發
-    def mouseReleaseEvent(self, event):
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
-            self.is_moving = False
-            event.accept()
 
 class InterfaceWindow(QMainWindow):
     def __init__(self):
@@ -74,6 +74,9 @@ class InterfaceWindow(QMainWindow):
         ###視窗設定###
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.mouseMoveEvent = lambda event:mouseMoveEvent(self, event)
+        self.mousePressEvent = lambda event:mousePressEvent(self, event)
+        self.mouseReleaseEvent = lambda event:mouseReleaseEvent(self, event)
 
         ### 切換至教師登入介面 ###  
         self.ui.teacher.clicked.connect(self.open_to_login)  # 連結到switch_to_login method
@@ -105,6 +108,7 @@ class InterfaceWindow(QMainWindow):
         # 影片捕捉對象 (0 表示攝影機)
         self.cap = cv2.VideoCapture(0)
         self.video_label = self.ui.pic
+        self.detector = cv2.QRCodeDetector()
         # 設置定時器，每30毫秒刷新畫面
         self.timer = QTimer()
         self.timer.timeout.connect(self.updata_frame)
@@ -142,7 +146,6 @@ class InterfaceWindow(QMainWindow):
         self.is_font_1 = not self.is_font_1
     #改變字體大小
     def change_font_size(self, value):
-        
         if self.is_font_1:
             font_family = self.font_family_1
         else:
@@ -161,18 +164,33 @@ class InterfaceWindow(QMainWindow):
     def updata_frame(self):
         ret, frame = self.cap.read()
         if ret:
-            image_with_crosshair = self.draw_cercent(frame)
-            self.display_image(image_with_crosshair)
+            decoder_text, pts, _ = self.detector.detectAndDecode(frame)
+            if decoder_text:
+                self.draw_qrcode_box(frame, pts, decoder_text)
+                print(f"Qrcode內容:{decoder_text}")
+            
+            image_with_cerent = self.draw_cercent(frame)
+            self.display_image(image_with_cerent)
+        
+    def draw_qrcode_box(self, frame, pts, decoder_text):
+        if pts is not None:
+            # pts 是 QRCode 外框的四個頂點座標
+            pts = pts[0].astype(int).reshape((-1,1,2))
+            # 繪製外框
+            cv2.polylines(frame, [pts], isClosed=True, color=(0,0,255), thickness=2)
+            # 顯示內容在QRCode外框上方
+            cv2.putText(frame, decoder_text, (pts[0][0][0], pts[0][0][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),2)
     
     # 繪製十字線
     def draw_cercent(self, image):
         height, width, _ = image.shape
         center_x, center_y = width//2, height//2
         # 繪製水平線
-        cv2.line(image, (0, center_y), (width, center_y), (255,255,255),1)
+        cv2.line(image, (0, center_y), (width, center_y), (255,255,255),2)
         # 繪製垂直線
-        cv2.line(image, (center_x,0), (center_x, height), (255,255,255),1)
+        cv2.line(image, (center_x,0), (center_x, height), (255,255,255),2)
         return image
+
     # 顯示影像
     def display_image(self, image):
         # BGR轉RGB
