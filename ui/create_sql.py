@@ -1,11 +1,10 @@
-from PyQt6.QtWidgets import QFileDialog, QMessageBox,QMainWindow
-from PyQt6 import QtWidgets,QtGui, QtCore
 import sqlite3
 import uuid
-import pandas as pd
-import os
-import qrcode
-from PIL import ImageDraw, ImageFont
+from PyQt6.QtWidgets import QMessageBox, QMainWindow
+from PyQt6 import QtWidgets, QtGui, QtCore
+from datetime import datetime, timedelta
+from main_teacher import teacher_window
+
 class CreateDatabase:
     def __init__(self, db_name='test_database.db'):
         self.conn = sqlite3.connect(db_name)
@@ -52,102 +51,149 @@ class CreateDatabase:
 
     # 提交至sqlite
         self.conn.commit()
-class Stus:
-    def __init__(self, db, ui,main_window):  # 只接受 db 和 ui 兩個參數
+
+# # 初始化Users
+class Users:
+    # 初始化資料表所需參數
+    def __init__(self ,db, ui,main_window):
         self.db = db
         self.ui = ui
         self.main_window = main_window
         
-    def add_stu(self):
+    # 註冊
+    def register_user(self):
+        user_account = self.ui.register_account.text()
+        user_pwd = self.ui.register_password_1.text()
+        user_check_pwd = self.ui.register_password_2.text()
+        user_uuid = str(uuid.uuid4())
+        # 搜索
+        self.ui.stackedWidget.setCurrentIndex(1)
+        # 註冊時帳號密碼不能為空白
+        if  not user_account.strip() or not user_pwd.strip(): #判斷去掉空白後是否為空
+                self.ui.stackedWidget.setCurrentIndex(7)
+        else:
+            try:
+                self.db.cursor.execute('''SELECT user_account from Users where user_account=?''',(user_account,))
+                user_data = self.db.cursor.fetchone()
+                if not user_data: #判斷此帳號不存在，則可以註冊
+                    if user_pwd != user_check_pwd: # 判斷驗證密碼和所輸入密碼是否相同
+                        self.ui.stackedWidget.setCurrentIndex(3)
+                    else: # 註冊成功
+                        self.db.cursor.execute('''INSERT INTO Users (user_account, user_password, user_uuid, in_date) VALUES (?, ?, ?, datetime('now'))''',
+                        (user_account, user_pwd, user_uuid))
+                        self.db.conn.commit()
+                        self.ui.stackedWidget.setCurrentIndex(0)
+                else: # 帳號已存在不可註冊
+                    self.ui.stackedWidget.setCurrentIndex(2)
+            except Exception as e:
+                    self.ui.stackedWidget.setCurrentIndex(4)
+                    print(f"註冊失敗={e}")
+                    
+
+    
+    def login_user(self):
+        user_account = self.ui.Login_account.text()
+        user_pwd = self.ui.Login_password.text()
+        
+        # 判斷帳戶是否被鎖定中
+        self.db.cursor.execute("SELECT user_failed_attempts, lock_until FROM Users WHERE user_account = ?", (user_account,))
+        user_data = self.db.cursor.fetchone()
+        # 如果帳戶被鎖定，檢查鎖定時間是否已經過期
+        if user_data:
+            user_failed_attempts, lock_until = user_data
+            if lock_until:
+                lock_until_time = datetime.fromisoformat(lock_until)
+                # 如果當前時間超過了鎖定時間，則重置失敗次數並解除鎖定
+                if datetime.now() > lock_until_time:
+                    self.reset_failed_attempts(user_account)
+                else:
+                    remaining_time = (lock_until_time - datetime.now()).seconds
+                    self.ui.label_lock.setText(f"錯誤，帳號被鎖定請{remaining_time//60}分{remaining_time%60}秒後再試")
+                return
+                # 如果帳戶被鎖定，檢查鎖定時間是否已經過期
+        # 搜尋帳號密碼並回傳
+        self.db.cursor.execute("SELECT * FROM Users WHERE user_account = ? AND user_password = ?", (user_account, user_pwd))
+        user = self.db.cursor.fetchone()
+
+        if user: # 登入成功
+            self.ui.stackedWidget.setCurrentIndex(5)
+            self.reset_failed_attempts(user_account)
+            self.win = teacher_window()
+            self.win.show()
+            self.main_window.close()
+        else:
+            self.record_failed_attempt(user_account)
+    
+    # 將錯誤次數、鎖定時間歸0
+    def reset_failed_attempts(self, user_account): 
+        self.db.cursor.execute("UPDATE Users SET user_failed_attempts = 0, lock_until = NULL WHERE user_account = ?", (user_account,))
+        self.db.conn.commit()
+        
+    # 鎖定條件
+    def record_failed_attempt(self, user_account):
+        # 查詢用戶失敗次數
+        self.db.cursor.execute("SELECT user_failed_attempts FROM Users WHERE user_account = ?", (user_account,))
+        user = self.db.cursor.fetchone()
+        # 
+        if user:
+            failed_attempts = user[0] + 1
+            print(f"次數{failed_attempts}")
+            # 如果密碼錯誤達3次，則鎖定五分鐘
+            if failed_attempts >= 3:
+                lock_until = datetime.now() + timedelta(minutes=1)
+                self.db.cursor.execute("UPDATE Users SET user_failed_attempts = ?, lock_until = ? WHERE user_account = ?",
+                                    (failed_attempts, lock_until.isoformat(),user_account))
+                self.ui.stackedWidget.setCurrentIndex(8)
+            else: # 錯誤未達3次，則累加錯誤次數至user_failed_attempts
+                self.db.cursor.execute("UPDATE Users SET user_failed_attempts = ? WHERE user_account = ?", (failed_attempts,user_account))
+                self.ui.stackedWidget.setCurrentIndex(6) # 帳號密碼錯誤
+        else:
+            self.ui.stackedWidget.setCurrentIndex(6) # 帳號密碼錯誤
+
+        self.db.conn.commit()
+
+        
+    
+class Stus:
+    def __init__(self, db, ui, main_window):  # 只接受 db 和 ui 兩個參數
+        self.db = db
+        self.ui = ui
+        self.main_window = main_window
+    
+    def add_stu(self): # 輸入單一筆資料
         stu_uuid = str(uuid.uuid4())  # 生成唯一的学生 ID
         stu_name = self.ui.input_name.text()  # 讀取input_name
-        stu_class = self.ui.input_class.text()  # 讀取 input_class
+        stu_class = self.ui.input_class.text()  # 讀取input_class
         stu_sex = self.ui.input_sex.currentText()  # 訪問下拉選單
-        # 輸入帳號轉為整數，確保輸入有效
-        try:
+        # 為確保輸入有效，將座位輸入格式轉為int
+        try:  
             if self.ui.input_seat_number.text():
                 stu_seat_num = int(self.ui.input_seat_number.text())
             else: 0  # 默認座號為0
         except ValueError:
             stu_seat_num = 0  # 如果輸入無效，默認為0
-            print("座位號無效，默認值 0")
+            print("座位號無效，默認值 0。")
         
         # 插入數據到數據庫
         try:
             self.db.cursor.execute('''
-            INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, in_date) VALUES (?, ?, ?, ?, ?, datetime('now'))
+            INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_id, in_date) VALUES (?, ?, ?, ?, ?, datetime('now'))
             ''', (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid))
             self.db.conn.commit()
-            QMessageBox.information(self.main_window, "成功","學生添加成功")
+            QMessageBox.information(self.main_window, '成功', '添加學生成功')
         except Exception as e:
+            QMessageBox.information(self.main_window, '失敗', '添加學生失敗')
             print(f"添加学生失敗: {e}")
-            QMessageBox.information(self.main_window, "失敗","學生添加失敗")
-            
-    def add_csv(self):
-        # 彈出視窗選擇檔案
-        file_name, _ =  QFileDialog.getOpenFileName(self.main_window, "選擇csv文件",'', '(*.csv)')
-        if file_name:
-            try:
-                df = pd.read_csv(file_name, encoding='utf-8-sig') # 讀取csv檔案
-                required_columns = {'stu_class', 'stu_sex', 'stu_seat_num', 'stu_name'}
-                if not required_columns.issubset(df.columns):
-                    QMessageBox.information(self.main_window, "失敗", "csv文件缺少必要欄位值")
-                    return
-                # 如果stu_uuid不存在，則生成uuid
-                if 'stu_uuid' not in df.columns:
-                    df['stu_uuid'] = [str(uuid.uuid4()) for _ in range(len(df))]
-                # 插入批量數據
-                # 批量插入數據
-                self.db.cursor.executemany('''
-                                           INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, in_date)
-                                           VALUES (?, ?, ?, ?, ?, datetime('now'))
-                                           ''', df[['stu_class', 'stu_sex', 'stu_seat_num', 'stu_name', 'stu_uuid']].values.tolist())
-                self.db.conn.commit()
-                QMessageBox.information(self.main_window, "成功","學生添加成功")
-            except Exception as e:
-                QMessageBox.information(self.main_window, "失敗","學生添加失敗")
-                print(f"添加学生失敗: {e}")
-    
-    def clear_edit(self):
-        # 清空输入框的内容
-        self.ui.input_name.clear()  # 清空姓名输入框
-        self.ui.input_class.clear()  # 清空輸入班級框
-        self.ui.input_seat_number.clear()  # 清空座位号输入框
-        self.ui.input_sex.setCurrentIndex(0)  # 重置性別下拉框到第一個選項
-    
-    def delect_student_row(self, row_index):
-        try:
-            item = self.ui.table_stu.item(row_index, 4)
-            if item is None:
-                raise ValueError(f"无法获取该行的 'stu_uuid' 数据，可能为空")
-            stu_uuid = item.text()
-            if not isinstance(stu_uuid, str):
-                raise TypeError("stu_uuid 必需是字符串類型")
-            # 刪除uuid所指資料行
-            self.db.cursor.execute('''DELETE FROM Students WHERE stu_uuid=?''',(stu_uuid,))
-            self.db.conn.commit()
-            self.ui.table_stu.removeRow(row_index)
-            self.display_students()
-            QMessageBox.information(self.main_window, "成功","學生資料刪除成功")
-        except Exception as e:
-            self.db.conn.rollback() # 資料庫回滾，恢復資料庫狀態，不受資料刪除失敗影響
-            print(f"刪除資料行失敗:{e}")
-            QMessageBox.information(self.main_window, "失敗","學生資料刪除失敗")
-            
-    
-    
+
     def display_students(self):
         self.ui.table_stu.setRowCount(0)  # 清空現有行
-        
-        # 從資料庫獲取學生資料
-        try:
-            self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid FROM Students")
+        try: # 從資料庫獲取學生資料
+            self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name, stu_id FROM Students")
             rows = self.db.cursor.fetchall()
         except Exception as e:
             print(f"獲取學生資料失敗: {e}")
             return
-
-    # 設置表格行數
+        # 設置表格行數
         self.ui.table_stu.setRowCount(len(rows))
 
         for row_index, row in enumerate(rows):
@@ -238,14 +284,17 @@ class Stus:
             layout.setSpacing(10)
             layout.setContentsMargins(2, 2, 2, 2)
             self.ui.table_stu.setCellWidget(row_index, 5, button_widget)
-            
-            button3.clicked.connect(lambda: self.delect_student_row(row_index))
 
     # 自动調整行高
         self.ui.table_stu.resizeRowsToContents()
 
 
-
+    def clear_edit(self):
+        # 清空输入框的内容
+        self.ui.input_name.clear()  # 清空姓名输入框
+        self.ui.input_class.clear()  # 清空班级输入框
+        self.ui.input_seat_number.clear()  # 清空座位号输入框
+        self.ui.input_sex.setCurrentIndex(0)  # 重置性別下拉框到第一個選項
 
 class MainWindow(QMainWindow):
     def __init__(self):

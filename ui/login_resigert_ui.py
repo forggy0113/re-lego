@@ -441,7 +441,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.stackedWidget_2.setCurrentIndex(0)
-        self.stackedWidget.setCurrentIndex(10)
+        self.stackedWidget.setCurrentIndex(6)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -465,11 +465,11 @@ class Ui_MainWindow(object):
         self.Login_button.setText(_translate("MainWindow", "..."))
         self.Register_button.setText(_translate("MainWindow", "..."))
         self.label_register_correct.setText(_translate("MainWindow", "成功，註冊成功"))
-        self.label_register_account.setText(_translate("MainWindow", "帳號已存在，請更換另一個"))
+        self.label_register_account.setText(_translate("MainWindow", "帳號不可用，請更換另一個"))
         self.label_register_pwd.setText(_translate("MainWindow", "密碼不同"))
         self.label_register_lost.setText(_translate("MainWindow", "失敗，註冊失敗"))
         self.label_login_correct.setText(_translate("MainWindow", "成功，登入成功"))
         self.label_login_pwd_account.setText(_translate("MainWindow", "帳號密碼錯誤"))
-        self.label_login_pwd.setText(_translate("MainWindow", "密碼錯誤"))
+        self.label_login_pwd.setText(_translate("MainWindow", "帳號密碼不得為空"))
         self.label_login_pwd_lock.setText(_translate("MainWindow", "密碼錯誤達三次，鎖定五分鐘"))
         self.label_login_lost.setText(_translate("MainWindow", "失敗，登入失敗"))

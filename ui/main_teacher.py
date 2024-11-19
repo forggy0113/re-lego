@@ -2,14 +2,11 @@ import sys
 from teacher_mode_ui import Ui_MainWindow as teacher_mode
 from PyQt6.QtWidgets import  QMainWindow,QFileDialog,QMessageBox
 from PyQt6 import QtWidgets,QtCore
-from func_sql import CreateDatabase, Stus, Qrcode, import_csv_to_db
-import sqlite3
-import pandas as pd
-import uuid
-import os
-from PyQt6.QtSql import QSqlTableModel
+from func_sql import Stus,CreateDatabase
 from func.win_move_zoom import border_mouseMove, border_mousePress,border_mouseRelease,is_in_resize_area,resize_window,update_cursor,max_win
-
+# from create_sql import  CreateDatabase
+import pandas as pd
+import os
 
 
 class teacher_window(QMainWindow):
@@ -20,10 +17,10 @@ class teacher_window(QMainWindow):
         ### 初始化資料庫 ###
         self.create_db = CreateDatabase()
         # 只回傳 db 和 ui
-        self.stu_manager = Stus(self.create_db, self.ui)
-        db_name = 'test_database.db'
-        folder_path = 'qrcode'
-        self.qrcode_test = Qrcode(db_name, folder_path)
+        self.stu_manager = Stus(self.create_db, self.ui, main_window=self)
+        # db_name = 'test_database.db'
+        # folder_path = 'qrcode'
+        # self.qrcode_test = Qrcode(db_name, folder_path)
 
         ## 連接保存和刪除按鈕
         self.ui.btn_save.clicked.connect(self.add_stu_data)
@@ -51,8 +48,9 @@ class teacher_window(QMainWindow):
         
         ## 新增下載example.csv檔功能
         self.ui.btn_download_file.clicked.connect(self.create_download_csv)
-        self.ui.btn_import_csvfile.clicked.connect(self.open_file_dialog)
-        self.ui.btn_import_qrcode.clicked.connect(self.qrcode_test.all_qrcode)
+        self.ui.btn_import_csvfile.clicked.connect(self.add_csv_data)
+        self.update_student_display()
+        # self.ui.btn_import_qrcode.clicked.connect(self.qrcode_test.all_qrcode)
         
         ### 無邊框 ###
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
@@ -80,25 +78,6 @@ class teacher_window(QMainWindow):
     def resize_window(self, pos): # 縮放窗口
         resize_window(self, pos)
         
-    def open_file_dialog(self):
-        # 彈出一個文件夾讓用戶選擇檔案
-        file_name, _ = QFileDialog.getOpenFileName(self, "選擇csv文件", '', '(*.csv)') 
-        if file_name:
-            self.import_csv_to_db(file_name)
-            
-    def import_csv_to_db(self, file_name):
-        import_csv_to_db(self, file_name)
-            
-
-    def refresh_table_view(self):
-        # 創建並設置 QSqlTableModel 來顯示數據
-        model = QSqlTableModel()
-        model.setTable("Students")
-        model.setEditStrategy(QSqlTableModel.EditStrategy.OnFieldChange)
-        model.select()
-        
-        # 將模型設置給 QTableView 控件
-        self.tableView.setModel(model)
 
     ### 下載範例csv檔 ###
     def create_download_csv(self):
@@ -117,12 +96,22 @@ class teacher_window(QMainWindow):
     def add_stu_data(self):
         self.stu_manager.add_stu()
         self.stu_manager.clear_edit()
-        self.update_student_display()
-
+        self.stu_manager.display_students()
+        
+        
+    def add_csv_data(self):
+        self.stu_manager.add_csv()
+        self.stu_manager.display_students()
+        
     def update_student_display(self):
         self.stu_manager.display_students()
     def clear_stu_data(self):
         self.stu_manager.clear_edit()
+    def delect_stu_row(self):
+        self.stu_manager.delect_student_row()
+        
+        
+        
 
 
 if __name__ == '__main__':

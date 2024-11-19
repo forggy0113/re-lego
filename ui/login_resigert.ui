@@ -653,7 +653,7 @@ padding-left:5px;
              </size>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="page_register_correct_0">
              <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -689,7 +689,7 @@ padding-left:5px;
                  </font>
                 </property>
                 <property name="text">
-                 <string>帳號已存在，請更換另一個</string>
+                 <string>帳號不可用，請更換另一個</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -789,7 +789,7 @@ padding-left:5px;
                  </font>
                 </property>
                 <property name="text">
-                 <string>密碼錯誤</string>
+                 <string>帳號密碼不得為空</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>

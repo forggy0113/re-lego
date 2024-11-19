@@ -9,14 +9,14 @@ from PyQt6 import QtCore, QtGui
 from PyQt6.QtGui import QImage, QPixmap
 import cv2
 from func.win_move_zoom import mouseMoveEvent, mousePressEvent, mouseReleaseEvent
-from creat_sql import *
+from create_sql import *
 
 class Login_Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = LoginUiMainWindow()  
         self.ui.setupUi(self)
-                
+        self.initstack()
         # 設置窗口屬性 frameless 無邊框窗口
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         # 自定義外觀窗口 背景為透明
@@ -42,30 +42,13 @@ class Login_Window(QMainWindow):
         self.ui.register_correct.clicked.connect(self.register_user)
         
         self.ui.Login_correct.clicked.connect(self.login_user)
-        self.close_window()
 
     def register_user(self):
         self.User.register_user()
     def login_user(self):
         self.User.login_user()
-        
-    
-        
-        
-    # 登入帳號密碼
-    # def Login(self):
-    #     account = self.ui.Login_account.text()
-    #     password = self.ui.Login_password.text()
-    #     if account == "ada" and password == "012567":
-    #         self.win = teacher_window()
-    #         self.win.show()
-    #         self.close()
-    #     else:
-    #         print("wrong")
-
-    def close_window(self):
-        self.close()
-
+    def initstack(self):
+        self.ui.stackedWidget.setCurrentIndex(1)
 class InterfaceWindow(QMainWindow):
     def __init__(self):
         super().__init__()
