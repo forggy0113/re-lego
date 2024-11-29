@@ -1,10 +1,9 @@
 import sys
-from teacher_mode_ui import Ui_MainWindow as teacher_mode
-from PyQt6.QtWidgets import  QMainWindow,QFileDialog,QMessageBox
+from ui.teacher_mode_ui import Ui_MainWindow as teacher_mode
+from PyQt6.QtWidgets import  QMainWindow
 from PyQt6 import QtWidgets,QtCore
-from func_sql import Stus,CreateDatabase
-from func.win_move_zoom import border_mouseMove, border_mousePress,border_mouseRelease,is_in_resize_area,resize_window,update_cursor,max_win
-# from create_sql import  CreateDatabase
+from ui.func_sql import Stus,CreateDatabase, Qrcode
+from ui.func.win_move_zoom import border_mouseMove, border_mousePress,border_mouseRelease,is_in_resize_area,resize_window,update_cursor,max_win
 import pandas as pd
 import os
 
@@ -15,13 +14,10 @@ class teacher_window(QMainWindow):
         self.ui = teacher_mode()
         self.ui.setupUi(self)
         ### 初始化資料庫 ###
-        self.create_db = CreateDatabase()
+        self.create_db = CreateDatabase(db_name = 'test_database.db')
+        self.create_qr = Qrcode(db_name = 'test_database.db', folder_path = 'qrcode', main_window=self)
         # 只回傳 db 和 ui
         self.stu_manager = Stus(self.create_db, self.ui, main_window=self)
-        # db_name = 'test_database.db'
-        # folder_path = 'qrcode'
-        # self.qrcode_test = Qrcode(db_name, folder_path)
-
         ## 連接保存和刪除按鈕
         self.ui.btn_save.clicked.connect(self.add_stu_data)
         self.ui.btn_trash.clicked.connect(self.clear_stu_data)
@@ -50,7 +46,7 @@ class teacher_window(QMainWindow):
         self.ui.btn_download_file.clicked.connect(self.create_download_csv)
         self.ui.btn_import_csvfile.clicked.connect(self.add_csv_data)
         self.update_student_display()
-        # self.ui.btn_import_qrcode.clicked.connect(self.qrcode_test.all_qrcode)
+        self.ui.btn_import_qrcode.clicked.connect(self.create_qrcode)
         
         ### 無邊框 ###
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
@@ -78,7 +74,8 @@ class teacher_window(QMainWindow):
     def resize_window(self, pos): # 縮放窗口
         resize_window(self, pos)
         
-
+    def create_qrcode(self):
+        self.create_qr.all_qrcode()
     ### 下載範例csv檔 ###
     def create_download_csv(self):
         df = pd.DataFrame(columns=['stu_class','stu_sex','stu_seat_num','stu_name'])
@@ -107,12 +104,12 @@ class teacher_window(QMainWindow):
         self.stu_manager.display_students()
     def clear_stu_data(self):
         self.stu_manager.clear_edit()
+        
     def delect_stu_row(self):
         self.stu_manager.delect_student_row()
         
         
         
-
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

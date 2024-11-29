@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QFileDialog, QMessageBox,QMainWindow
+from PyQt6.QtWidgets import QFileDialog, QMessageBox,QPushButton
 from PyQt6 import QtWidgets,QtGui, QtCore
 import sqlite3
 import uuid
@@ -6,6 +6,7 @@ import pandas as pd
 import os
 import qrcode
 from PIL import ImageDraw, ImageFont
+
 class CreateDatabase:
     def __init__(self, db_name='test_database.db'):
         self.conn = sqlite3.connect(db_name)
@@ -57,6 +58,7 @@ class Stus:
         self.db = db
         self.ui = ui
         self.main_window = main_window
+    
         
     def add_stu(self):
         stu_uuid = str(uuid.uuid4())  # 生成唯一的学生 ID
@@ -115,24 +117,7 @@ class Stus:
         self.ui.input_seat_number.clear()  # 清空座位号输入框
         self.ui.input_sex.setCurrentIndex(0)  # 重置性別下拉框到第一個選項
     
-    def delect_student_row(self, row_index):
-        try:
-            item = self.ui.table_stu.item(row_index, 4)
-            if item is None:
-                raise ValueError(f"无法获取该行的 'stu_uuid' 数据，可能为空")
-            stu_uuid = item.text()
-            if not isinstance(stu_uuid, str):
-                raise TypeError("stu_uuid 必需是字符串類型")
-            # 刪除uuid所指資料行
-            self.db.cursor.execute('''DELETE FROM Students WHERE stu_uuid=?''',(stu_uuid,))
-            self.db.conn.commit()
-            self.ui.table_stu.removeRow(row_index)
-            self.display_students()
-            QMessageBox.information(self.main_window, "成功","學生資料刪除成功")
-        except Exception as e:
-            self.db.conn.rollback() # 資料庫回滾，恢復資料庫狀態，不受資料刪除失敗影響
-            print(f"刪除資料行失敗:{e}")
-            QMessageBox.information(self.main_window, "失敗","學生資料刪除失敗")
+
             
     
     
@@ -141,7 +126,7 @@ class Stus:
         
         # 從資料庫獲取學生資料
         try:
-            self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid FROM Students")
+            self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name FROM Students")
             rows = self.db.cursor.fetchall()
         except Exception as e:
             print(f"獲取學生資料失敗: {e}")
@@ -158,23 +143,16 @@ class Stus:
                 except Exception as e:
                     print(f"設置表格項失敗: {e}")
 
-        # 添加按紐到最后一列
-        for row_index in range(len(rows)):
-            button_widget = QtWidgets.QWidget()
-            layout = QtWidgets.QHBoxLayout(button_widget)
-            
-            button1 = QtWidgets.QPushButton()
-            button2 = QtWidgets.QPushButton()
-            button3 = QtWidgets.QPushButton()
-            layout.addWidget(button1)
-            layout.addWidget(button2)
-            layout.addWidget(button3)
+        for row_index in range(self.ui.table_stu.rowCount()):
+            qr_button = QPushButton("QRcode")
+            modify_button = QPushButton("修改學生")
+            delete_button = QPushButton("刪除學生")
             icon14 = QtGui.QIcon()
-            icon14.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/qr_code.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-            button1.setIcon(icon14)
-            button1.setIconSize(QtCore.QSize(35, 35))
-            button1.setObjectName("btn_database_qrcode")
-            button1.setStyleSheet("#btn_database_qrcode{\n"
+            icon14.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/qr_code.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+            qr_button.setIcon(icon14)
+            qr_button.setIconSize(QtCore.QSize(35, 35))
+            qr_button.setObjectName("btn_database_qrcode")
+            qr_button.setStyleSheet("#btn_database_qrcode{\n"
 "border:none;\n"
 "border-radius :6px;\n"
 "background-color:#EEEEEE;\n"
@@ -192,11 +170,11 @@ class Stus:
 "background-color:#B7B7B7;\n"
 "}")
             icon15 = QtGui.QIcon()
-            icon15.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/modify_data.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-            button2.setIcon(icon15)
-            button2.setIconSize(QtCore.QSize(35, 35))
-            button2.setObjectName("btn_database_modify_data")
-            button2.setStyleSheet("#btn_database_modify_data{\n"
+            icon15.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/modify_data.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+            modify_button.setIcon(icon15)
+            modify_button.setIconSize(QtCore.QSize(35, 35))
+            modify_button.setObjectName("btn_database_modify_data")
+            modify_button.setStyleSheet("#btn_database_modify_data{\n"
 "border:none;\n"
 "border-radius :6px;\n"
 "background-color:#FFCF9D;\n"
@@ -214,11 +192,11 @@ class Stus:
 "background-color:#DE8F5F;\n"
 "}")
             icon16 = QtGui.QIcon()
-            icon16.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon_0925/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-            button3.setIcon(icon16)
-            button3.setIconSize(QtCore.QSize(35, 35))
-            button3.setObjectName("btn_database_delect")
-            button3.setStyleSheet("#btn_database_delect{\n"
+            icon16.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+            delete_button.setIcon(icon16)
+            delete_button.setIconSize(QtCore.QSize(35, 35))
+            delete_button.setObjectName("btn_database_delect")
+            delete_button.setStyleSheet("#btn_database_delect{\n"
 "border:none;\n"
 "border-radius :6px;\n"
 "background-color: #ffeb9a;\n"
@@ -235,29 +213,97 @@ class Stus:
 "border-radius :6px;\n"
 "background-color: #FFCD00;\n"
 "}")
-            layout.setSpacing(10)
-            layout.setContentsMargins(2, 2, 2, 2)
-            self.ui.table_stu.setCellWidget(row_index, 5, button_widget)
+            delete_button.clicked.connect(self.delect_student_row)
+            qr_button.clicked.connect(self.stu_qrcode)
             
-            button3.clicked.connect(lambda: self.delect_student_row(row_index))
+            self.ui.table_stu.setCellWidget(row_index, 5, qr_button)
+            self.ui.table_stu.setCellWidget(row_index, 4, modify_button)
+            self.ui.table_stu.setCellWidget(row_index, 6, delete_button)
+         
 
-    # 自动調整行高
+    # 自動調整行高
         self.ui.table_stu.resizeRowsToContents()
 
+    def delect_student_row(self):
+        button = self.ui.table_stu.sender() # 獲取按鈕所在行的內容
+        if button: # 檢查按鈕是否存在
+            try:
+                index = self.ui.table_stu.indexAt(button.pos())
+                row = index.row()
+                item = self.ui.table_stu.item(row, 3) # 得到對應學生姓名
+                if row < 0: #無法確定按鈕所在行
+                    raise ValueError(f"無法確定按鈕所在行")
+                if  item is None or not item.text():
+                    raise TypeError("無法獲取學生姓名，該行數據可能為空")
+                stu_name = item.text()
+                # 刪除學生名字所指資料行
+                self.db.cursor.execute('''DELETE FROM Students WHERE stu_name=?''',(stu_name,))
+                self.db.conn.commit()
+                self.ui.table_stu.removeRow(row)
+                self.display_students()
+                QMessageBox.information(self.main_window, "成功","學生資料刪除成功")
+            except Exception as e:
+                self.db.conn.rollback() # 資料庫回滾，恢復資料庫狀態，不受資料刪除失敗影響
+                print(f"刪除資料行失敗:{e}")
+                QMessageBox.information(self.main_window, "失敗",f"{stu_name}學生資料刪除失敗")
+        
+    def stu_qrcode(self):
+        button = self.ui.table_stu.sender()
+        if button:
+            try:
+                index = self.ui.table_stu.indexAt(button.pos())
+                row = index.row()
+                item = self.ui.table_stu.item(row, 3)
+                if row <0:
+                    raise ValueError("無法確定按鈕所在行")
+                if item is None or not item.text():
+                    raise ValueError("無法獲取學生姓名，該行數據可能為空")
+                stu_name = item.text()
+                self.db.cursor.execute('''SELECT stu_uuid, stu_class, stu_seat_num, stu_name FROM Students WHERE stu_name=?''', (stu_name,))
+                stu_rows = self.db.cursor.fetchall()
+                
+                for uuid_row,class_row, seat_num_row, name_row  in stu_rows:
+                    stu_uuid_row = uuid_row
+                    stu_class_row = class_row
+                    stu_seat_num_row = seat_num_row
+                    stu_name_row = name_row
+                    # 生成Qrcode
+                    qr_image = qrcode.make(stu_uuid_row )
+                    # 繪製qrcode
+                    qr_image = qr_image.convert("RGB")
+                    draw = ImageDraw.Draw(qr_image)
+                    try:
+                        font = ImageFont.truetype("font\BpmfGenSenRounded-R.ttf", size=20) #顯示字體
+                    except IOError:
+                        font = ImageFont.load_default() # 加載默認字體
+                    # 字體位置定義
+                    text = f"{stu_class_row}_{stu_seat_num_row}_{stu_name_row}"
+                    text_bbox = draw.textbbox((0,0), text, font=font)
+                    text_width = text_bbox[2] - text_bbox[0] # 右邊界 - 左邊界
+                    text_height = text_bbox[3] - text_bbox[1] # 下邊界 - 上邊界
+                    # qr位置定義
+                    qr_width, qr_height = qr_image.size
+                    text_x = (qr_width - text_width) // 2
+                    text_y = (qr_height - text_height) -10 # 留底部空間
+                    # 繪製文字
+                    draw.text((text_x, text_y), text=text, fill='black',font=font)
+                    # 儲存圖片名
+                    qr_filename = f"{stu_class_row}_{stu_seat_num_row}_{stu_name_row}.png"
+                    qr_image.save(qr_filename)
+                    print(f"生成qrcode:{qr_filename}")
+                    QMessageBox.information(self.main_window, "成功", f"成功生成{stu_name_row}學生qrcode")
+            except Exception as e:
+                print(f"生成{stu_name}學生qrcode失敗={e}")
+                QMessageBox.information(self.main_window, "失敗", f"生成{stu_name_row}學生qrcode失敗")
+                
 
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
-
-        # 创建Qrcode实例并传入主窗口作为父窗口
-        self.qrcode = Qrcode(parent=self)
 
 class Qrcode:
-    def __init__(self, db_name, folder_path):
+    def __init__(self, db_name, folder_path, main_window):
         self.db_name = db_name
         self.folder_path = folder_path
+        main_window=main_window
+    
     def all_qrcode(self):
         # 確保資料夾存在
         if not os.path.exists(self.folder_path):
@@ -304,22 +350,3 @@ class Qrcode:
         QMessageBox.information(None, '成功', '學生QRcode已生成')
     
         conn.close()
-
-
-
-def import_csv_to_db(self, file_name):
-    try:
-        db_path = 'test_database.db'
-        table_path = 'Students'
-        df = pd.read_csv(file_name, encoding='utf-8-sig')
-        if 'stu_id' not in df.columns:
-            df['stu_id'] = [str(uuid.uuid4()) for _ in range(len(df))]
-
-        conn = sqlite3.connect(db_path)
-        df.to_sql(table_path, conn, if_exists='append', index=False)
-        
-        conn.close()
-        QMessageBox.information(self, '成功', 'csv文件已成功導入數據庫')
-        
-    except Exception as e:
-        QMessageBox.critical(self, '錯誤', f"導入失敗:{str(e)}")

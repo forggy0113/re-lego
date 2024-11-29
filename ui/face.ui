@@ -174,7 +174,7 @@ border:none;
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>icon_0925/message.png</normaloff>icon_0925/message.png</iconset>
+                     <normaloff>icon/message.png</normaloff>icon/message.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -191,7 +191,7 @@ border:none;
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>icon_0925/help.png</normaloff>icon_0925/help.png</iconset>
+                     <normaloff>icon/help.png</normaloff>icon/help.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -208,7 +208,7 @@ border:none;
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>icon_0925/language.png</normaloff>icon_0925/language.png</iconset>
+                     <normaloff>icon/language.png</normaloff>icon/language.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -225,7 +225,7 @@ border:none;
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>icon_0925/settings.png</normaloff>icon_0925/settings.png</iconset>
+                     <normaloff>icon/settings.png</normaloff>icon/settings.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -242,7 +242,7 @@ border:none;
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>icon_0925/admin_panel.png</normaloff>icon_0925/admin_panel.png</iconset>
+                     <normaloff>icon/admin_panel.png</normaloff>icon/admin_panel.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -281,7 +281,7 @@ border:none;}</string>
                       </property>
                       <property name="icon">
                        <iconset>
-                        <normaloff>icon_0925/cute_role.png</normaloff>icon_0925/cute_role.png</iconset>
+                        <normaloff>icon/cute_role.png</normaloff>icon/cute_role.png</iconset>
                       </property>
                       <property name="iconSize">
                        <size>
@@ -304,7 +304,7 @@ border:none;}</string>
                       </property>
                       <property name="icon">
                        <iconset>
-                        <normaloff>icon_0925/father.png</normaloff>icon_0925/father.png</iconset>
+                        <normaloff>icon/father.png</normaloff>icon/father.png</iconset>
                       </property>
                       <property name="iconSize">
                        <size>
@@ -359,7 +359,7 @@ border:none;}</string>
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap>icon_0925/qr_code.png</pixmap>
+                       <pixmap>icon/qr_code.png</pixmap>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -455,7 +455,7 @@ border:none;
                       </property>
                       <property name="icon">
                        <iconset>
-                        <normaloff>icon_0925/sky_fly.png</normaloff>icon_0925/sky_fly.png</iconset>
+                        <normaloff>icon/sky_fly.png</normaloff>icon/sky_fly.png</iconset>
                       </property>
                       <property name="iconSize">
                        <size>
@@ -478,7 +478,7 @@ border:none;
                       </property>
                       <property name="icon">
                        <iconset>
-                        <normaloff>icon_0925/woman.png</normaloff>icon_0925/woman.png</iconset>
+                        <normaloff>icon/woman.png</normaloff>icon/woman.png</iconset>
                       </property>
                       <property name="iconSize">
                        <size>

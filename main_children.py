@@ -1,20 +1,23 @@
 import sys
-from face_ui import Ui_MainWindow as FaceUiMainWindow
-from login_resigert_ui import Ui_MainWindow as LoginUiMainWindow
-from main_teacher import teacher_window
-from PyQt6.QtWidgets import QApplication, QMainWindow,QWidget
+from ui.face_ui import Ui_MainWindow as FaceUiMainWindow
+from ui.login_resigert_ui import Ui_MainWindow as LoginUiMainWindow
+from main_teacher import teacher_mode
+from PyQt6.QtWidgets import  QMainWindow,QWidget
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QTimer 
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtGui import QImage, QPixmap
 import cv2
-from func.win_move_zoom import mouseMoveEvent, mousePressEvent, mouseReleaseEvent
-from create_sql import *
+from ui.func.win_move_zoom import mouseMoveEvent, mousePressEvent, mouseReleaseEvent
+from src.sql_py.login_sql import *
+from ui.func_sql import CreateDatabase
 
 class Login_Window(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ui = LoginUiMainWindow()  
+        self.ui = LoginUiMainWindow()
+        self.db = CreateDatabase()
+        self.User = Users(db=self.db, ui=self.ui, main_window=self)
         self.ui.setupUi(self)
         self.initstack()
         # 設置窗口屬性 frameless 無邊框窗口
@@ -36,8 +39,7 @@ class Login_Window(QMainWindow):
         self.ui.btn_find_password.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(1))
         self.ui.Register_button.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(2))
         
-        self.db = CreateDatabase()
-        self.User = Users(db=self.db, ui=self.ui, main_window=self)
+
         
         self.ui.register_correct.clicked.connect(self.register_user)
         
@@ -49,6 +51,8 @@ class Login_Window(QMainWindow):
         self.User.login_user()
     def initstack(self):
         self.ui.stackedWidget.setCurrentIndex(1)
+
+
 class InterfaceWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -57,6 +61,9 @@ class InterfaceWindow(QMainWindow):
         ###視窗設定###
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
+        
+        self.is_moving = False
+        self.mouse_position = None
         self.mouseMoveEvent = lambda event:mouseMoveEvent(self, event)
         self.mousePressEvent = lambda event:mousePressEvent(self, event)
         self.mouseReleaseEvent = lambda event:mouseReleaseEvent(self, event)
@@ -68,8 +75,8 @@ class InterfaceWindow(QMainWindow):
         ### 切換字體 ###
         # 設定字體類型
         init_font_size = 25
-        self.font_id_1 = QtGui.QFontDatabase.addApplicationFont("font/BpmfGenSenRounded-R.ttf")
-        self.font_id_2 = QtGui.QFontDatabase.addApplicationFont("font/FakePearl-Regular.ttf")
+        self.font_id_1 = QtGui.QFontDatabase.addApplicationFont("ui/font/BpmfGenSenRounded-R.ttf")
+        self.font_id_2 = QtGui.QFontDatabase.addApplicationFont("ui/font/FakePearl-Regular.ttf")
         self.font_family_1 = QtGui.QFontDatabase.applicationFontFamilies(self.font_id_1)
         self.font_family_2 = QtGui.QFontDatabase.applicationFontFamilies(self.font_id_2)
         # 設置初始字體

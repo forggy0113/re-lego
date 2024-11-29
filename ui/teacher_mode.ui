@@ -136,7 +136,7 @@ border-radius:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/menu_bar.png</normaloff>icon_0925/menu_bar.png</iconset>
+                 <normaloff>icon/menu_bar.png</normaloff>icon/menu_bar.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -227,7 +227,7 @@ border-radius:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/min_window.png</normaloff>icon_0925/min_window.png</iconset>
+                 <normaloff>icon/min_window.png</normaloff>icon/min_window.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -244,7 +244,7 @@ border-radius:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/open_in_full_window.png</normaloff>icon_0925/open_in_full_window.png</iconset>
+                 <normaloff>icon/open_in_full_window.png</normaloff>icon/open_in_full_window.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -261,7 +261,7 @@ border-radius:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/close_window.png</normaloff>icon_0925/close_window.png</iconset>
+                 <normaloff>icon/close_window.png</normaloff>icon/close_window.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -376,7 +376,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/contact_page.png</normaloff>icon_0925/contact_page.png</iconset>
+                 <normaloff>icon/contact_page.png</normaloff>icon/contact_page.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -415,7 +415,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/analytics.png</normaloff>icon_0925/analytics.png</iconset>
+                 <normaloff>icon/analytics.png</normaloff>icon/analytics.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -454,7 +454,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/settings.png</normaloff>icon_0925/settings.png</iconset>
+                 <normaloff>icon/settings.png</normaloff>icon/settings.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -493,7 +493,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/new_releases.png</normaloff>icon_0925/new_releases.png</iconset>
+                 <normaloff>icon/new_releases.png</normaloff>icon/new_releases.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -620,7 +620,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/contact_page.png</normaloff>icon_0925/contact_page.png</iconset>
+                 <normaloff>icon/contact_page.png</normaloff>icon/contact_page.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -665,7 +665,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/analytics.png</normaloff>icon_0925/analytics.png</iconset>
+                 <normaloff>icon/analytics.png</normaloff>icon/analytics.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -710,7 +710,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/settings.png</normaloff>icon_0925/settings.png</iconset>
+                 <normaloff>icon/settings.png</normaloff>icon/settings.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -755,7 +755,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/new_releases.png</normaloff>icon_0925/new_releases.png</iconset>
+                 <normaloff>icon/new_releases.png</normaloff>icon/new_releases.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -930,7 +930,7 @@ color:white;
                         </property>
                         <property name="icon">
                          <iconset>
-                          <normaloff>icon_0925/person_add.png</normaloff>icon_0925/person_add.png</iconset>
+                          <normaloff>icon/person_add.png</normaloff>icon/person_add.png</iconset>
                         </property>
                         <property name="iconSize">
                          <size>
@@ -996,7 +996,7 @@ color:white;
                         </property>
                         <property name="icon">
                          <iconset>
-                          <normaloff>icon_0925/import_excel.png</normaloff>icon_0925/import_excel.png</iconset>
+                          <normaloff>icon/import_excel.png</normaloff>icon/import_excel.png</iconset>
                         </property>
                         <property name="iconSize">
                          <size>
@@ -1055,7 +1055,7 @@ color: white;
                         </property>
                         <property name="icon">
                          <iconset>
-                          <normaloff>icon_0925/import_qr_code.png</normaloff>icon_0925/import_qr_code.png</iconset>
+                          <normaloff>icon/import_qr_code.png</normaloff>icon/import_qr_code.png</iconset>
                         </property>
                         <property name="iconSize">
                          <size>
@@ -1260,12 +1260,17 @@ background-color:#FCFAED;
                       </column>
                       <column>
                        <property name="text">
-                        <string>uuid</string>
+                        <string>修正</string>
                        </property>
                       </column>
                       <column>
                        <property name="text">
-                        <string>修正</string>
+                        <string>下載個人QRcode</string>
+                       </property>
+                      </column>
+                      <column>
+                       <property name="text">
+                        <string>刪除</string>
                        </property>
                       </column>
                      </widget>
@@ -1329,6 +1334,9 @@ QLineEdit{
 }
 </string>
                       </property>
+                      <property name="currentIndex">
+                       <number>0</number>
+                      </property>
                       <widget class="QWidget" name="page_create_new_data">
                        <layout class="QVBoxLayout" name="verticalLayout_7">
                         <item>
@@ -1337,7 +1345,7 @@ QLineEdit{
                            <string/>
                           </property>
                           <property name="pixmap">
-                           <pixmap>icon_0925/draw.png</pixmap>
+                           <pixmap>icon/account.png</pixmap>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignCenter</set>
@@ -1530,7 +1538,7 @@ QLineEdit{
                             </property>
                             <property name="icon">
                              <iconset>
-                              <normaloff>icon_0925/delete.png</normaloff>icon_0925/delete.png</iconset>
+                              <normaloff>icon/delete.png</normaloff>icon/delete.png</iconset>
                             </property>
                             <property name="iconSize">
                              <size>
@@ -1563,7 +1571,7 @@ QLineEdit{
                             </property>
                             <property name="icon">
                              <iconset>
-                              <normaloff>icon_0925/save.png</normaloff>icon_0925/save.png</iconset>
+                              <normaloff>icon/save.png</normaloff>icon/save.png</iconset>
                             </property>
                             <property name="iconSize">
                              <size>
@@ -1633,7 +1641,7 @@ QLineEdit{
                            <string/>
                           </property>
                           <property name="pixmap">
-                           <pixmap>icon_0925/edit.png</pixmap>
+                           <pixmap>icon/edit.png</pixmap>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignCenter</set>

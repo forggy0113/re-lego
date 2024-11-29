@@ -96,7 +96,7 @@ border:none;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icon_0925/close_window.png</normaloff>icon_0925/close_window.png</iconset>
+              <normaloff>icon/close_window.png</normaloff>icon/close_window.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -131,7 +131,7 @@ border:none;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icon_0925/icon.png</normaloff>icon_0925/icon.png</iconset>
+              <normaloff>icon/icon.png</normaloff>icon/icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -563,7 +563,7 @@ padding-left:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/login.png</normaloff>icon_0925/login.png</iconset>
+                 <normaloff>icon/login.png</normaloff>icon/login.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -580,7 +580,7 @@ padding-left:5px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>icon_0925/login_add.png</normaloff>icon_0925/login_add.png</iconset>
+                 <normaloff>icon/login_add.png</normaloff>icon/login_add.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -769,7 +769,7 @@ padding-left:5px;
                  </font>
                 </property>
                 <property name="text">
-                 <string>帳號密碼錯誤</string>
+                 <string>帳號或密碼錯誤</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
