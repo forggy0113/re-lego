@@ -7,59 +7,12 @@ import os
 import qrcode
 from PIL import ImageDraw, ImageFont
 
-class CreateDatabase:
-    def __init__(self, db_name='test_database.db'):
-        self.conn = sqlite3.connect(db_name)
-        self.cursor = self.conn.cursor()
-        self.create_table()
-    
-    def create_table(self):
-    # 學生資料表
-        self.cursor.execute('''
-                        CREATE TABLE IF NOT EXISTS Students(
-                            stu_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                            stu_class TEXT NOT NULL,
-                            stu_sex TEXT NOT NULL,
-                            stu_seat_num INTEGER NOT NULL,
-                            stu_name TEXT NOT NULL,
-                            stu_uuid TEXT NOT NULL,
-                            in_date TIMESTAMP)''')
-
-    # 老師/家長資料表
-        self.cursor.execute('''
-                        CREATE TABLE IF NOT EXISTS Users(
-                            user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                            user_account TEXT NOT NULL,
-                            user_password TEXT NOT NULL,
-                            user_uuid TEXT NOT NULL,
-                            user_failed_attempts INTEGER DEFAULT 0,
-                            lock_until TEXT DEFAULT NULL,
-                            in_date TIMESTAMP)''')
-
-    # 權限動作資料表
-        self.cursor.execute('''
-                        CREATE TABLE IF NOT EXISTS permissions(
-                            permission_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                            action TEXT NOT NULL)''')
-
-    # 使用者權限分配
-        self.cursor.execute('''
-                        CREATE TABLE IF NOT EXISTS user_permissions(
-                            permission_id INTEGER,
-                            uuid TEXT,
-                            FOREIGN KEY (uuid) REFERENCES Users (user_uuid),
-                            FOREIGN KEY (permission_id) REFERENCES permissions (permission_id),
-                            PRIMARY KEY (uuid, permission_id))''')
-
-    # 提交至sqlite
-        self.conn.commit()
 class Stus:
     def __init__(self, db, ui,main_window):  # 只接受 db 和 ui 兩個參數
         self.db = db
         self.ui = ui
         self.main_window = main_window
     
-        
     def add_stu(self):
         stu_uuid = str(uuid.uuid4())  # 生成唯一的学生 ID
         stu_name = self.ui.input_name.text()  # 讀取input_name

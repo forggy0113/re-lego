@@ -2,11 +2,11 @@ import sys
 from ui.teacher_mode_ui import Ui_MainWindow as teacher_mode
 from PyQt6.QtWidgets import  QMainWindow
 from PyQt6 import QtWidgets,QtCore
-from ui.func_sql import Stus,CreateDatabase, Qrcode
+from src.sql_py.create_sql import CreateDatabase
+from src.sql_py.func_sql import Stus, Qrcode
 from ui.func.win_move_zoom import border_mouseMove, border_mousePress,border_mouseRelease,is_in_resize_area,resize_window,update_cursor,max_win
 import pandas as pd
 import os
-
 
 class teacher_window(QMainWindow):
     def __init__(self):

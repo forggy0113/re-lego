@@ -10,7 +10,7 @@ from PyQt6.QtGui import QImage, QPixmap
 import cv2
 from ui.func.win_move_zoom import mouseMoveEvent, mousePressEvent, mouseReleaseEvent
 from src.sql_py.login_sql import *
-from ui.func_sql import CreateDatabase
+from src.sql_py.create_sql import CreateDatabase
 
 class Login_Window(QMainWindow):
     def __init__(self):
