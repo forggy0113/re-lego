@@ -47,6 +47,9 @@ class teacher_window(QMainWindow):
         self.ui.btn_import_csvfile.clicked.connect(self.add_csv_data)
         self.update_student_display()
         self.ui.btn_import_qrcode.clicked.connect(self.create_qrcode)
+        ## 加載班級 and 篩選學生
+        self.load_class()
+        # self.ui.btn_filter.clicked.connect(self.search_stu)
         
         ### 無邊框 ###
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
@@ -74,8 +77,13 @@ class teacher_window(QMainWindow):
     def resize_window(self, pos): # 縮放窗口
         resize_window(self, pos)
         
+    # def search_stu(self):
+    #     self.stu_manager.search_stu()
+    def load_class(self):
+        self.stu_manager.load_class()
     def create_qrcode(self):
         self.create_qr.all_qrcode()
+        
     ### 下載範例csv檔 ###
     def create_download_csv(self):
         df = pd.DataFrame(columns=['stu_class','stu_sex','stu_seat_num','stu_name'])
@@ -94,19 +102,23 @@ class teacher_window(QMainWindow):
         self.stu_manager.add_stu()
         self.stu_manager.clear_edit()
         self.stu_manager.display_students()
+        self.stu_manager.load_class()
         
         
     def add_csv_data(self):
         self.stu_manager.add_csv()
+        self.stu_manager.load_class()
         self.stu_manager.display_students()
         
     def update_student_display(self):
         self.stu_manager.display_students()
+        
     def clear_stu_data(self):
         self.stu_manager.clear_edit()
         
     def delect_stu_row(self):
         self.stu_manager.delect_student_row()
+        
         
         
         

@@ -6,15 +6,16 @@ import pandas as pd
 import os
 import qrcode
 from PIL import ImageDraw, ImageFont
-
+    
+from PyQt6.QtCore import QTimer
 class Stus:
     def __init__(self, db, ui,main_window):  # 只接受 db 和 ui 兩個參數
         self.db = db
         self.ui = ui
         self.main_window = main_window
-    
+        
     def add_stu(self):
-        stu_uuid = str(uuid.uuid4())  # 生成唯一的学生 ID
+        stu_uuid = str(uuid.uuid4())  # 生成唯一的學生 ID
         stu_name = self.ui.input_name.text()  # 讀取input_name
         stu_class = self.ui.input_class.text()  # 讀取 input_class
         stu_sex = self.ui.input_sex.currentText()  # 訪問下拉選單
@@ -35,9 +36,9 @@ class Stus:
             self.db.conn.commit()
             QMessageBox.information(self.main_window, "成功","學生添加成功")
         except Exception as e:
-            print(f"添加学生失敗: {e}")
+            print(f"添加學生失敗: {e}")
             QMessageBox.information(self.main_window, "失敗","學生添加失敗")
-            
+    
     def add_csv(self):
         # 彈出視窗選擇檔案
         file_name, _ =  QFileDialog.getOpenFileName(self.main_window, "選擇csv文件",'', '(*.csv)')
@@ -71,12 +72,8 @@ class Stus:
         self.ui.input_sex.setCurrentIndex(0)  # 重置性別下拉框到第一個選項
     
 
-            
-    
-    
     def display_students(self):
         self.ui.table_stu.setRowCount(0)  # 清空現有行
-        
         # 從資料庫獲取學生資料
         try:
             self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name FROM Students")
@@ -193,8 +190,10 @@ class Stus:
                 self.db.cursor.execute('''DELETE FROM Students WHERE stu_name=?''',(stu_name,))
                 self.db.conn.commit()
                 self.ui.table_stu.removeRow(row)
-                self.display_students()
+                self.display_students() # 顯示資料
+                self.load_class() # 更新班級資料選單
                 QMessageBox.information(self.main_window, "成功","學生資料刪除成功")
+                
             except Exception as e:
                 self.db.conn.rollback() # 資料庫回滾，恢復資料庫狀態，不受資料刪除失敗影響
                 print(f"刪除資料行失敗:{e}")
@@ -248,7 +247,31 @@ class Stus:
             except Exception as e:
                 print(f"生成{stu_name}學生qrcode失敗={e}")
                 QMessageBox.information(self.main_window, "失敗", f"生成{stu_name_row}學生qrcode失敗")
-                
+
+
+    def load_class(self):
+        # 從資料庫加載班級選單內容
+        try:
+            # 查詢資料庫中的所有班級（移除重複值）
+            self.db.cursor.execute('''SELECT DISTINCT stu_class FROM Students''')
+            class_data = self.db.cursor.fetchall()
+            print(class_data)
+            # 清空下拉選單
+            self.ui.box_search_class.clear()
+            # 添加「全部」選項
+            self.ui.box_search_class.addItem("全部")  # 預設選項，顯示所有班級
+
+            # 動態添加班級名稱
+            for row in class_data:
+                class_name = str(row[0]) if row[0] is not None else "未命名班級"
+                self.ui.box_search_class.addItem(class_name)
+                print(class_name)
+        except Exception as e:
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.critical(self.main_window, "錯誤", f"無法加載班級資料: {e}")
+
+
+
 
 
 class Qrcode:
