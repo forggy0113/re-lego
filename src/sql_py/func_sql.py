@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QFileDialog, QMessageBox,QPushButton
-from PyQt6 import QtWidgets,QtGui, QtCore
+from PyQt5.QtWidgets import QFileDialog, QMessageBox,QPushButton
+from PyQt5 import QtWidgets,QtGui, QtCore
 import sqlite3
 import uuid
 import pandas as pd
@@ -270,6 +270,129 @@ class Stus:
             from PyQt6.QtWidgets import QMessageBox
             QMessageBox.critical(self.main_window, "錯誤", f"無法加載班級資料: {e}")
 
+    def filter_display_students(self, rows):
+        self.ui.table_stu.setRowCount(0)  # 清空現有行
+
+        # 設置表格行數
+        self.ui.table_stu.setRowCount(len(rows))
+
+        for row_index, row in enumerate(rows):
+            for column_index, item in enumerate(row):
+                try:
+                    qtablewidgetitem = QtWidgets.QTableWidgetItem(str(item))
+                    self.ui.table_stu.setItem(row_index, column_index, qtablewidgetitem)
+                except Exception as e:
+                    print(f"設置表格項失敗: {e}")
+
+            for row_index in range(self.ui.table_stu.rowCount()):
+                qr_button = QPushButton("QRcode")
+                modify_button = QPushButton("修改學生")
+                delete_button = QPushButton("刪除學生")
+                icon14 = QtGui.QIcon()
+                icon14.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/qr_code.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+                qr_button.setIcon(icon14)
+                qr_button.setIconSize(QtCore.QSize(35, 35))
+                qr_button.setObjectName("btn_database_qrcode")
+                qr_button.setStyleSheet("#btn_database_qrcode{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color:#EEEEEE;\n"
+        "}\n"
+        "\n"
+        "#btn_database_qrcode:hover{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color:#B7B7B7;\n"
+        "}\n"
+        "\n"
+        "#btn_database_qrcode:check{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color:#B7B7B7;\n"
+        "}")
+                icon15 = QtGui.QIcon()
+                icon15.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/modify_data.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+                modify_button.setIcon(icon15)
+                modify_button.setIconSize(QtCore.QSize(35, 35))
+                modify_button.setObjectName("btn_database_modify_data")
+                modify_button.setStyleSheet("#btn_database_modify_data{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color:#FFCF9D;\n"
+        "}\n"
+        "\n"
+        "#btn_database_modify_data:hover{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color: #DE8F5F;\n"
+        "}\n"
+        "\n"
+        "#btn_database_modify_data:check{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color:#DE8F5F;\n"
+        "}")
+                icon16 = QtGui.QIcon()
+                icon16.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+                delete_button.setIcon(icon16)
+                delete_button.setIconSize(QtCore.QSize(35, 35))
+                delete_button.setObjectName("btn_database_delect")
+                delete_button.setStyleSheet("#btn_database_delect{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color: #ffeb9a;\n"
+        "}\n"
+        "\n"
+        "#btn_database_delect:hover{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color:#FFCD00;\n"
+        "}\n"
+        "\n"
+        "#btn_database_delect:check{\n"
+        "border:none;\n"
+        "border-radius :6px;\n"
+        "background-color: #FFCD00;\n"
+        "}")
+                delete_button.clicked.connect(self.delect_student_row)
+                qr_button.clicked.connect(self.stu_qrcode)
+                
+                self.ui.table_stu.setCellWidget(row_index, 5, qr_button)
+                self.ui.table_stu.setCellWidget(row_index, 4, modify_button)
+                self.ui.table_stu.setCellWidget(row_index, 6, delete_button)
+        # 自動調整行高
+        self.ui.table_stu.resizeRowsToContents()
+        
+    def filter_stu(self):
+        """根據篩選條件查詢學生"""
+        try:
+            # 獲取篩選條件
+            stu_class = self.ui.box_search_class.currentText()
+            
+            # 基本查詢語句，從學生資料中查詢指定欄位
+            query = "SELECT stu_class, stu_sex, stu_seat_num, stu_name FROM Students WHERE 1=1"
+            params = []
+
+            # 根據條件動態構建查詢語句
+            if stu_class != "全部" and stu_class != "":
+                query += " AND stu_class=?"
+                params.append(stu_class)
+
+            # 執行查詢
+            if len(params) > 0:
+                self.db.cursor.execute(query, tuple(params))
+            else:
+                # 如果沒有篩選條件，查詢所有學生
+                self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name FROM Students")
+            
+            # 獲取查詢結果
+            result = self.db.cursor.fetchall()
+
+            # 顯示查詢結果
+            self.filter_display_students(result)
+
+        except Exception as e:
+            print(f"查詢過程中出錯: {e}")
 
 
 

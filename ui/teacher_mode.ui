@@ -337,7 +337,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../../../Downloads/home_50dp_000000_FILL0_wght400_GRAD0_opsz48.svg</normaloff>../../../../Downloads/home_50dp_000000_FILL0_wght400_GRAD0_opsz48.svg</iconset>
+                 <normaloff>icon/house.png</normaloff>icon/house.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -575,7 +575,7 @@ background-color:#FFCD00;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../../../Downloads/home_50dp_000000_FILL0_wght400_GRAD0_opsz48.svg</normaloff>../../../../Downloads/home_50dp_000000_FILL0_wght400_GRAD0_opsz48.svg</iconset>
+                 <normaloff>icon/house.png</normaloff>icon/house.png</iconset>
                </property>
                <property name="iconSize">
                 <size>

@@ -104,8 +104,29 @@ background-color:#FFCD00;
               <item>
                <widget class="QWidget" name="widget_6" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QLabel" name="txt_font_size">
+                   <property name="font">
+                    <font>
+                     <family>AniMe Matrix - MB_EN</family>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>字型大小</string>
                    </property>
