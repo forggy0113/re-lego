@@ -195,7 +195,7 @@ border:none;
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>icon/message.png</normaloff>icon/message.png</iconset>
+                     <normaloff>./icon/message.png</normaloff>./icon/message.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>

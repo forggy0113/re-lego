@@ -7,7 +7,7 @@ import os
 import qrcode
 from PIL import ImageDraw, ImageFont
     
-from PyQt6.QtCore import QTimer
+from PyQt5.QtCore import QTimer
 class Stus:
     def __init__(self, db, ui,main_window):  # 只接受 db 和 ui 兩個參數
         self.db = db
