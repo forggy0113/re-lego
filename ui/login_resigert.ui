@@ -96,7 +96,7 @@ border:none;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icon/close_window.png</normaloff>icon/close_window.png</iconset>
+              <normaloff>/home/jetson-xnx/Desktop/re-lego-main/ui/icon/close_window.png</normaloff>/home/jetson-xnx/Desktop/re-lego-main/ui/icon/close_window.png</iconset>
             </property>
             <property name="iconSize">
              <size>
