@@ -1,64 +1,43 @@
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import padding
-import os
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 import base64
-###尚未使用，待討論###
 
-class AES:
-    def __init__(self):
-        self.aes_key = os.urandom(32) # AES加密密鑰(32字節=256位元)
+import uuid
+
+class Encrypted:
+    def __init__ (self):
+        self.private_key = None
+        self.public_key = None
+        self.private_key_path = r"./src/sql_py/private.pem"
+        self.public_key_path = r"./src/sql_py/public.pem"
+    # 生成公鑰和私鑰
+    def generate_keys(self):
+        self.private_key = RSA.generate(2048)
+        self.public_key = self.private_key.publickey()
+        with open(self.private_key_path, "wb") as f:
+            f.write(self.private_key.export_key())
+        with open(self.public_key_path, "wb") as f:
+            f.write(self.public_key.export_key())
     
-    def encrypt_aes(self, data):
-        try:
-            # 隨機生成初始向量(IV) 16字節
-            iv = os.urandom(16)
-            # 創建AES-CBC填充數據  # CBC(密碼快連結)要求數據輸入長度是密碼塊大小的倍數
-            cipher = Cipher(algorithms.AES(self.aes_key), modes.CBC(iv))
-            encryptor = cipher.encryptor()
-            # 使用PKCS7填充數據
-            padder = padding.PKCS7(algorithms.AES.block_size).padder()
-            padded_data = padder.update(data) + padder.finalize()
-            # 加密數據
-            encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
-            # 返回 IV 和加密數據，使用 Base64 進行編碼
-            return base64.b64encode(iv + encrypted_data).decode()
-        except Exception as e:
-            print(f"加密失敗:{e}")
-    
-    def decrypt_aes(self,encrypted_data):
-        try:
-            # 解碼base64數據
-            encrypted_data = base64.b64decode(encrypted_data)
-            # 分離iv和加密內容
-            iv, encrypted_message= encrypted_data[:16], encrypted_data[16:]
-            # 創建AES解碼器
-            cipher = Cipher(algorithms.AES(self.aes_key), modes.CBC(iv))
-            decryptor = cipher.decryptor()
-            # 解密數據
-            decryptor_padded_data = decryptor.update(encrypted_message) + decryptor.finalize()
-            # 去除PKCS7填充(數位簽章格式)
-            unpadder = padding.PKCS7(algorithms.AES.block_size).unpadder()
-            data = unpadder.update(decryptor_padded_data) + unpadder.finalize() 
-            return data
-        except Exception as e:
-            print(f"解密失敗={e}")
-            
-            
-            
-# if __name__ == "__main__":
-#     ecc = AES()  # 初始化 ECC 类，自动生成 AES 密钥
-
-#     # 待加密数据
-#     plain_text = "This is a test UUID."
-#     print(f"原始数据: {plain_text}")
-
-#     # 加密数据
-#     encrypted = ecc.encrypt_aes(plain_text.encode())
-#     print(f"加密后数据: {encrypted}")
-
-#     # 解密数据
-#     decrypted = ecc.decrypt_aes(encrypted).decode()
-#     print(f"解密后数据: {decrypted}")
-
-    # 验证结果
-    # assert plain_text == decrypted
+    # 加密
+    def encrypt(self, data):
+        if not self.public_key:
+            with open(self.public_key_path, "rb") as f:
+                self.public_key = RSA.import_key(f.read())
+        cipher = PKCS1_OAEP.new(self.public_key)
+        return base64.b64encode(cipher.encrypt(data.encode())).decode()
+    # 解密
+    def decrypt(self, data):
+        if not self.private_key:
+            with open(self.private_key_path, "rb") as f:
+                self.private_key = RSA.import_key(f.read())
+        cipher = PKCS1_OAEP.new(self.private_key)
+        return cipher.decrypt(base64.b64decode(data)).decode()
+## 測試加解密效果
+# test_uuid = str(uuid.uuid4())
+# print(f"原始資料: {test_uuid}")
+# Encrypted().generate_keys()
+# encrypted_data = Encrypted().encrypt(test_uuid)
+# print(f"加密後: {encrypted_data}")
+# decrypted_data = Encrypted().decrypt(encrypted_data)
+# print(f"解密後: {decrypted_data}")

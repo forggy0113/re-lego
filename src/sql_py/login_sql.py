@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timedelta
 from ui_main import teacher_window
-import hashlib
+from src.sql_py.encrypted import Encrypted
 
 # 初始化 Users
 class Users:
@@ -16,7 +16,7 @@ class Users:
         user_pwd = self.ui.register_password_1.text()
         user_check_pwd = self.ui.register_password_2.text()
         user_uuid = str(uuid.uuid4())
-        user_uuid = hashlib.sha256(user_uuid.encode('utf-8')).hexdigest()
+        user_uuid = Encrypted().encrypt(user_uuid)
         self.ui.stackedWidget.setCurrentIndex(1)
 
         if not user_account.strip() or not user_pwd.strip():
@@ -99,92 +99,3 @@ class Users:
             self.ui.stackedWidget.setCurrentIndex(6)
 
         self.db.conn.commit()
-
-# class Stus:
-#     def __init__(self, db, ui, main_window):
-#         self.db = db
-#         self.ui = ui
-#         self.main_window = main_window
-
-#     def add_stu(self):
-#         stu_uuid = str(uuid.uuid4())
-#         stu_name = self.ui.input_name.text()
-#         stu_class = self.ui.input_class.text()
-#         stu_sex = self.ui.input_sex.currentText()
-
-#         try:
-#             stu_seat_num = int(self.ui.input_seat_number.text()) if self.ui.input_seat_number.text() else 0
-#         except ValueError:
-#             stu_seat_num = 0
-
-#         try:
-#             self.db.cursor.execute(
-#                 '''INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_id, in_date) VALUES (?, ?, ?, ?, ?, datetime('now'))''',
-#                 (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid)
-#             )
-#             self.db.conn.commit()
-#             QMessageBox.information(self.main_window, '成功', '添加學生成功')
-#         except Exception as e:
-#             QMessageBox.information(self.main_window, '失敗', '添加學生失敗')
-#             print(f"添加學生失敗: {e}")
-
-#     def display_students(self):
-#         self.ui.table_stu.setRowCount(0)
-#         try:
-#             self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name, stu_id FROM Students")
-#             rows = self.db.cursor.fetchall()
-#         except Exception as e:
-#             print(f"獲取學生資料失敗: {e}")
-#             return
-
-#         self.ui.table_stu.setRowCount(len(rows))
-
-#         for row_index, row in enumerate(rows):
-#             for column_index, item in enumerate(row):
-#                 try:
-#                     self.ui.table_stu.setItem(row_index, column_index, QTableWidgetItem(str(item)))
-#                 except Exception as e:
-#                     print(f"設置表格項失敗: {e}")
-
-#         for row_index in range(len(rows)):
-#             button_widget = QWidget()
-#             layout = QHBoxLayout(button_widget)
-
-#             button1 = QPushButton()
-#             button2 = QPushButton()
-#             button3 = QPushButton()
-#             layout.addWidget(button1)
-#             layout.addWidget(button2)
-#             layout.addWidget(button3)
-
-#             button1.setIcon(QtGui.QIcon("path_to_icon_1"))
-#             button2.setIcon(QtGui.QIcon("path_to_icon_2"))
-#             button3.setIcon(QtGui.QIcon("path_to_icon_3"))
-
-#             self.ui.table_stu.setCellWidget(row_index, 5, button_widget)
-
-#         self.ui.table_stu.resizeRowsToContents()
-
-#     def clear_edit(self):
-#         self.ui.input_name.clear()
-#         self.ui.input_class.clear()
-#         self.ui.input_seat_number.clear()
-#         self.ui.input_sex.setCurrentIndex(0)
-
-# class MainWindow(QMainWindow):
-#     def __init__(self):
-#         super(MainWindow, self).__init__()
-
-# class Qrcode:
-#     def __init__(self, db_name, folder_path):
-#         self.db_name = db_name
-#         self.folder_path = folder_path
-
-#     def all_qrcode(self):
-#         if not os.path.exists(self.folder_path):
-#             os.makedirs(self.folder_path)
-
-#         conn = sqlite3.connect(self.db_name)
-#         conn.cursor()
-#         # Your database logic here
-#         conn.close()

@@ -6,11 +6,7 @@ import pandas as pd
 import os
 import qrcode
 from PIL import ImageDraw, ImageFont
-from PyQt6.QtCore import QTimer
-import hashlib
-
-    
-from PyQt5.QtCore import QTimer
+from src.sql_py.encrypted import Encrypted
 class Stus:
     def __init__(self, db, ui,main_window):  # 只接受 db 和 ui 兩個參數
         self.db = db
@@ -19,7 +15,7 @@ class Stus:
         
     def add_stu(self):
         stu_uuid = str(uuid.uuid4())  # 生成唯一的學生 ID
-        stu_uuid = hashlib.sha256(stu_uuid.encode('utf-8')).hexdigest() # 生成10位數的sha256加密字串
+        stu_qr_uuid =  Encrypted().encrypt(stu_uuid) # 加密uuid
         stu_name = self.ui.input_name.text()  # 讀取input_name
         stu_class = self.ui.input_class.text()  # 讀取 input_class
         stu_sex = self.ui.input_sex.currentText()  # 訪問下拉選單
@@ -35,8 +31,8 @@ class Stus:
         # 插入數據到數據庫
         try:
             self.db.cursor.execute('''
-            INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, in_date) VALUES (?, ?, ?, ?, ?, datetime('now'))
-            ''', (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid))
+            INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid,stu_qr_uuid, in_date) VALUES (?, ?, ?, ?, ?,?, datetime('now'))
+            ''', (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, stu_qr_uuid))
             self.db.conn.commit()
             QMessageBox.information(self.main_window, "成功","學生添加成功")
         except Exception as e:
@@ -56,12 +52,13 @@ class Stus:
                 # 如果stu_uuid不存在，則生成uuid
                 if 'stu_uuid' not in df.columns:
                     df['stu_uuid'] = [str(uuid.uuid4()) for _ in range(len(df))]
-                # 插入批量數據
+                    df['stu_qr_uuid'] = [Encrypted().encrypt(uuid) for uuid in df['stu_uuid']]
+
                 # 批量插入數據
                 self.db.cursor.executemany('''
-                                           INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, in_date)
-                                           VALUES (?, ?, ?, ?, ?, datetime('now'))
-                                           ''', df[['stu_class', 'stu_sex', 'stu_seat_num', 'stu_name', 'stu_uuid']].values.tolist())
+                                           INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, stu_qr_uuid, in_date)
+                                           VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+                                           ''', df[['stu_class', 'stu_sex', 'stu_seat_num', 'stu_name', 'stu_uuid','stu_qr_uuid']].values.tolist())
                 self.db.conn.commit()
                 QMessageBox.information(self.main_window, "成功","學生添加成功")
             except Exception as e:
@@ -215,7 +212,7 @@ class Stus:
                 if item is None or not item.text():
                     raise ValueError("無法獲取學生姓名，該行數據可能為空")
                 stu_name = item.text()
-                self.db.cursor.execute('''SELECT stu_uuid, stu_class, stu_seat_num, stu_name FROM Students WHERE stu_name=?''', (stu_name,))
+                self.db.cursor.execute('''SELECT stu_qr_uuid, stu_class, stu_seat_num, stu_name FROM Students WHERE stu_name=?''', (stu_name,))
                 stu_rows = self.db.cursor.fetchall()
                 
                 for uuid_row,class_row, seat_num_row, name_row  in stu_rows:
@@ -229,9 +226,11 @@ class Stus:
                     qr_image = qr_image.convert("RGB")
                     draw = ImageDraw.Draw(qr_image)
                     try:
-                        font = ImageFont.truetype("font\BpmfGenSenRounded-R.ttf", size=20) #顯示字體
+                        font = ImageFont.truetype(r"C:\Users\Ada\Desktop\github\re-lego\ui\font\BpmfGenSenRounded-R.ttf", size=20) #顯示字體
+                        print("使用自定義字體")
                     except IOError:
                         font = ImageFont.load_default() # 加載默認字體
+                        print("使用默認字體")
                     # 字體位置定義
                     text = f"{stu_class_row}_{stu_seat_num_row}_{stu_name_row}"
                     text_bbox = draw.textbbox((0,0), text, font=font)
@@ -416,7 +415,7 @@ class Qrcode:
         cursor = conn.cursor()
         # 查詢所有uuid
         try:
-            cursor.execute("select stu_id, stu_class, stu_seat_num, stu_name from Students")
+            cursor.execute("select stu_qr_uuid, stu_class, stu_seat_num, stu_name from Students")
             rows = cursor.fetchall()
         except Exception as e:
             print(f"獲取uuid失敗:{e}")
@@ -432,10 +431,12 @@ class Qrcode:
             # 繪製qrcode
             draw = ImageDraw.Draw(qr_image)
             try:
-                font = ImageFont.truetype("font\BpmfGenSenRounded-R.ttf", size=20)
+                font = ImageFont.truetype("ui\font\BpmfGenSenRounded-R.ttf", size=20)
+                print("使用自定義字體")
             except IOError:
                 # 加載默認字體
                 font = ImageFont.load_default()
+                print("使用默認字體")
             text = f"{class_str}_{seat_num_str}_{name_str}"
             text_bbox = draw.textbbox((0,0), text, font=font)
             text_width = text_bbox[2] - text_bbox[0] # 右邊界 - 左邊界

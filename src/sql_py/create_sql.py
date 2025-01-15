@@ -16,6 +16,7 @@ class CreateDatabase:
                             stu_seat_num INTEGER NOT NULL,
                             stu_name TEXT NOT NULL,
                             stu_uuid TEXT NOT NULL,
+                            stu_qr_uuid TEXT NOT NULL,
                             in_date TIMESTAMP)''')
 
     # 老師/家長資料表
