@@ -2,7 +2,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 import os
 import base64
-
+###尚未使用，待討論###
 
 class AES:
     def __init__(self):

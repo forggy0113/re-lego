@@ -6,8 +6,9 @@ import pandas as pd
 import os
 import qrcode
 from PIL import ImageDraw, ImageFont
-    
 from PyQt6.QtCore import QTimer
+import hashlib
+
 class Stus:
     def __init__(self, db, ui,main_window):  # 只接受 db 和 ui 兩個參數
         self.db = db
@@ -16,6 +17,7 @@ class Stus:
         
     def add_stu(self):
         stu_uuid = str(uuid.uuid4())  # 生成唯一的學生 ID
+        stu_uuid = hashlib.sha256(stu_uuid.encode('utf-8')).hexdigest() # 生成10位數的sha256加密字串
         stu_name = self.ui.input_name.text()  # 讀取input_name
         stu_class = self.ui.input_class.text()  # 讀取 input_class
         stu_sex = self.ui.input_sex.currentText()  # 訪問下拉選單
@@ -38,7 +40,7 @@ class Stus:
         except Exception as e:
             print(f"添加學生失敗: {e}")
             QMessageBox.information(self.main_window, "失敗","學生添加失敗")
-    
+        
     def add_csv(self):
         # 彈出視窗選擇檔案
         file_name, _ =  QFileDialog.getOpenFileName(self.main_window, "選擇csv文件",'', '(*.csv)')
