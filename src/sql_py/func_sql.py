@@ -199,7 +199,19 @@ class Stus:
                 self.db.conn.rollback() # 資料庫回滾，恢復資料庫狀態，不受資料刪除失敗影響
                 print(f"刪除資料行失敗:{e}")
                 QMessageBox.information(self.main_window, "失敗",f"{stu_name}學生資料刪除失敗")
-        
+                
+    def login_stu(self, uuid):
+        stu_uuid = self.db.cursor.execute('''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''', (uuid,))
+        if stu_uuid:
+            stu_name, stu_class, stu_seat_num = stu_uuid.fetchone()
+            print(bool(stu_uuid))
+            QMessageBox.information(self.main_window, "成功",f"{stu_name}_{stu_class}_{stu_seat_num}學生登入成功")
+        else:
+            print(bool(stu_uuid))
+            QMessageBox.information(self.main_window, "失敗","學生登入失敗")
+            
+    
+            
     def stu_qrcode(self):
         button = self.ui.table_stu.sender()
         if button:

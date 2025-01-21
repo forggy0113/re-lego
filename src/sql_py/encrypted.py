@@ -1,7 +1,7 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 import base64
-
+import binascii
 import uuid
 
 class Encrypted:
@@ -27,12 +27,31 @@ class Encrypted:
         cipher = PKCS1_OAEP.new(self.public_key)
         return base64.b64encode(cipher.encrypt(data.encode())).decode()
     # 解密
+    # def decrypt(self, data):
+    #     if not self.private_key:
+    #         with open(self.private_key_path, "rb") as f:
+    #             self.private_key = RSA.import_key(f.read())
+    #     cipher = PKCS1_OAEP.new(self.private_key)
+    #     return cipher.decrypt(base64.b64decode(data)).decode()
     def decrypt(self, data):
-        if not self.private_key:
-            with open(self.private_key_path, "rb") as f:
-                self.private_key = RSA.import_key(f.read())
-        cipher = PKCS1_OAEP.new(self.private_key)
-        return cipher.decrypt(base64.b64decode(data)).decode()
+        try:
+            # 如果没有加载私钥，加载私钥
+            if not self.private_key:
+                with open(self.private_key_path, "rb") as f:
+                    self.private_key = RSA.import_key(f.read())
+            
+            # 补全Base64字符串填充
+            missing_padding = len(data) % 4
+            if missing_padding:
+                data += '=' * (4 - missing_padding)
+            
+            # 解密
+            cipher = PKCS1_OAEP.new(self.private_key)
+            decrypted_data = cipher.decrypt(base64.b64decode(data)).decode()
+            return decrypted_data
+        except (binascii.Error, ValueError, TypeError):
+            # 捕获Base64解码失败或RSA解密失败的异常
+            return None
 ## 測試加解密效果
 # test_uuid = str(uuid.uuid4())
 # print(f"原始資料: {test_uuid}")

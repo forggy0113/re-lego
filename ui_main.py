@@ -14,7 +14,7 @@ from src.sql_py.func_sql import Stus, Qrcode
 from src.sql_py.create_sql import CreateDatabase
 from ui.func.win_move_zoom import border_mouseMove, border_mousePress, border_mouseRelease, is_in_resize_area, resize_window, update_cursor, max_win
 from ui.func.win_move_zoom import mouseMoveEvent, mousePressEvent, mouseReleaseEvent
-
+from src.sql_py.encrypted import Encrypted
 
 class Login_Window(QMainWindow):
     def __init__(self):
@@ -59,6 +59,8 @@ class InterfaceWindow(QMainWindow):
         super().__init__()
         self.ui = FaceUiMainWindow()
         self.ui.setupUi(self)
+        self.create_db = CreateDatabase(db_name='test_database.db')
+        self.stu_manager = Stus(self.create_db, self.ui, main_window=self)
         ### 視窗設定 ###
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -143,9 +145,17 @@ class InterfaceWindow(QMainWindow):
             decoder_text, pts, _ = self.detector.detectAndDecode(frame)
             if decoder_text:
                 self.draw_qrcode_box(frame, pts, decoder_text)
-                print(f"Qrcode內容:{decoder_text}")
+                # print(f"Qrcode內容:{decoder_text}")
+                self.login_student(decoder_text)
             image_with_cerent = self.draw_cercent(frame)
             self.display_image(image_with_cerent)
+    
+    
+    def login_student(self, decoder_text):
+        decrypted_data = Encrypted().decrypt(decoder_text)
+        # print(f"解密後: {decrypted_data}")
+        if decrypted_data:
+            self.stu_manager.login_stu(decrypted_data)
 
     def draw_qrcode_box(self, frame, pts, decoder_text):
         if pts is not None:
