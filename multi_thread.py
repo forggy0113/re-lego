@@ -1,53 +1,47 @@
 import threading
 import time
+from ui_main import *  # 確保這裡能夠正確導入 Login_Window
+from src.sql_py.func_sql import Stus
 
 # Event object used to signal threads to start
 start_event = threading.Event()
 
-def pyqt_thread(is_logged_in):
+def pyqt_thread():
     print("First thread (pyqt_thread) is running")
-    # Simulate some work with sleep
-    time.sleep(2)
-    if is_logged_in:
-        print("Login successful in pyqt_thread")
-        start_event.set()  # Signal other threads to start
-    else:
-        print("Login failed in pyqt_thread")
+    app = QApplication(sys.argv)
+    win = InterfaceWindow()
+    win.show()
+    sys.exit(app.exec_())
+    start_event.set()
+    print("First thread (pyqt_thread) has finished work")
 
 def pygame_thread():
-    # Wait for the pyqt_thread to signal
     start_event.wait()
     print("Second thread (pygame_thread) is running")
-    # Simulate some work with sleep
-    time.sleep(2)
     print("Second thread (pygame_thread) has finished work")
 
 def cv_thread():
     start_event.wait()
     print("Third thread (cv_thread) is running")
-    # Simulate some work with sleep
-    time.sleep(2)
     print("Third thread (cv_thread) has finished work")
 
 def call_model_thread():
     start_event.wait()
     print("Fourth thread (call_model_thread) is running")
-    # Simulate some work with sleep
-    time.sleep(2)
     print("Fourth thread (call_model_thread) has finished work")
 
 # Example usage
-is_logged_in = True # Set to True or False based on the login result
+is_logged_in = True  # 這個變數目前沒有在程式中使用，可以考慮如何在程式邏輯中利用它
 
 # Create threads
-thread1 = threading.Thread(target=pyqt_thread, args=(is_logged_in,))
+thread1 = threading.Thread(target=pyqt_thread)
 thread2 = threading.Thread(target=pygame_thread)
 thread3 = threading.Thread(target=cv_thread)
 thread4 = threading.Thread(target=call_model_thread)
 
 # Start and join threads
 thread1.start()
-thread1.join()
+thread1.join()  # 等待 thread1 完成並設置事件
 
 # Start other threads after thread1 has completed
 thread2.start()

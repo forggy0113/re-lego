@@ -7,6 +7,7 @@ import os
 import qrcode
 from PIL import ImageDraw, ImageFont
 from src.sql_py.encrypted import Encrypted
+import time
 class Stus:
     def __init__(self, db, ui,main_window):  # 只接受 db 和 ui 兩個參數
         self.db = db
@@ -200,14 +201,14 @@ class Stus:
                 print(f"刪除資料行失敗:{e}")
                 QMessageBox.information(self.main_window, "失敗",f"{stu_name}學生資料刪除失敗")
                 
-    def login_stu(self, uuid):
+    def login_stu(self, uuid ):
         stu_uuid = self.db.cursor.execute('''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''', (uuid,))
         if stu_uuid:
             stu_name, stu_class, stu_seat_num = stu_uuid.fetchone()
-            print(bool(stu_uuid))
             QMessageBox.information(self.main_window, "成功",f"{stu_name}_{stu_class}_{stu_seat_num}學生登入成功")
+            time.sleep(3)
+            self.login_win.close()
         else:
-            print(bool(stu_uuid))
             QMessageBox.information(self.main_window, "失敗","學生登入失敗")
             
     

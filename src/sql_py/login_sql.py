@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timedelta
-from ui_main import teacher_window
+# from ui_main import teacher_window
 from src.sql_py.encrypted import Encrypted
 
 # 初始化 Users
