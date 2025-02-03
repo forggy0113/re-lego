@@ -1,10 +1,10 @@
-import threading
+import multiprocessing as mp
 import time
 from ui_main import *  # 確保這裡能夠正確導入 Login_Window
 from src.sql_py.func_sql import Stus
 
 # Event object used to signal threads to start
-start_event = threading.Event()
+start_event = mp.Event()
 
 def pyqt_thread():
     print("First thread (pyqt_thread) is running")
@@ -34,10 +34,10 @@ def call_model_thread():
 is_logged_in = True  # 這個變數目前沒有在程式中使用，可以考慮如何在程式邏輯中利用它
 
 # Create threads
-thread1 = threading.Thread(target=pyqt_thread)
-thread2 = threading.Thread(target=pygame_thread)
-thread3 = threading.Thread(target=cv_thread)
-thread4 = threading.Thread(target=call_model_thread)
+thread1 = mp.Process(target=pyqt_thread)
+thread2 = mp.Process(target=pygame_thread)
+thread3 = mp.Process(target=cv_thread)
+thread4 = mp.Process(target=call_model_thread)
 
 # Start and join threads
 thread1.start()
