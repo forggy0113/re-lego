@@ -535,7 +535,7 @@ background-color:#FFCD00;
             </property>
             <property name="maximumSize">
              <size>
-              <width>150</width>
+              <width>1500</width>
               <height>16777215</height>
              </size>
             </property>
@@ -1264,7 +1264,7 @@ background-color:#FCFAED;
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>250</width>
+                     <width>1000</width>
                      <height>16777215</height>
                     </size>
                    </property>

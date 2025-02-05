@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>1920</width>
-    <height>1080</height>
+    <width>19200</width>
+    <height>10800</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -195,7 +195,7 @@ border:none;
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>./icon/message.png</normaloff>./icon/message.png</iconset>
+                     <normaloff>icon/message.png</normaloff>icon/message.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
