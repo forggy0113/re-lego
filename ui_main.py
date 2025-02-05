@@ -60,7 +60,7 @@ class InterfaceWindow(QMainWindow):
         self.ui = FaceUiMainWindow()
         self.ui.setupUi(self)
         self.create_db = CreateDatabase(db_name='test_database.db')
-        self.stu_manager = Stus(self.create_db, self.ui, log_win=self)
+        self.stu_manager = Stus(self.create_db, self.ui, main_window=self)
         ### 視窗設定 ###
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
