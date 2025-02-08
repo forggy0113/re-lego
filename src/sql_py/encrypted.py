@@ -52,6 +52,7 @@ class Encrypted:
         except (binascii.Error, ValueError, TypeError):
             # 捕获Base64解码失败或RSA解密失败的异常
             return None
+
 ## 測試加解密效果
 # test_uuid = str(uuid.uuid4())
 # print(f"原始資料: {test_uuid}")

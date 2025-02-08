@@ -11,7 +11,6 @@ from sql.create_sql import CreateDataBase
 from sql.user_login import User
 from sql.student import Stus
 from sql.encrypted import Encrypted
-
 # 學生登入介面
 class Main(QMainWindow):
     def __init__(self):
@@ -19,11 +18,9 @@ class Main(QMainWindow):
         self.ui = Main_Window()
         self.ui.setupUi(self) # 設定主視窗
         self.db = CreateDataBase()
-        self.Encrypted = Encrypted(private_key_path= "./sql/private.pem", public_key_path = "./sql/public.pem")
-        self.Encrypted.generate_keys()
-        self.camera = Camera(db = self.db, ui=self.ui, main_window=self, encrypted=self.Encrypted)
-        
-        win_full(self) # 設定全螢幕
+        self.camera = Camera(db = self.db, ui=self.ui, main_window=self)
+        win_move(self)
+        # win_full(self) # 設定全螢幕
         win_no_title_bar(self) # 隱藏視窗標題欄 
         """ 初始化字體和設定字體大小"""
         init_font_size = 20 # 初始化字體大小
@@ -40,16 +37,16 @@ class Main(QMainWindow):
         self.ui.slide_font_size.setRange(10, 27)
         self.ui.slide_font_size.setValue(init_font_size)
         self.ui.slide_font_size.valueChanged.connect(lambda: self.Font.font_size_change(self.ui.slide_font_size.value()))
-
+        self.stu_camera()
+        
+    def stu_camera(self):
+        self.camera.stu_login_video()
+        
     def show_teacher_login(self): # 顯示教師登入介面
         self.teacher_login = Teacher_login()
         self.teacher_login.show()
-        
-    def stu_login_video(self):
-        self.camera.stu_login_video()
-        
-    def login_student(self):
-        self.camera.login_student()
+    
+    
 # 教師登入介面
 class Teacher_login(QMainWindow):
     def __init__(self):
