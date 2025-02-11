@@ -58,9 +58,19 @@ class Camera():
         try:
             if not self.decoder_text:
                 print("解碼後的 QR Code 內容為空")
-                QMessageBox.information(self.main_window, "錯誤", "無法讀取 QR Code")
+                
+                # 創建 QMessageBox 並自動關閉
+                msg_box = QMessageBox(self.main_window)
+                msg_box.setWindowTitle("錯誤")
+                msg_box.setText("無法讀取 QR Code \n\n  (3 秒後關閉本通知)")
+                msg_box.setStandardButtons(QMessageBox.Ok)
+
+                # 設定計時器，3 秒後自動關閉
+                QTimer.singleShot(3000, msg_box.accept)
+                
+                msg_box.exec_()
                 return
-            
+
             print(f"QR Code 原始內容: {self.decoder_text}")  # 確認 QR Code 內容
             
             decrypted_data = self.encrypted.decrypt(self.decoder_text)
@@ -68,27 +78,62 @@ class Camera():
             
             if not decrypted_data:
                 print("解密後內容為空，可能是密鑰錯誤")
-                QMessageBox.information(self.main_window, "錯誤", "無法解密 QR Code")
+                
+                msg_box = QMessageBox(self.main_window)
+                msg_box.setWindowTitle("錯誤")
+                msg_box.setText("無法解密 QR Code \n\n  (3 秒後關閉本通知)")
+                msg_box.setStandardButtons(QMessageBox.Ok)
+
+                QTimer.singleShot(3000, msg_box.accept)
+                
+                msg_box.exec_()
                 return
 
-            self.db.cursor.execute('''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''', (decrypted_data,))
+            self.db.cursor.execute(
+                '''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''', 
+                (decrypted_data,)
+            )
             stu_uuid = self.db.cursor.fetchone()
 
             if stu_uuid is None:
                 print(f"資料庫查無此 UUID: {decrypted_data}")
-                QMessageBox.information(self.main_window, "失敗", f"查無此學生，UUID={decrypted_data}")
+
+                msg_box = QMessageBox(self.main_window)
+                msg_box.setWindowTitle("失敗")
+                msg_box.setText(f"查無此學生，UUID={decrypted_data} \n\n  (3 秒後關閉本通知)")
+                msg_box.setStandardButtons(QMessageBox.Ok)
+
+                QTimer.singleShot(3000, msg_box.accept)
+
+                msg_box.exec_()
                 return
 
             stu_name, stu_class, stu_seat_num = stu_uuid
-            QMessageBox.information(self.main_window, "成功", f"{stu_name}_{stu_class}_{stu_seat_num} 學生登入成功")
 
-            time.sleep(3)
-            self.closeEvent()
+            # 成功登入訊息
+            msg_box = QMessageBox(self.main_window)
+            msg_box.setWindowTitle("成功")
+            msg_box.setText(f"{stu_name}_{stu_class}_{stu_seat_num} 學生登入成功 \n\n  (3 秒後啟動遊戲)")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+
+            QTimer.singleShot(3000, msg_box.accept)
+
+            msg_box.exec_()
+
+            # 關閉視窗
             self.main_window.close()
 
         except Exception as e:
-            QMessageBox.information(self.main_window, "錯誤", f"學生登入發生錯誤: {e}")
             print(f"登入失敗={e}")
+
+            msg_box = QMessageBox(self.main_window)
+            msg_box.setWindowTitle("錯誤")
+            msg_box.setText(f"學生登入發生錯誤: {e} \n\n  (3 秒後關閉本通知)")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+
+            QTimer.singleShot(3000, msg_box.accept)
+
+            msg_box.exec_()
             
     def draw_qrcode_box(self, frame, pts):
         if pts is not None:
