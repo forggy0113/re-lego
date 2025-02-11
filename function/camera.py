@@ -54,6 +54,7 @@ class Camera():
             self.display_image(image_with_crosshair) # opencv轉換成Qpixmap
             
     def login_student(self):
+        countdown_sec = 5
         """解密 QR Code 內容，並嘗試登入"""
         try:
             if not self.decoder_text:
@@ -62,11 +63,11 @@ class Camera():
                 # 創建 QMessageBox 並自動關閉
                 msg_box = QMessageBox(self.main_window)
                 msg_box.setWindowTitle("錯誤")
-                msg_box.setText("無法讀取 QR Code \n\n  (3 秒後關閉本通知)")
+                msg_box.setText(f"無法讀取 QR Code \n\n  ({countdown_sec} 秒後關閉本通知)")
                 msg_box.setStandardButtons(QMessageBox.Ok)
 
                 # 設定計時器，3 秒後自動關閉
-                QTimer.singleShot(3000, msg_box.accept)
+                QTimer.singleShot(countdown_sec*1000, msg_box.accept)
                 
                 msg_box.exec_()
                 return
@@ -81,10 +82,10 @@ class Camera():
                 
                 msg_box = QMessageBox(self.main_window)
                 msg_box.setWindowTitle("錯誤")
-                msg_box.setText("無法解密 QR Code \n\n  (3 秒後關閉本通知)")
+                msg_box.setText(f"無法解密 QR Code \n\n  ({countdown_sec} 秒後關閉本通知)")
                 msg_box.setStandardButtons(QMessageBox.Ok)
 
-                QTimer.singleShot(3000, msg_box.accept)
+                QTimer.singleShot(countdown_sec*1000, msg_box.accept)
                 
                 msg_box.exec_()
                 return
@@ -100,10 +101,10 @@ class Camera():
 
                 msg_box = QMessageBox(self.main_window)
                 msg_box.setWindowTitle("失敗")
-                msg_box.setText(f"查無此學生，UUID={decrypted_data} \n\n  (3 秒後關閉本通知)")
+                msg_box.setText(f"查無此學生，UUID={decrypted_data} \n\n  ({countdown_sec} 秒後關閉本通知)")
                 msg_box.setStandardButtons(QMessageBox.Ok)
 
-                QTimer.singleShot(3000, msg_box.accept)
+                QTimer.singleShot(countdown_sec*1000, msg_box.accept)
 
                 msg_box.exec_()
                 return
@@ -113,10 +114,10 @@ class Camera():
             # 成功登入訊息
             msg_box = QMessageBox(self.main_window)
             msg_box.setWindowTitle("成功")
-            msg_box.setText(f"{stu_name}_{stu_class}_{stu_seat_num} 學生登入成功 \n\n  (3 秒後啟動遊戲)")
+            msg_box.setText(f"{stu_name}_{stu_class}_{stu_seat_num} 學生登入成功 \n\n  ({countdown_sec} 秒後啟動遊戲)")
             msg_box.setStandardButtons(QMessageBox.Ok)
 
-            QTimer.singleShot(3000, msg_box.accept)
+            QTimer.singleShot(countdown_sec*1000, msg_box.accept)
 
             msg_box.exec_()
 
@@ -128,10 +129,10 @@ class Camera():
 
             msg_box = QMessageBox(self.main_window)
             msg_box.setWindowTitle("錯誤")
-            msg_box.setText(f"學生登入發生錯誤: {e} \n\n  (3 秒後關閉本通知)")
+            msg_box.setText(f"學生登入發生錯誤: {e} \n\n  ({countdown_sec} 秒後關閉本通知)")
             msg_box.setStandardButtons(QMessageBox.Ok)
 
-            QTimer.singleShot(3000, msg_box.accept)
+            QTimer.singleShot(countdown_sec*1000, msg_box.accept)
 
             msg_box.exec_()
             
