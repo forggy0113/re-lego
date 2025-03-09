@@ -7,9 +7,10 @@ import numpy as np
 import time
 import pygame
 import sys
+from ffpyplayer.player import MediaPlayer
 
 class Pygame_display:
-    def __init__(self, width=640, height=640):
+    def __init__(self, width=1920, height=1080):
         pygame.init()
         self.width = width
         self.height = height
@@ -52,11 +53,11 @@ def load_class(name_path):
         return [line.strip() for line in f]
 
 def main():
-    class_name_path = r'C:\Users\Ada\Desktop\yolov7_opencv\class_lego.txt'
+    class_name_path = 'yolov7_opencv\class_lego.txt'
     class_names = load_class(class_name_path)
 
     # 指定模型權重路徑
-    weights_path = r'C:\Users\Ada\Desktop\yolov7_opencv\yolov7-main\best.pt'
+    weights_path = r'yolov7_opencv\yolov7-main\best.pt'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if 'cuda':
         print('cuda可用')
@@ -67,7 +68,7 @@ def main():
     model.eval()  # 設置為推理模式
 
     print('模型加載完成')
-
+    
     visualizer = Pygame_display()  # 創建yolov7視覺化
     # 開啟攝影機
     cap = cv2.VideoCapture(0)
@@ -143,3 +144,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+        
