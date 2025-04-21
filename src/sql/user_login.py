@@ -157,7 +157,7 @@ class User:
 
     def switch_to_teacher_window(self):
         """登入成功後，切換至教師介面"""
-        from main import Teacher_mode  # 避免循環導入，延遲加載模組
+        from qt import Teacher_mode  # 避免循環導入，延遲加載模組
         self.win = Teacher_mode()
         self.win.show()
         self.main_window.close() # 關閉主窗口

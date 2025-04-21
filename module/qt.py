@@ -11,6 +11,7 @@ from sql.create_sql import CreateDataBase
 from sql.user_login import User
 from sql.student import Stus
 from sql.encrypted import Encrypted
+
 # 學生登入介面
 class Main(QMainWindow):
     def __init__(self):
