@@ -1,16 +1,19 @@
-from ui.Ui_main import Ui_MainWindow as Main_Window
-from ui.Ui_login_resigert import Ui_MainWindow as Login_Resigert_Window
-from ui.Ui_teacher_mode import Ui_MainWindow as Teacher_Mode_Window
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from src.ui.Ui_main import Ui_MainWindow as Main_Window
+from src.ui.Ui_login_resigert import Ui_MainWindow as Login_Resigert_Window
+from src.ui.Ui_teacher_mode import Ui_MainWindow as Teacher_Mode_Window
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QFont
-import sys
-from func.window_change import *
-from func.font_change import Font
-from func.camera import Camera
-from sql.create_sql import CreateDataBase
-from sql.user_login import User
+from src.func.window_change import *
+from src.func.font_change import Font
+from src.func.camera import Camera
+from src.sql.create_sql import CreateDataBase
+from src.sql.user_login import User
 from sql.student import Stus
-from sql.encrypted import Encrypted
+from src.sql.encrypted import Encrypted
 
 # 學生登入介面
 class Main(QMainWindow):
@@ -80,7 +83,7 @@ class Teacher_mode(QMainWindow):
         win_no_title_bar(self) # 隱藏視窗標題欄
         win_resize(self) # 設定視窗縮放
         
-        self.Encrypted = Encrypted(private_key_path= "./sql/private.pem", public_key_path = "./sql/public.pem")
+        self.Encrypted = Encrypted(private_key_path= "./src/sql/private.pem", public_key_path = "./src/sql/public.pem")
         # self.Encrypted.generate_keys()
         
         self.db = CreateDataBase()
@@ -93,15 +96,10 @@ class Teacher_mode(QMainWindow):
         self.ui.min_button.clicked.connect(self.showMinimized) # 最小化視窗
         self.ui.max_button.clicked.connect(lambda: max_win(self)) # 放大視窗
         ### 切換菜單頁面 ###
-        # self.ui.database_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
         self.ui.database_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
-        # self.ui.analytics_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
         self.ui.analytics_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
-        # self.ui.setting_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
         self.ui.setting_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
-        # self.ui.home_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
         self.ui.home_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
-        # self.ui.release_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
         self.ui.release_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
         ### 切換新增學生頁面 ###
         self.ui.btn_create_data.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(0))

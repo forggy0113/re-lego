@@ -2,28 +2,43 @@ import cv2
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QLabel, QMessageBox
-import time
-from sql.encrypted import Encrypted
+import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from sql.encrypted import Encrypted
 
 class Camera():
     def __init__(self, db,ui, main_window):
+        """
+        初始化攝影機登入控制器。
+
+        Args:
+            db (sqlite3.Connection): 資料庫連線物件。
+            ui (object): PyQt5 介面物件，需含 QLabel。
+            main_window (QMainWindow): PyQt 主視窗實體，用於彈窗與關閉。
+        """
         self.ui = ui
         self.db = db
-        self.cap = None  # 初始化攝影機
-        self.decoder_text = None
-        self.timer = QTimer()
-        # self.encrypted = encrypted
         self.main_window = main_window
+        # ----攝影機初始化------
+        self.cap = None  # 初始化攝影機
+        self.decoder_text = None # 儲存目前偵測到的qrcode解碼後文字 
+        self.timer = QTimer() # 計時器
         self.timer.timeout.connect(self.update_frame)
-        self.timer.start(30)
-        self.encrypted = Encrypted(private_key_path= "./sql/private.pem", public_key_path = "./sql/public.pem")
-        if not os.path.exists("./sql/private.pem") or not os.path.exists("./sql/public.pem"):
+        self.logged_in = False 
+        # self.timer.start(30)
+        # ----加解密初始化-------
+        self.encrypted = Encrypted(private_key_path= "./src/sql/private.pem", public_key_path = "./src/sql/public.pem")
+        if not os.path.exists("./src/sql/private.pem") or not os.path.exists("./src/sql/public.pem"):
             self.encrypted.generate_keys()
 
         
     def stu_login_video(self):
-        """ 初始化攝影機，並開啟時器讀取一幀 """
+        """ 
+        開啟攝影機並啟動畫面更新，30 FPS
+        Returns:
+          None
+        """
         self.cap = cv2.VideoCapture(0)
         if not self.cap.isOpened():
             print("無法開啟攝影機！")
@@ -35,114 +50,136 @@ class Camera():
         
         self.video_label = self.ui.label
         self.detector = cv2.QRCodeDetector() # qrcode解碼器
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_frame)
+        # self.timer.timeout.connect(self.update_frame)
         self.timer.start(30) # 每30每30
 
     def update_frame(self):
-        """ 讀取攝影機，並檢測qrcode """
+        """
+        每幀更新：讀取攝影機畫面、解析 QRCode、執行登入流程。
+
+        Returns:
+            None
+        """
+        self.logged_in = False
+
         if not self.cap or not self.cap.isOpened():
-            return
-        
+                    return
         ret, frame = self.cap.read()
-        if ret:
-            self.decoder_text, pts, _ = self.detector.detectAndDecode(frame)
-            if self.decoder_text:
-                self.draw_qrcode_box(frame, pts)
-                self.login_student()
-            image_with_crosshair = self.draw_cercent(frame)
-            self.display_image(image_with_crosshair) # opencv轉換成Qpixmap
+
+        if not ret:
+            return  # 若無法讀取影像，直接返回
+
+        # 解碼 QR Code
+        self.decoder_text, pts, _ = self.detector.detectAndDecode(frame)
+
+        # 若尚未登入，且成功解碼 QR Code，就執行登入與畫框
+        if not self.logged_in and self.decoder_text:
+            self.draw_qrcode_box(frame, pts)
+            self.login_student()
+
+        # 在畫面中央繪製十字準心輔助對齊
+        frame_with_cross = self.draw_cercent(frame)
+
+        # 將畫面轉為 QPixmap 並顯示到 PyQt 的 QLabel 中
+        self.display_image(frame_with_cross)
+
+
             
     def login_student(self):
-        countdown_sec = 5
-        """解密 QR Code 內容，並嘗試登入"""
+        """
+        嘗試根據解碼後的 QR Code 內容，進行學生登入檢查流程。
+        
+        流程邏輯：
+        1. 檢查 QR Code 解碼結果是否存在。
+        2. 使用 Encrypted 類別解密 QR Code 資料。
+        3. 用解密後的 UUID 查詢資料庫。
+        4. 若查無資料或解密失敗，顯示錯誤訊息。
+        5. 若成功登入，顯示成功訊息並可選擇關閉應用程式或切換頁面。
+
+        Returns:
+            None
+        """
+        if self.logged_in:
+            return # 已經登入就不再重複登入
+            
+        countdown_sec = 5  # 顯示訊息的倒數秒數
+
         try:
+            # === 1. 檢查是否成功解碼 QR Code ===
             if not self.decoder_text:
                 print("解碼後的 QR Code 內容為空")
-                
-                # 創建 QMessageBox 並自動關閉
-                msg_box = QMessageBox(self.main_window)
-                msg_box.setWindowTitle("錯誤")
-                msg_box.setText(f"無法讀取 QR Code \n\n  ({countdown_sec} 秒後關閉本通知)")
-                msg_box.setStandardButtons(QMessageBox.Ok)
-
-                # 設定計時器，3 秒後自動關閉
-                QTimer.singleShot(countdown_sec*1000, msg_box.accept)
-                
-                msg_box.exec_()
+                self.show_message("錯誤", "無法讀取 QR Code", countdown_sec)
                 return
 
-            print(f"QR Code 原始內容: {self.decoder_text}")  # 確認 QR Code 內容
-            
+            print(f"QR Code 原始內容: {self.decoder_text}")
+
+            # === 2. 嘗試使用私鑰解密 QR Code 內容 ===
             decrypted_data = self.encrypted.decrypt(self.decoder_text)
-            print(f"解密後的內容: {decrypted_data}")  # 確認解密結果
-            
-            if not decrypted_data:
-                print("解密後內容為空，可能是密鑰錯誤")
-                
-                msg_box = QMessageBox(self.main_window)
-                msg_box.setWindowTitle("錯誤")
-                msg_box.setText(f"無法解密 QR Code \n\n  ({countdown_sec} 秒後關閉本通知)")
-                msg_box.setStandardButtons(QMessageBox.Ok)
+            print(f"解密後的內容: {decrypted_data}")
 
-                QTimer.singleShot(countdown_sec*1000, msg_box.accept)
-                
-                msg_box.exec_()
+            if not decrypted_data:
+                # 若解密失敗（空字串），可能是密鑰錯誤或 QR Code 被竄改
+                self.show_message("錯誤", "無法解密 QR Code", countdown_sec)
                 return
 
+            # === 3. 查詢資料庫是否存在該 UUID ===
             self.db.cursor.execute(
-                '''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''', 
+                '''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''',
                 (decrypted_data,)
             )
             stu_uuid = self.db.cursor.fetchone()
 
             if stu_uuid is None:
+                # 查無此學生
                 print(f"資料庫查無此 UUID: {decrypted_data}")
-
-                msg_box = QMessageBox(self.main_window)
-                msg_box.setWindowTitle("失敗")
-                msg_box.setText(f"查無此學生，UUID={decrypted_data} \n\n  ({countdown_sec} 秒後關閉本通知)")
-                msg_box.setStandardButtons(QMessageBox.Ok)
-
-                QTimer.singleShot(countdown_sec*1000, msg_box.accept)
-
-                msg_box.exec_()
+                self.show_message("失敗", f"查無此學生，UUID={decrypted_data}", countdown_sec)
                 return
 
+            # === 4. 登入成功，取得學生資訊 ===
             stu_name, stu_class, stu_seat_num = stu_uuid
 
-            # 成功登入訊息
-            msg_box = QMessageBox(self.main_window)
-            msg_box.setWindowTitle("成功")
-            msg_box.setText(f"{stu_name}_{stu_class}_{stu_seat_num} 學生登入成功 \n\n  ({countdown_sec} 秒後啟動遊戲)")
-            msg_box.setStandardButtons(QMessageBox.Ok)
+            # ✅ 成功後顯示訊息，並執行後續動作（如關閉程式）
 
-            QTimer.singleShot(countdown_sec*1000, msg_box.accept)
-
-            msg_box.exec_()
-
-            # 關閉視窗
-            self.main_window.close()
+            self.show_message(
+                "成功",
+                f"{stu_name}_{stu_class}_{stu_seat_num} 登入成功",
+                countdown_sec,
+                on_finish=self.exit_app  # 這裡可以替換成 go_to_game_ui 之類的方法
+            )
 
         except Exception as e:
-            print(f"登入失敗={e}")
+            # 捕捉任何例外錯誤，顯示錯誤訊息
+            print(f"登入失敗: {e}")
+            self.show_message("錯誤", f"登入失敗：{e}", countdown_sec)
 
-            msg_box = QMessageBox(self.main_window)
-            msg_box.setWindowTitle("錯誤")
-            msg_box.setText(f"學生登入發生錯誤: {e} \n\n  ({countdown_sec} 秒後關閉本通知)")
-            msg_box.setStandardButtons(QMessageBox.Ok)
-
-            QTimer.singleShot(countdown_sec*1000, msg_box.accept)
-
-            msg_box.exec_()
-            
     def draw_qrcode_box(self, frame, pts):
-        if pts is not None:
+        """
+        在 QRCode 周圍畫出紅色邊框。
+
+        Args:
+            frame (np.ndarray): 攝影機畫面。
+            pts (np.ndarray): QR code 四角點座標。
+
+        Returns:
+            None
+        """
+        if pts is None or len(pts) == 0:
+            return
+
+        try:
             pts = pts[0].astype(int).reshape((-1, 1, 2))
-            cv2.polylines(frame, [pts], isClosed=True, color=(0, 0, 255), thickness=2)
-            cv2.putText(frame, self.decoder_text, (pts[0][0][0], pts[0][0][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            if pts.shape[0] >= 3:  # 至少要 3 點才可構成多邊形
+                cv2.polylines(frame, [pts], isClosed=True, color=(0, 0, 255), thickness=2)
+                cv2.putText(frame, self.decoder_text, (pts[0][0][0], pts[0][0][1] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        except Exception as e:
+            print(f"⚠️ 繪製 QRCode 邊框失敗: {e}")
 
     def draw_cercent(self, image):
+        """
+        繪製白色定位十字線
+        Return: image 給 update_frame
+        """
         height, width, _ = image.shape
         center_x, center_y = width // 2, height // 2
         cv2.line(image, (0, center_y), (width, center_y), (255, 255, 255), 2)
@@ -150,54 +187,54 @@ class Camera():
         return image
 
     def display_image(self, image):
+        """
+        將 OpenCV 畫面轉為 QPixmap 並顯示於介面。
+
+        Args:
+            image (np.ndarray): BGR 格式的 OpenCV 畫面。
+
+        Returns:
+            None
+        """
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
         bytes_per_line = ch * w
         qimg = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
         self.video_label.setPixmap(QPixmap.fromImage(qimg))
 
-    def closeEvent(self):
-        self.cap.release()
-    # def draw_qrcode_box(self, frame, pts):
-    #     """ 在qrcode周圍繪製紅色邊框 """
-    #     if pts is not None:
-    #         pts = pts[0].astype(int).reshape((-1, 1, 2))
-    #         cv2.polylines(frame, [pts], isClosed=True, color=(0, 0, 255), thickness=2)
-    #         cv2.putText(frame, self.decoder_text, (pts[0][0][0], pts[0][0][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-    # def draw_crosshair(self, image):
-    #     """在畫面中心繪製十字線"""
-    #     height, width, _ = image.shape
-    #     center_x, center_y = width // 2, height // 2
-    #     cv2.line(image, (0, center_y), (width, center_y), (255, 255, 255), 2)
-    #     cv2.line(image, (center_x, 0), (center_x, height), (255, 255, 255), 2)
-    #     return image
+    def show_message(self, title, text, countdown_sec=5, on_finish=None):
+        """
+        顯示倒數提示視窗，可指定倒數後的操作（如關閉程式）。
 
-    # def display_image(self, image):
-    #     """將 OpenCV 圖像轉換為 QPixmap 並顯示"""
-    #     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    #     h, w, ch = rgb_image.shape
-    #     bytes_per_line = ch * w
-    #     qimg = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
-    #     self.video_label.setPixmap(QPixmap.fromImage(qimg))
+        Args:
+            title (str): QMessageBox 標題
+            text (str): 顯示文字
+            countdown_sec (int): 倒數秒數
+            on_finish (Callable): 倒數後要執行的函式（可為 None）
+        """
+        msg_box = QMessageBox(self.main_window)
+        msg_box.setWindowTitle(title)
+        msg_box.setText(f"{text}\n\n({countdown_sec} 秒後自動關閉)")
+        msg_box.setStandardButtons(QMessageBox.Ok)
 
-    # def release_camera(self):
-    #     """ 釋放攝影機資源 """
-    #     if self.cap and self.cap.isOpened():
-    #         self.cap.release()
-    #         print("攝像機已釋放！")
-            
-    # """確保攝影機被釋放"""
-    # def __del__(self):
-    #     self.release_camera()
+        def close_and_continue():
+            msg_box.accept()
+            if callable(on_finish):
+                on_finish()
+
+        QTimer.singleShot(countdown_sec * 1000, close_and_continue)
+        msg_box.exec_()
     
+    def release_camera(self):
+        if self.cap and self.cap.isOpened():
+            self.cap.release()
+
     
-    # def login_stu(self):
-    #     stu_uuid = self.db.cursor.execute('''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''', (uuid,))
-    #     if stu_uuid:
-    #         stu_name, stu_class, stu_seat_num = stu_uuid.fetchone()
-    #         QMessageBox.information(self.main_window, "成功",f"{stu_name}_{stu_class}_{stu_seat_num}學生登入成功")
-    #         time.sleep(3)
-    #         self.main_window.close()
-    #     else:
-    #         QMessageBox.information(self.main_window, "失敗","學生登入失敗")
+    def exit_app(self):
+        """
+        關閉整個 PyQt 應用程式。
+        """
+        self.release_camera()
+        from PyQt5.QtWidgets import QApplication
+        QApplication.quit()

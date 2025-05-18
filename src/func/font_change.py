@@ -8,8 +8,8 @@ class Font:
         self.ui = ui # 當前窗口
         self.init_font_size = init_font_size
         # 定義字體
-        self.font_id_1 = QFontDatabase.addApplicationFont("./ui/font/BpmfGenSenRounded-R.ttf")
-        self.font_id_2 = QFontDatabase.addApplicationFont("./ui/font/FakePearl-Regular.ttf")
+        self.font_id_1 = QFontDatabase.addApplicationFont("src/ui/font/BpmfGenSenRounded-R.ttf")
+        self.font_id_2 = QFontDatabase.addApplicationFont("src/ui/font/FakePearl-Regular.ttf")
         if self.font_id_1 == -1:
             print("無法加載字體1")
         if self.font_id_2 == -1:
@@ -17,6 +17,11 @@ class Font:
         # 獲取字體資料庫
         self.font_family_1 = QFontDatabase.applicationFontFamilies(self.font_id_1)
         self.font_family_2 = QFontDatabase.applicationFontFamilies(self.font_id_2)
+        if self.font_family_1:
+            self.font = QFont(self.font_family_1[0], self.init_font_size)
+        else:
+            self.font = QFont("Arial", self.init_font_size)  # fallback
+    
         
     
     def font_all_change(self, font):
