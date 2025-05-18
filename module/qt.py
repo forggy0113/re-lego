@@ -93,15 +93,15 @@ class Teacher_mode(QMainWindow):
         self.ui.min_button.clicked.connect(self.showMinimized) # 最小化視窗
         self.ui.max_button.clicked.connect(lambda: max_win(self)) # 放大視窗
         ### 切換菜單頁面 ###
-        self.ui.database_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
+        # self.ui.database_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
         self.ui.database_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
-        self.ui.analytics_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
+        # self.ui.analytics_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
         self.ui.analytics_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
-        self.ui.setting_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
+        # self.ui.setting_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
         self.ui.setting_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
-        self.ui.home_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
+        # self.ui.home_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
         self.ui.home_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
-        self.ui.release_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
+        # self.ui.release_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
         self.ui.release_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
         ### 切換新增學生頁面 ###
         self.ui.btn_create_data.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(0))
