@@ -39,34 +39,32 @@ class CreateDataBase:
                                 PRIMARY KEY (user_uuid, stu_uuid),
                                 FOREIGN KEY (user_uuid) REFERENCES Users(user_uuid),
                                 FOREIGN KEY (stu_uuid) REFERENCES Students(stu_uuid))''')
-        # 創建模型資料表
-        self.cursor.execute('''
-                            CREATE TABLE IF NOT EXISTS Model(
-                                model_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                model_name TEXT NOT NULL,
-                                model_path TEXT NOT NULL,
-                                model_parameter TEXT NOT NULL,
-                                model_date TIMESTAMP NOT NULL)''')
-        # 創建腳本資料表
-        self.cursor.execute('''
-                            CREATE TABLE IF NOT EXISTS Script(
-                                script_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                script_name TEXT NOT NULL,
-                                script_brick_path TEXT NOT NULL,
-                                script_date TIMESTAMP NOT NULL)''')
+        # # 創建模型資料表
+        # self.cursor.execute('''
+        #                     CREATE TABLE IF NOT EXISTS Model(
+        #                         model_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        #                         model_name TEXT NOT NULL,
+        #                         model_path TEXT NOT NULL,
+        #                         model_parameter TEXT NOT NULL,
+        #                         model_date TIMESTAMP NOT NULL)''')
+        # # 創建腳本資料表
+        # self.cursor.execute('''
+        #                     CREATE TABLE IF NOT EXISTS Script(
+        #                         script_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        #                         script_name TEXT NOT NULL,
+        #                         script_brick_path TEXT NOT NULL,
+        #                         script_date TIMESTAMP NOT NULL)''')
         # 創建學生練習資料表
         self.cursor.execute('''
                             CREATE TABLE IF NOT EXISTS Practice(
                                 practice_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                stu_name stu_name TEXT NOT NULL,
                                 stu_uuid INTEGER NOT NULL,
-                                model_id INTEGER NOT NULL,
-                                script_id INTEGER NOT NULL,
-                                score INTEGER NOT NULL,
+                                game_time INTEGER NOT NULL,
                                 practice_start_date TIMESTAMP NOT NULL,
                                 practice_end_date TIMESTAMP NOT NULL,
-                                FOREIGN KEY (stu_uuid) REFERENCES Students(stu_uuid),
-                                FOREIGN KEY (model_id) REFERENCES Model(model_id),
-                                FOREIGN KEY (script_id) REFERENCES Script(script_id))''')
+                                FOREIGN KEY (stu_name) REFERENCES Students(stu_name)
+                                FOREIGN KEY (stu_uuid) REFERENCES Students(stu_uuid))''')
         
         
         self.conn.commit() # 提交數據庫

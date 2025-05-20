@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>720</height>
+    <height>751</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -762,7 +762,7 @@ color:white;
 #btn_import_excel:check{
 border:none;
 border-radius :6px;
-background-color:#387478c;
+background-color:#387478;
 color:white;
 
 }</string>
@@ -924,31 +924,6 @@ QToolButton {
                          </size>
                         </property>
                        </spacer>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="txt_search_stu">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>30</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>500</width>
-                          <height>60</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微軟正黑體</family>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="placeholderText">
-                         <string>搜尋學生</string>
-                        </property>
-                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_4">
@@ -1538,11 +1513,30 @@ QLineEdit{
                     </font>
                    </property>
                    <property name="text">
-                    <string>學習分析</string>
+                    <string>學習紀錄</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignCenter</set>
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                    </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QTableWidget" name="table_game">
+                   <property name="font">
+                    <font>
+                     <pointsize>20</pointsize>
+                    </font>
+                   </property>
+                   <column>
+                    <property name="text">
+                     <string>姓名</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>遊玩時間</string>
+                    </property>
+                   </column>
                   </widget>
                  </item>
                 </layout>
