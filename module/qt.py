@@ -76,7 +76,7 @@ class Teacher_login(QMainWindow):
         self.Font.font_change_size_force(font)
         
 class Teacher_mode(QMainWindow):
-    def __init__(self):
+    def __init__(self, user_uuid):
         super().__init__()
         self.ui = Teacher_Mode_Window()
         self.ui.setupUi(self)
@@ -106,17 +106,17 @@ class Teacher_mode(QMainWindow):
         self.ui.btn_create_file.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(1))
         
         """ 學生資料管理功能 """
-        self.stu_manager = Stus(self.db, self.ui, main_window=self, encrypted=self.Encrypted, folder_path='./qrcode')
+        self.stu_manager = Stus(self.db, self.ui, main_window=self, encrypted=self.Encrypted, folder_path='./qrcode', teacher_uuid=user_uuid)
         ## 連接保存和刪除按鈕
         self.ui.btn_save.clicked.connect(self.add_stu_data)
         self.ui.btn_trash.clicked.connect(lambda: self.stu_manager.clear_edit())
-        self.update_student_display()
+        # self.update_student_display()
         self.ui.btn_download_file.clicked.connect(lambda: self.stu_manager.create_download_csv())
         self.ui.btn_import_csvfile.clicked.connect(self.add_csv_data)
-        self.update_student_display()
         self.ui.btn_import_qrcode.clicked.connect(lambda: self.stu_manager.all_qrcode())
         self.ui.btn_filter.clicked.connect(lambda: self.stu_manager.filter_stu())
-        
+        # 初次載入資料
+        self.update_student_display()
     def add_stu_data(self):
         self.stu_manager.add_stu()
         self.stu_manager.clear_edit()
@@ -131,8 +131,8 @@ class Teacher_mode(QMainWindow):
         self.stu_manager.load_class()
         self.stu_manager.display_students()
         
-    def delect_stu_row(self):
-        self.stu_manager.delect_student_row()
+    # def delect_stu_row(self):
+    #     self.stu_manager.delect_student_row()
 
     
 if __name__ == '__main__':

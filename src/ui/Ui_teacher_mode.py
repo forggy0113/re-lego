@@ -466,13 +466,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.widget)
         self.widget_2 = QtWidgets.QWidget(self.page_database)
         self.widget_2.setMinimumSize(QtCore.QSize(250, 0))
-        self.widget_2.setMaximumSize(QtCore.QSize(1000, 16777215))
+        self.widget_2.setMaximumSize(QtCore.QSize(300, 16777215))
         self.widget_2.setObjectName("widget_2")
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.widget_2)
         self.horizontalLayout_10.setContentsMargins(5, 5, 5, 5)
         self.horizontalLayout_10.setSpacing(5)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.stack_create_data = QtWidgets.QStackedWidget(self.widget_2)
+        self.stack_create_data.setMaximumSize(QtCore.QSize(300, 16777215))
         self.stack_create_data.setStyleSheet("\n"
 "QToolButton {\n"
 "    border: none; /* 去掉邊框 */\n"

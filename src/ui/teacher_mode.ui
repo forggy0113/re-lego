@@ -1035,7 +1035,7 @@ background-color:#FCFAED;
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>1000</width>
+                     <width>300</width>
                      <height>16777215</height>
                     </size>
                    </property>
@@ -1057,6 +1057,12 @@ background-color:#FCFAED;
                     </property>
                     <item>
                      <widget class="QStackedWidget" name="stack_create_data">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true">
 QToolButton {

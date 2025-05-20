@@ -30,19 +30,15 @@ class CreateDataBase:
                                 Login_time TIMESTAMP,
                                 Logout_time TIMESTAMP,
                                 create_date TIMESTAMP)''')
-        # 創建權限資料表
-        self.cursor.execute('''
-                            CREATE TABLE IF NOT EXISTS Permissions(
-                                permission_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                action TEXT NOT NULL)''')
+
         # 創建使用者權限資料表
         self.cursor.execute('''
-                            CREATE TABLE IF NOT EXISTS User_permissions(
-                                permission_id INTEGER,
-                                uuid TEXT,
-                                PRIMARY KEY (uuid, permission_id),
-                                FOREIGN KEY (uuid) REFERENCES Users(user_id),
-                                FOREIGN KEY (permission_id) REFERENCES Permissions(permission_id))''')
+                            CREATE TABLE IF NOT EXISTS Teacher_Student(
+                                user_uuid NOT NULL,
+                                stu_uuid NOT NULL,
+                                PRIMARY KEY (user_uuid, stu_uuid),
+                                FOREIGN KEY (user_uuid) REFERENCES Users(user_uuid),
+                                FOREIGN KEY (stu_uuid) REFERENCES Students(stu_uuid))''')
         # 創建模型資料表
         self.cursor.execute('''
                             CREATE TABLE IF NOT EXISTS Model(

@@ -1,22 +1,22 @@
 from PyQt5.QtWidgets import QFileDialog, QMessageBox,QPushButton
 from PyQt5 import QtWidgets,QtGui, QtCore
-import sqlite3
 import uuid
 import pandas as pd
 import os
 import qrcode
 from PIL import ImageDraw, ImageFont
-from sql.encrypted import Encrypted
-import time
+
 class Stus:
-    def __init__(self, db, ui,main_window, encrypted, folder_path):  # 只接受 db 和 ui 兩個參數
+    def __init__(self, db, ui,main_window, encrypted, folder_path, teacher_uuid):  # 只接受 db 和 ui 兩個參數
         self.db = db
         self.ui = ui
         self.main_window = main_window
         self.encrypted = encrypted
         self.folder_path = folder_path
-        
+        self.teacher_uuid = teacher_uuid
+
     def add_stu(self):
+        """添加學生"""
         stu_uuid = str(uuid.uuid4())  # 生成唯一的學生 ID
         stu_qr_uuid =  self.encrypted.encrypt(stu_uuid) # 加密uuid
         stu_name = self.ui.input_name.text()  # 讀取input_name
@@ -26,7 +26,8 @@ class Stus:
         try:
             if self.ui.input_seat_number.text():
                 stu_seat_num = int(self.ui.input_seat_number.text())
-            else: 0  # 默認座號為0
+            else: 
+                stu_seat_num = 0  # 默認座號為0
         except ValueError:
             stu_seat_num = 0  # 如果輸入無效，默認為0
             print("座位號無效，默認值 0")
@@ -36,6 +37,8 @@ class Stus:
             self.db.cursor.execute('''
             INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, stu_qr_uuid, in_date) VALUES (?, ?, ?, ?, ?,?, datetime('now'))
             ''', (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, stu_qr_uuid))
+            self.db.cursor.execute('''INSERT INTO Teacher_Student (user_uuid, stu_uuid) VALUES (?,?)''',
+                                   (self.teacher_uuid, stu_uuid))
             self.db.conn.commit()
             QMessageBox.information(self.main_window, "成功","學生添加成功")
         except Exception as e:
@@ -43,6 +46,7 @@ class Stus:
             QMessageBox.information(self.main_window, "失敗","學生添加失敗")
         
     def add_csv(self):
+        """添加學生_批量"""
         # 彈出視窗選擇檔案
         file_name, _ =  QFileDialog.getOpenFileName(self.main_window, "選擇csv文件",'', '(*.csv)')
         if file_name:
@@ -56,12 +60,15 @@ class Stus:
                 if 'stu_uuid' not in df.columns:
                     df['stu_uuid'] = [str(uuid.uuid4()) for _ in range(len(df))]
                     df['stu_qr_uuid'] = [self.encrypted.encrypt(uuid) for uuid in df['stu_uuid']]
-
+                # 建立與老師的關聯關係
+                relations = [(self.teacher_uuid, uid) for uid in df['stu_uuid']]
                 # 批量插入數據
                 self.db.cursor.executemany('''
-                                           INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid,stu_qr_uuid, in_date)
-                                           VALUES (?, ?, ?, ?, ?, datetime('now'))
+                                           INSERT INTO Students (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, stu_qr_uuid, in_date)
+                                           VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
                                            ''', df[['stu_class', 'stu_sex', 'stu_seat_num', 'stu_name', 'stu_uuid', 'stu_qr_uuid']].values.tolist())
+                self.db.cursor.executemany('''INSERT INTO Teacher_Student (user_uuid, stu_uuid) VALUES (?,?)'''
+                                           , relations)
                 self.db.conn.commit()
                 QMessageBox.information(self.main_window, "成功","學生添加成功")
             except Exception as e:
@@ -77,340 +84,186 @@ class Stus:
     
 
     def display_students(self):
-        self.ui.table_stu.setRowCount(0)  # 清空現有行
-        # 從資料庫獲取學生資料
+        """
+        顯示目前登入老師所屬學生資料。
+        包含 stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, stu_id。
+        呼叫 render_table() 顯示。
+        """
         try:
-            self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name FROM Students")
+            self.db.cursor.execute('''
+                SELECT s.stu_class, s.stu_sex, s.stu_seat_num, s.stu_name, s.stu_uuid, s.stu_id
+                FROM Students AS s
+                JOIN Teacher_Student AS ts ON s.stu_uuid = ts.stu_uuid
+                WHERE ts.user_uuid = ?
+            ''', (self.teacher_uuid,))
             rows = self.db.cursor.fetchall()
+            self.render_table(rows)
         except Exception as e:
             print(f"獲取學生資料失敗: {e}")
-            return
+            QMessageBox.critical(self.main_window, "錯誤", f"學生資料載入失敗\n{e}")
 
-    # 設置表格行數
-        self.ui.table_stu.setRowCount(len(rows))
+    def filter_stu(self):
+        """根據班級篩選目前老師的學生"""
+        try:
+            # 取得下拉選單中的班級條件
+            stu_class = self.ui.box_search_class.currentText()
 
-        for row_index, row in enumerate(rows):
-            for column_index, item in enumerate(row):
-                try:
-                    qtablewidgetitem = QtWidgets.QTableWidgetItem(str(item))
-                    self.ui.table_stu.setItem(row_index, column_index, qtablewidgetitem)
-                except Exception as e:
-                    print(f"設置表格項失敗: {e}")
+            # 建立基本查詢語句（JOIN 以限制學生必須屬於該老師）
+            query = '''
+                SELECT s.stu_class, s.stu_sex, s.stu_seat_num, s.stu_name, s.stu_uuid, stu_id
+                FROM Students s
+                JOIN Teacher_Student ts ON s.stu_uuid = ts.stu_uuid
+                WHERE ts.user_uuid = ?
+            '''
+            params = [self.teacher_uuid]
 
-        for row_index in range(self.ui.table_stu.rowCount()):
-            qr_button = QPushButton("QRcode")
-            modify_button = QPushButton("修改學生")
-            delete_button = QPushButton("刪除學生")
-            icon14 = QtGui.QIcon()
-            icon14.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/qr_code.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-            qr_button.setIcon(icon14)
-            qr_button.setIconSize(QtCore.QSize(35, 35))
-            qr_button.setObjectName("btn_database_qrcode")
-            qr_button.setStyleSheet("#btn_database_qrcode{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color:#EEEEEE;\n"
-"}\n"
-"\n"
-"#btn_database_qrcode:hover{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color:#B7B7B7;\n"
-"}\n"
-"\n"
-"#btn_database_qrcode:check{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color:#B7B7B7;\n"
-"}")
-            icon15 = QtGui.QIcon()
-            icon15.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/modify_data.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-            modify_button.setIcon(icon15)
-            modify_button.setIconSize(QtCore.QSize(35, 35))
-            modify_button.setObjectName("btn_database_modify_data")
-            modify_button.setStyleSheet("#btn_database_modify_data{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color:#FFCF9D;\n"
-"}\n"
-"\n"
-"#btn_database_modify_data:hover{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color: #DE8F5F;\n"
-"}\n"
-"\n"
-"#btn_database_modify_data:check{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color:#DE8F5F;\n"
-"}")
-            icon16 = QtGui.QIcon()
-            icon16.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-            delete_button.setIcon(icon16)
-            delete_button.setIconSize(QtCore.QSize(35, 35))
-            delete_button.setObjectName("btn_database_delect")
-            delete_button.setStyleSheet("#btn_database_delect{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color: #ffeb9a;\n"
-"}\n"
-"\n"
-"#btn_database_delect:hover{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color:#FFCD00;\n"
-"}\n"
-"\n"
-"#btn_database_delect:check{\n"
-"border:none;\n"
-"border-radius :6px;\n"
-"background-color: #FFCD00;\n"
-"}")
-            delete_button.clicked.connect(self.delect_student_row)
-            qr_button.clicked.connect(self.stu_qrcode)
-            
-            self.ui.table_stu.setCellWidget(row_index, 5, qr_button)
-            self.ui.table_stu.setCellWidget(row_index, 4, modify_button)
-            self.ui.table_stu.setCellWidget(row_index, 6, delete_button)
-         
+            # 如果班級不是「全部」，加入條件
+            if stu_class != "全部" and stu_class != "":
+                query += " AND s.stu_class = ?"
+                params.append(stu_class)
 
-    # 自動調整行高
-        self.ui.table_stu.resizeRowsToContents()
+            # 執行查詢
+            self.db.cursor.execute(query, tuple(params))
+            rows = self.db.cursor.fetchall()
+
+            # 顯示結果
+            self.render_table(rows)
+
+        except Exception as e:
+            print(f"查詢過程中出錯: {e}")
+            QMessageBox.critical(self.main_window, "錯誤", f"學生查詢失敗\n{e}")
 
     def delect_student_row(self):
-        button = self.ui.table_stu.sender() # 獲取按鈕所在行的內容
-        if button: # 檢查按鈕是否存在
+        """刪除指定學生與其教師關聯資料"""
+        button = self.ui.table_stu.sender()  # 獲取按鈕來源
+        stu_name = "未知學生"  # 🔧 預設錯誤處理名稱
+        if button:
             try:
                 index = self.ui.table_stu.indexAt(button.pos())
                 row = index.row()
-                item = self.ui.table_stu.item(row, 3) # 得到對應學生姓名
-                if row < 0: #無法確定按鈕所在行
-                    raise ValueError(f"無法確定按鈕所在行")
-                if  item is None or not item.text():
-                    raise TypeError("無法獲取學生姓名，該行數據可能為空")
-                stu_name = item.text()
-                # 刪除學生名字所指資料行
-                self.db.cursor.execute('''DELETE FROM Students WHERE stu_name=?''',(stu_name,))
+
+                if row < 0:
+                    raise ValueError("無法確定按鈕所在行")
+
+                uuid_item = self.ui.table_stu.item(row, 6)  # 第 6 欄是 stu_uuid
+                if uuid_item is None or not uuid_item.text():
+                    raise ValueError("無法取得學生 UUID，該行資料可能為空")
+
+                stu_uuid = uuid_item.text()
+
+                # 查詢學生姓名（用於提示訊息）
+                self.db.cursor.execute("SELECT stu_name FROM Students WHERE stu_uuid = ?", (stu_uuid,))
+                result = self.db.cursor.fetchone()
+                stu_name = result[0] if result else "未知學生"
+
+                # 刪除 Teacher_Student 關聯資料
+                self.db.cursor.execute("DELETE FROM Teacher_Student WHERE stu_uuid = ?", (stu_uuid,))
+                # 刪除學生本體資料
+                self.db.cursor.execute("DELETE FROM Students WHERE stu_uuid = ?", (stu_uuid,))
                 self.db.conn.commit()
+
+                # 更新 UI
                 self.ui.table_stu.removeRow(row)
-                self.display_students() # 顯示資料
-                self.load_class() # 更新班級資料選單
-                QMessageBox.information(self.main_window, "成功","學生資料刪除成功")
-                
+                self.display_students()
+                self.load_class()
+
+                QMessageBox.information(self.main_window, "成功", f"{stu_name} 資料已成功刪除")
+
             except Exception as e:
-                self.db.conn.rollback() # 資料庫回滾，恢復資料庫狀態，不受資料刪除失敗影響
-                print(f"刪除資料行失敗:{e}")
-                QMessageBox.information(self.main_window, "失敗",f"{stu_name}學生資料刪除失敗")
-                
-    # def login_stu(self, uuid):
-    #     stu_uuid = self.db.cursor.execute('''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''', (uuid,))
-    #     if stu_uuid:
-    #         stu_name, stu_class, stu_seat_num = stu_uuid.fetchone()
-    #         QMessageBox.information(self.main_window, "成功",f"{stu_name}_{stu_class}_{stu_seat_num}學生登入成功")
-    #         time.sleep(3)
-    #         self.login_win.close()
-    #     else:
-    #         QMessageBox.information(self.main_window, "失敗","學生登入失敗")
-            
+                self.db.conn.rollback()
+                print(f"刪除學生失敗：{e}")
+                QMessageBox.critical(self.main_window, "錯誤", f"{stu_name} 資料刪除失敗\n{e}")
+
+        
             
     def stu_qrcode(self):
+        """生成單一學生的 QRCode，使用 UUID 作為查詢依據"""
         button = self.ui.table_stu.sender()
         if button:
             try:
                 index = self.ui.table_stu.indexAt(button.pos())
                 row = index.row()
-                item = self.ui.table_stu.item(row, 3)
-                if row <0:
+                if row < 0:
                     raise ValueError("無法確定按鈕所在行")
-                if item is None or not item.text():
-                    raise ValueError("無法獲取學生姓名，該行數據可能為空")
-                stu_name = item.text()
-                self.db.cursor.execute('''SELECT stu_qr_uuid, stu_class, stu_seat_num, stu_name FROM Students WHERE stu_name=?''', (stu_name,))
-                stu_rows = self.db.cursor.fetchall()
-                
-                for uuid_row,class_row, seat_num_row, name_row  in stu_rows:
-                    stu_uuid_row = uuid_row
-                    stu_class_row = class_row
-                    stu_seat_num_row = seat_num_row
-                    stu_name_row = name_row
-                    # 生成Qrcode
-                    qr_image = qrcode.make(stu_uuid_row )
-                    # 繪製qrcode
-                    qr_image = qr_image.convert("RGB")
-                    draw = ImageDraw.Draw(qr_image)
-                    try:
-                        font = ImageFont.truetype(r"C:\Users\Ada\Desktop\github\re-lego\ui\font\BpmfGenSenRounded-R.ttf", size=20) #顯示字體
-                        print("使用自定義字體")
-                    except IOError:
-                        font = ImageFont.load_default() # 加載默認字體
-                        print("使用默認字體")
-                    # 字體位置定義
-                    text = f"{stu_class_row}_{stu_seat_num_row}_{stu_name_row}"
-                    text_bbox = draw.textbbox((0,0), text, font=font)
-                    text_width = text_bbox[2] - text_bbox[0] # 右邊界 - 左邊界
-                    text_height = text_bbox[3] - text_bbox[1] # 下邊界 - 上邊界
-                    # qr位置定義
-                    qr_width, qr_height = qr_image.size
-                    text_x = (qr_width - text_width) // 2
-                    text_y = (qr_height - text_height) -10 # 留底部空間
-                    # 繪製文字
-                    draw.text((text_x, text_y), text=text, fill='black',font=font)
-                    # 儲存圖片名
-                    qr_filename = f"{stu_class_row}_{stu_seat_num_row}_{stu_name_row}.png"
-                    qr_image.save(qr_filename)
-                    print(f"生成qrcode:{qr_filename}")
-                    QMessageBox.information(self.main_window, "成功", f"成功生成{stu_name_row}學生qrcode")
+
+                # 從第 6 欄取得 UUID
+                uuid_item = self.ui.table_stu.item(row, 6)
+                if uuid_item is None or not uuid_item.text():
+                    raise ValueError("找不到學生 UUID，無法生成 QRCode")
+
+                stu_uuid = uuid_item.text()
+
+                # 查詢學生資料
+                self.db.cursor.execute('''
+                    SELECT stu_qr_uuid, stu_class, stu_seat_num, stu_name
+                    FROM Students
+                    WHERE stu_uuid = ?
+                ''', (stu_uuid,))
+                result = self.db.cursor.fetchone()
+
+                if not result:
+                    raise ValueError("查無此學生資料")
+
+                stu_qr_uuid, stu_class, stu_seat_num, stu_name = result
+
+                # 生成 QRCode 圖像
+                qr_image = qrcode.make(stu_qr_uuid)
+                qr_image = qr_image.convert("RGB")
+                draw = ImageDraw.Draw(qr_image)
+
+                # 加入底部文字
+                try:
+                    font = ImageFont.truetype(r"C:\Users\Admin\Documents\re-lego\src\ui\font\BpmfGenSenRounded-R.ttf", size=20)
+                    print("✅ 使用自定義字體")
+                except IOError:
+                    font = ImageFont.load_default()
+                    print("⚠️ 使用預設字體")
+
+                text = f"{stu_class}_{stu_seat_num}_{stu_name}"
+                text_bbox = draw.textbbox((0, 0), text, font=font)
+                text_width = text_bbox[2] - text_bbox[0]
+                text_height = text_bbox[3] - text_bbox[1]
+
+                qr_width, qr_height = qr_image.size
+                text_x = (qr_width - text_width) // 2
+                text_y = qr_height - text_height - 10
+                draw.text((text_x, text_y), text, fill='black', font=font)
+
+                # 儲存圖像
+                qr_filename = f"{stu_uuid}_{stu_class}_{stu_seat_num}_{stu_name}.png"
+                qr_image.save(qr_filename)
+
+                print(f"✅ 生成 QRCode：{qr_filename}")
+                QMessageBox.information(self.main_window, "成功", f"成功生成 {stu_name} 的 QRCode")
+
             except Exception as e:
-                print(f"生成{stu_name}學生qrcode失敗={e}")
-                QMessageBox.information(self.main_window, "失敗", f"生成{stu_name_row}學生qrcode失敗")
+                print(f"❌ 生成學生 QRCode 失敗：{e}")
+                QMessageBox.critical(self.main_window, "錯誤", f"QRCode 生成失敗：\n{e}")
 
 
     def load_class(self):
-        # 從資料庫加載班級選單內容
+        """根據目前登入的老師 UUID，載入對應學生的班級選單"""
         try:
-            # 查詢資料庫中的所有班級（移除重複值）
-            self.db.cursor.execute('''SELECT DISTINCT stu_class FROM Students''')
+            # 查詢該老師對應學生的班級（去除重複值）
+            self.db.cursor.execute('''
+                SELECT DISTINCT s.stu_class
+                FROM Students s
+                JOIN Teacher_Student ts ON s.stu_uuid = ts.stu_uuid
+                WHERE ts.user_uuid = ?
+            ''', (self.teacher_uuid,))
             class_data = self.db.cursor.fetchall()
-            print(class_data)
+
             # 清空下拉選單
             self.ui.box_search_class.clear()
-            # 添加「全部」選項
-            self.ui.box_search_class.addItem("全部")  # 預設選項，顯示所有班級
+            self.ui.box_search_class.addItem("全部")  # 預設選項：顯示所有班級
 
-            # 動態添加班級名稱
+            # 加入查到的班級名稱
             for row in class_data:
-                class_name = str(row[0]) if row[0] is not None else "未命名班級"
+                class_name = str(row[0]) if row[0] else "未命名班級"
                 self.ui.box_search_class.addItem(class_name)
-                print(class_name)
         except Exception as e:
-            from PyQt6.QtWidgets import QMessageBox
-            QMessageBox.critical(self.main_window, "錯誤", f"無法加載班級資料: {e}")
-
-
-    def filter_display_students(self, rows):
-        self.ui.table_stu.setRowCount(0)  # 清空現有行
-
-        # 設置表格行數
-        self.ui.table_stu.setRowCount(len(rows))
-
-        for row_index, row in enumerate(rows):
-            for column_index, item in enumerate(row):
-                try:
-                    qtablewidgetitem = QtWidgets.QTableWidgetItem(str(item))
-                    self.ui.table_stu.setItem(row_index, column_index, qtablewidgetitem)
-                except Exception as e:
-                    print(f"設置表格項失敗: {e}")
-
-            for row_index in range(self.ui.table_stu.rowCount()):
-                qr_button = QPushButton("QRcode")
-                modify_button = QPushButton("修改學生")
-                delete_button = QPushButton("刪除學生")
-                icon14 = QtGui.QIcon()
-                icon14.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/qr_code.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-                qr_button.setIcon(icon14)
-                qr_button.setIconSize(QtCore.QSize(35, 35))
-                qr_button.setObjectName("btn_database_qrcode")
-                qr_button.setStyleSheet("#btn_database_qrcode{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color:#EEEEEE;\n"
-        "}\n"
-        "\n"
-        "#btn_database_qrcode:hover{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color:#B7B7B7;\n"
-        "}\n"
-        "\n"
-        "#btn_database_qrcode:check{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color:#B7B7B7;\n"
-        "}")
-                icon15 = QtGui.QIcon()
-                icon15.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/modify_data.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-                modify_button.setIcon(icon15)
-                modify_button.setIconSize(QtCore.QSize(35, 35))
-                modify_button.setObjectName("btn_database_modify_data")
-                modify_button.setStyleSheet("#btn_database_modify_data{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color:#FFCF9D;\n"
-        "}\n"
-        "\n"
-        "#btn_database_modify_data:hover{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color: #DE8F5F;\n"
-        "}\n"
-        "\n"
-        "#btn_database_modify_data:check{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color:#DE8F5F;\n"
-        "}")
-                icon16 = QtGui.QIcon()
-                icon16.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\ui\\icon/delete.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-                delete_button.setIcon(icon16)
-                delete_button.setIconSize(QtCore.QSize(35, 35))
-                delete_button.setObjectName("btn_database_delect")
-                delete_button.setStyleSheet("#btn_database_delect{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color: #ffeb9a;\n"
-        "}\n"
-        "\n"
-        "#btn_database_delect:hover{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color:#FFCD00;\n"
-        "}\n"
-        "\n"
-        "#btn_database_delect:check{\n"
-        "border:none;\n"
-        "border-radius :6px;\n"
-        "background-color: #FFCD00;\n"
-        "}")
-                delete_button.clicked.connect(self.delect_student_row)
-                qr_button.clicked.connect(self.stu_qrcode)
-                
-                self.ui.table_stu.setCellWidget(row_index, 5, qr_button)
-                self.ui.table_stu.setCellWidget(row_index, 4, modify_button)
-                self.ui.table_stu.setCellWidget(row_index, 6, delete_button)
-        # 自動調整行高
-        self.ui.table_stu.resizeRowsToContents()
-        
-    def filter_stu(self):
-        """根據篩選條件查詢學生"""
-        try:
-            # 獲取篩選條件
-            stu_class = self.ui.box_search_class.currentText()
-            
-            # 基本查詢語句，從學生資料中查詢指定欄位
-            query = "SELECT stu_class, stu_sex, stu_seat_num, stu_name FROM Students WHERE 1=1"
-            params = []
-
-            # 根據條件動態構建查詢語句
-            if stu_class != "全部" and stu_class != "":
-                query += " AND stu_class=?"
-                params.append(stu_class)
-
-            # 執行查詢
-            if len(params) > 0:
-                self.db.cursor.execute(query, tuple(params))
-            else:
-                # 如果沒有篩選條件，查詢所有學生
-                self.db.cursor.execute("SELECT stu_class, stu_sex, stu_seat_num, stu_name FROM Students")
-            
-            # 獲取查詢結果
-            result = self.db.cursor.fetchall()
-
-            # 顯示查詢結果
-            self.filter_display_students(result)
-
-        except Exception as e:
-            print(f"查詢過程中出錯: {e}")
+            print(f"⚠️ 載入班級失敗: {e}")
+            QMessageBox.critical(self.main_window, "錯誤", f"無法載入班級資料：{e}")
     
     """下載範例csv檔 """
     def create_download_csv(self):
@@ -427,48 +280,128 @@ class Stus:
             QMessageBox.information(self.main_window,"失敗", "下載範本失敗")  
             return None
     
-    """ 生成批量學生qrcode """
     def all_qrcode(self):
-        # 確保資料夾存在
-        if not os.path.exists(self.folder_path):
-            os.makedirs(self.folder_path)
-        # 查詢所有uuid
+        """批量生成目前老師所屬學生 QRCode（使用 stu_id 命名，支援中文顯示）"""
         try:
-            self.db.cursor.execute("select stu_qr_uuid, stu_class, stu_seat_num, stu_name from Students")
+            if not os.path.exists(self.folder_path):
+                os.makedirs(self.folder_path)
+
+            # 查詢學生資料
+            self.db.cursor.execute('''
+                SELECT s.stu_qr_uuid, s.stu_class, s.stu_seat_num, s.stu_name, s.stu_id
+                FROM Students s
+                JOIN Teacher_Student ts ON s.stu_uuid = ts.stu_uuid
+                WHERE ts.user_uuid = ?
+            ''', (self.teacher_uuid,))
             rows = self.db.cursor.fetchall()
+
+            if not rows:
+                QMessageBox.information(self.main_window, "提示", "尚未有學生可產生 QRCode")
+                return
+
+            # 載入中文字體（使用絕對路徑）
+            # base_dir = os.path.dirname(os.path.abspath(__file__))
+            font_path = os.path.join("src", "ui", "font", "BpmfGenSenRounded-R.ttf")
+
+            for qr_uuid, stu_class, stu_seat_num, stu_name, stu_id in rows:
+                # 生成 QRCode
+                qr = qrcode.make(qr_uuid)
+                qr_image = qr.convert("RGB")
+                draw = ImageDraw.Draw(qr_image)
+
+                # 載入字體
+                try:
+                    font = ImageFont.truetype(font_path, size=20)
+                except IOError:
+                    font = ImageFont.load_default()
+                    print("⚠️ 字體載入失敗，使用預設字體")
+
+                # 顯示於圖片上的文字
+                label_text = f"{stu_class}_{stu_seat_num}_{stu_name}"
+                text_bbox = draw.textbbox((0, 0), label_text, font=font)
+                text_width = text_bbox[2] - text_bbox[0]
+                text_height = text_bbox[3] - text_bbox[1]
+                qr_width, qr_height = qr_image.size
+                text_x = (qr_width - text_width) // 2
+                text_y = qr_height - text_height - 10
+                draw.text((text_x, text_y), label_text, fill='black', font=font)
+
+                # 使用 stu_id 當作檔名前綴
+                qr_filename = os.path.join(
+                    self.folder_path,
+                    f"{stu_id}_{stu_class}_{stu_seat_num}.png"
+                )
+                qr_image.save(qr_filename)
+                print(f"✅ 已儲存 QRCode：{qr_filename}")
+
+            QMessageBox.information(self.main_window, "成功", "所有學生 QR Code 已成功生成")
+
         except Exception as e:
-            print(f"獲取uuid失敗:{e}")
-            return
-        
-        for uuid_row,stu_class_row, stu_seat_num_row, stu_name_row  in rows:
-            uuid_str =uuid_row #取得uuid字串
-            class_str = stu_class_row
-            seat_num_str = stu_seat_num_row 
-            name_str = stu_name_row
-            # 生成qrcode
-            qr = qrcode.make(uuid_str)
-            qr_image = qr.convert("RGB")
-            # 繪製qrcode
-            draw = ImageDraw.Draw(qr_image)
-            try:
-                font = ImageFont.truetype("ui\font\BpmfGenSenRounded-R.ttf", size=20)
-                print("使用自定義字體")
-            except IOError:
-                # 加載默認字體
-                font = ImageFont.load_default()
-                print("使用默認字體")
-            text = f"{class_str}_{seat_num_str}_{name_str}"
-            text_bbox = draw.textbbox((0,0), text, font=font)
-            text_width = text_bbox[2] - text_bbox[0] # 右邊界 - 左邊界
-            text_height = text_bbox[3] - text_bbox[1] # 下邊界 - 上邊界
-            
-            qr_width, qr_height = qr_image.size
-            text_x = (qr_width - text_width) //2
-            text_y = (qr_height-text_height)-10 # 留底部空間
-            # 繪製文字
-            draw.text((text_x, text_y), text, fill='black', font=font)
-            # 圖片名
-            qr_filename = os.path.join(self.folder_path,f"{class_str}_{seat_num_str}_{name_str}.png")
-            qr_image.save(qr_filename)
-            print(f"生成qrcode:{qr_filename}")
-        QMessageBox.information(None, '成功', '學生QRcode已生成')
+            print(f"❌ QRCode 批次產生錯誤：{e}")
+            QMessageBox.critical(self.main_window, "錯誤", f"QRCode 產生失敗：\n{e}")
+
+
+    def render_table(self, rows):
+        """
+        顯示學生資料表格與操作按鈕。
+
+        Args:
+            rows (List[Tuple]): 每筆資料格式為
+            (stu_class, stu_sex, stu_seat_num, stu_name, stu_uuid, stu_id)
+        """
+        self.ui.table_stu.setRowCount(0)
+        self.ui.table_stu.setRowCount(len(rows))
+        self.ui.table_stu.setColumnCount(8)  # 顯示0~5, 隱藏6,7
+
+        for row_index, row in enumerate(rows):
+            # 顯示欄位：0~3 = 基本資料
+            for col_index in range(4):
+                item = QtWidgets.QTableWidgetItem(str(row[col_index]))
+                self.ui.table_stu.setItem(row_index, col_index, item)
+
+            # === QR Code 按鈕 ===
+            qr_button = QPushButton("QRcode")
+            qr_button.setIcon(QtGui.QIcon(".src/ui/icon/qr_code.png"))
+            qr_button.setIconSize(QtCore.QSize(35, 35))
+            qr_button.setObjectName("btn_database_qrcode")
+            qr_button.setStyleSheet("""
+                #btn_database_qrcode {
+                    border: none; border-radius: 6px;
+                    background-color: #EEEEEE;
+                }
+                #btn_database_qrcode:hover {
+                    background-color: #B7B7B7;
+                }
+            """)
+            qr_button.clicked.connect(self.stu_qrcode)
+            self.ui.table_stu.setCellWidget(row_index, 4, qr_button)
+
+            # === 刪除按鈕 ===
+            delete_button = QPushButton("刪除學生")
+            delete_button.setIcon(QtGui.QIcon(".src/ui/icon/delete.png"))
+            delete_button.setIconSize(QtCore.QSize(35, 35))
+            delete_button.setObjectName("btn_database_delect")
+            delete_button.setStyleSheet("""
+                #btn_database_delect {
+                    border: none; border-radius: 6px;
+                    background-color: #ffeb9a;
+                }
+                #btn_database_delect:hover {
+                    background-color: #FFCD00;
+                }
+            """)
+            delete_button.clicked.connect(self.delect_student_row)
+            self.ui.table_stu.setCellWidget(row_index, 5, delete_button)
+
+            # === 隱藏欄：stu_uuid 第 6 欄 ===
+            uuid_item = QtWidgets.QTableWidgetItem(str(row[4]))
+            self.ui.table_stu.setItem(row_index, 6, uuid_item)
+
+            # === 隱藏欄：stu_id 第 7 欄 ===
+            id_item = QtWidgets.QTableWidgetItem(str(row[5]))
+            self.ui.table_stu.setItem(row_index, 7, id_item)
+
+        # 隱藏 UUID 與 stu_id 欄位
+        self.ui.table_stu.setColumnHidden(6, True)
+        self.ui.table_stu.setColumnHidden(7, True)
+        self.ui.table_stu.resizeRowsToContents()
