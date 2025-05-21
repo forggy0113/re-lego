@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\Ada\Desktop\github\retry_fighting\ui\login_resigert.ui'
+# Form implementation generated from reading ui file 'c:\Users\Ada\Desktop\github\re-lego\src\ui\login_resigert.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -54,7 +54,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addItem(spacerItem)
         self.toolButton = QtWidgets.QToolButton(self.widget)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("src/ui/icon/close_window.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\src\\ui\\icon/close_window.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.toolButton.setIcon(icon)
         self.toolButton.setIconSize(QtCore.QSize(40, 40))
         self.toolButton.setObjectName("toolButton")
@@ -72,7 +72,7 @@ class Ui_MainWindow(object):
         self.toolButton_5 = QtWidgets.QToolButton(self.widget_2)
         self.toolButton_5.setMinimumSize(QtCore.QSize(150, 130))
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("src/ui/icon/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\src\\ui\\icon/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.toolButton_5.setIcon(icon1)
         self.toolButton_5.setIconSize(QtCore.QSize(200, 200))
         self.toolButton_5.setObjectName("toolButton_5")
@@ -264,14 +264,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.Login_button = QtWidgets.QToolButton(self.widget_6)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("src/ui/icon/login.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\src\\ui\\icon/login.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Login_button.setIcon(icon2)
         self.Login_button.setIconSize(QtCore.QSize(35, 35))
         self.Login_button.setObjectName("Login_button")
         self.horizontalLayout_2.addWidget(self.Login_button)
         self.Register_button = QtWidgets.QToolButton(self.widget_6)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("src/ui/icon/login_add.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap("c:\\Users\\Ada\\Desktop\\github\\re-lego\\src\\ui\\icon/login_add.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Register_button.setIcon(icon3)
         self.Register_button.setIconSize(QtCore.QSize(35, 35))
         self.Register_button.setObjectName("Register_button")

@@ -1,8 +1,0 @@
-support-11
-bearing
-hold
-wheel
-motor
-long
-screw
-fixed

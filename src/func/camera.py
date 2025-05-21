@@ -39,11 +39,14 @@ class Camera():
         Returns:
           None
         """
+        if self.cap is not None and self.cap.isOpened():
+            return 
         self.cap = cv2.VideoCapture(0)
         if not self.cap.isOpened():
             print("無法開啟攝影機！")
             return
-    
+
+        
         if not isinstance(self.ui.label, QLabel):
             print("錯誤：self.ui.label 不是 QLabel！")
             return
@@ -52,6 +55,7 @@ class Camera():
         self.detector = cv2.QRCodeDetector() # qrcode解碼器
         # self.timer.timeout.connect(self.update_frame)
         self.timer.start(30) # 每30每30
+        print("攝影機已啟動！開始掃描QRcode")
 
     def update_frame(self):
         """
@@ -60,15 +64,16 @@ class Camera():
         Returns:
             None
         """
-        self.logged_in = False
-
+        # self.logged_in = False
         if not self.cap or not self.cap.isOpened():
-                    return
+            return
         ret, frame = self.cap.read()
 
         if not ret:
             return  # 若無法讀取影像，直接返回
-
+        alpha = 1.5
+        beta = -10
+        frame = cv2.convertScaleAbs(frame, alpha=alpha, beta=beta)
         # 解碼 QR Code
         self.decoder_text, pts, _ = self.detector.detectAndDecode(frame)
 
@@ -78,12 +83,12 @@ class Camera():
             self.login_student()
 
         # 在畫面中央繪製十字準心輔助對齊
-        frame_with_cross = self.draw_cercent(frame)
+        # frame_with_cross = self.draw_cercent(frame)
 
         # 將畫面轉為 QPixmap 並顯示到 PyQt 的 QLabel 中
-        self.display_image(frame_with_cross)
-
-
+        # self.display_image(frame_with_cross)
+        cv2.imshow("Camera", frame)
+        cv2.waitKey(1) # 等待1毫秒，讓畫面更新
             
     def login_student(self):
         """
@@ -107,21 +112,21 @@ class Camera():
         try:
             # === 1. 檢查是否成功解碼 QR Code ===
             if not self.decoder_text:
-                print("解碼後的 QR Code 內容為空")
-                self.show_message("錯誤", "無法讀取 QR Code", countdown_sec)
-                return
+                # print("解碼後的 QR Code 內容為空")
+                # self.show_message("錯誤", "無法讀取 QR Code", countdown_sec)
+                return None, False
 
             print(f"QR Code 原始內容: {self.decoder_text}")
 
             # === 2. 嘗試使用私鑰解密 QR Code 內容 ===
             decrypted_data = self.encrypted.decrypt(self.decoder_text)
-            print(f"解密後的內容: {decrypted_data}")
+            # print(f"解密後的內容: {decrypted_data}")
 
             if not decrypted_data:
                 # 若解密失敗（空字串），可能是密鑰錯誤或 QR Code 被竄改
                 self.show_message("錯誤", "無法解密 QR Code", countdown_sec)
-                return
-
+                return None, False
+            
             # === 3. 查詢資料庫是否存在該 UUID ===
             self.db.cursor.execute(
                 '''SELECT stu_name, stu_class, stu_seat_num FROM Students WHERE stu_uuid=?''',
@@ -133,24 +138,31 @@ class Camera():
                 # 查無此學生
                 print(f"資料庫查無此 UUID: {decrypted_data}")
                 self.show_message("失敗", f"查無此學生，UUID={decrypted_data}", countdown_sec)
-                return
+                return None, False
 
             # === 4. 登入成功，取得學生資訊 ===
             stu_name, stu_class, stu_seat_num = stu_uuid
-
-            # ✅ 成功後顯示訊息，並執行後續動作（如關閉程式）
-
+            student_data = {
+                "stu_name": stu_name,
+                "stu_class": stu_class,
+                "stu_seat_num": stu_seat_num,
+                "stu_uuid": decrypted_data
+            }
+            # 成功後顯示訊息，並執行後續動作（如關閉程式）
+            self.logged_in = True # 設定為已登入
             self.show_message(
                 "成功",
                 f"{stu_name}_{stu_class}_{stu_seat_num} 登入成功",
                 countdown_sec,
-                on_finish=self.exit_app  # 這裡可以替換成 go_to_game_ui 之類的方法
+                on_finish=self.exit_app 
             )
+            return student_data, True
 
         except Exception as e:
             # 捕捉任何例外錯誤，顯示錯誤訊息
             print(f"登入失敗: {e}")
             self.show_message("錯誤", f"登入失敗：{e}", countdown_sec)
+            return None, False
 
     def draw_qrcode_box(self, frame, pts):
         """
@@ -227,8 +239,16 @@ class Camera():
         msg_box.exec_()
     
     def release_camera(self):
-        if self.cap and self.cap.isOpened():
-            self.cap.release()
+        """
+        釋放攝影機與停止 Timer，以避免資源未釋放或影像畫面殘留。
+        """
+        if hasattr(self, "timer") and self.timer.isActive():
+            self.timer.stop()
+
+        if hasattr(self, "cap") and self.cap is not None:
+            if self.cap.isOpened():
+                self.cap.release()
+            self.cap = None
 
     
     def exit_app(self):

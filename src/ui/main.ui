@@ -278,7 +278,7 @@ color: white;
      <widget class="QWidget" name="widget_2" native="true">
       <property name="styleSheet">
        <string notr="true">#widget_2{
-background-color:#FCFAED;
+background-color:#000000;
 }
 QToolButton{
 border:none;}</string>

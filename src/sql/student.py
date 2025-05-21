@@ -195,7 +195,7 @@ class Stus:
 
                 # 查詢學生資料
                 self.db.cursor.execute('''
-                    SELECT stu_qr_uuid, stu_class, stu_seat_num, stu_name
+                    SELECT stu_qr_uuid, stu_class, stu_seat_num, stu_name, stu_id
                     FROM Students
                     WHERE stu_uuid = ?
                 ''', (stu_uuid,))
@@ -204,16 +204,22 @@ class Stus:
                 if not result:
                     raise ValueError("查無此學生資料")
 
-                stu_qr_uuid, stu_class, stu_seat_num, stu_name = result
+                stu_qr_uuid, stu_class, stu_seat_num, stu_name, stu_id = result
 
                 # 生成 QRCode 圖像
+                qr_image = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_M,
+                    box_size=100,
+                    border=0,
+                )
                 qr_image = qrcode.make(stu_qr_uuid)
                 qr_image = qr_image.convert("RGB")
                 draw = ImageDraw.Draw(qr_image)
 
                 # 加入底部文字
                 try:
-                    font = ImageFont.truetype(r"C:\Users\Admin\Documents\re-lego\src\ui\font\BpmfGenSenRounded-R.ttf", size=20)
+                    font = ImageFont.truetype(r"C:\Users\Ada\Desktop\github\re-lego\src\ui\font\BpmfGenSenRounded-R.ttf", size=20)
                     print("✅ 使用自定義字體")
                 except IOError:
                     font = ImageFont.load_default()
@@ -230,7 +236,7 @@ class Stus:
                 draw.text((text_x, text_y), text, fill='black', font=font)
 
                 # 儲存圖像
-                qr_filename = f"{stu_uuid}_{stu_class}_{stu_seat_num}_{stu_name}.png"
+                qr_filename = f"{stu_id}_{stu_class}_{stu_seat_num}_{stu_name}.png"
                 qr_image.save(qr_filename)
 
                 print(f"✅ 生成 QRCode：{qr_filename}")
