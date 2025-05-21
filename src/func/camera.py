@@ -39,6 +39,9 @@ class Camera():
         Returns:
           None
         """
+        self.logged_in = False
+        self.decoder_text = None
+        self.student_data = None  # ✅ ← 清除舊登入資料
         if self.cap is not None and self.cap.isOpened():
             return 
         self.cap = cv2.VideoCapture(0)
@@ -150,6 +153,8 @@ class Camera():
             }
             # 成功後顯示訊息，並執行後續動作（如關閉程式）
             self.logged_in = True # 設定為已登入
+            self.student_data = student_data # 儲存學生資料
+            print(f"登入成功：{student_data}")
             self.show_message(
                 "成功",
                 f"{stu_name}_{stu_class}_{stu_seat_num} 登入成功",
@@ -186,35 +191,7 @@ class Camera():
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         except Exception as e:
             print(f"⚠️ 繪製 QRCode 邊框失敗: {e}")
-
-    def draw_cercent(self, image):
-        """
-        繪製白色定位十字線
-        Return: image 給 update_frame
-        """
-        height, width, _ = image.shape
-        center_x, center_y = width // 2, height // 2
-        cv2.line(image, (0, center_y), (width, center_y), (255, 255, 255), 2)
-        cv2.line(image, (center_x, 0), (center_x, height), (255, 255, 255), 2)
-        return image
-
-    def display_image(self, image):
-        """
-        將 OpenCV 畫面轉為 QPixmap 並顯示於介面。
-
-        Args:
-            image (np.ndarray): BGR 格式的 OpenCV 畫面。
-
-        Returns:
-            None
-        """
-        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        h, w, ch = rgb_image.shape
-        bytes_per_line = ch * w
-        qimg = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
-        self.video_label.setPixmap(QPixmap.fromImage(qimg))
-
-
+            
     def show_message(self, title, text, countdown_sec=5, on_finish=None):
         """
         顯示倒數提示視窗，可指定倒數後的操作（如關閉程式）。
@@ -249,12 +226,51 @@ class Camera():
             if self.cap.isOpened():
                 self.cap.release()
             self.cap = None
-
     
     def exit_app(self):
         """
-        關閉整個 PyQt 應用程式。
+        隱藏主視窗、關閉攝影機，進入遊戲流程，結束後再顯示主視窗重新登入。
         """
         self.release_camera()
-        from PyQt5.QtWidgets import QApplication
-        QApplication.quit()
+        self.main_window.hide()  # ← 不關掉整個 app，而是隱藏
+        
+        from main import run_game  # 確保 run_game 接收 student_data 並回傳 play_time
+        if hasattr(self, "student_data"):
+            play_time = run_game(self.student_data)
+            print(f"遊戲完成，遊玩時間：{play_time:.2f} 秒")
+        
+        # 準備下一位學生登入
+        self.logged_in = False
+        self.student_data = None
+        self.main_window.show()
+        self.stu_login_video()  # 再次開啟攝影機
+
+
+    # def draw_cercent(self, image):
+    #     """
+    #     繪製白色定位十字線
+    #     Return: image 給 update_frame
+    #     """
+    #     height, width, _ = image.shape
+    #     center_x, center_y = width // 2, height // 2
+    #     cv2.line(image, (0, center_y), (width, center_y), (255, 255, 255), 2)
+    #     cv2.line(image, (center_x, 0), (center_x, height), (255, 255, 255), 2)
+    #     return image
+
+    # def display_image(self, image):
+    #     """
+    #     將 OpenCV 畫面轉為 QPixmap 並顯示於介面。
+
+    #     Args:
+    #         image (np.ndarray): BGR 格式的 OpenCV 畫面。
+
+    #     Returns:
+    #         None
+    #     """
+    #     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    #     h, w, ch = rgb_image.shape
+    #     bytes_per_line = ch * w
+    #     qimg = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
+    #     self.video_label.setPixmap(QPixmap.fromImage(qimg))
+
+

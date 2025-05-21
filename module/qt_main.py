@@ -22,7 +22,7 @@ class Main(QMainWindow):
         self.ui.setupUi(self) # 設定主視窗
         self.db = CreateDataBase()
         self.camera = Camera(db = self.db, ui=self.ui, main_window=self)
-        self.on_login_success = None  # ✅ 外部 controller 用來註冊 callback
+        self.on_login_success = None  # 外部 controller 用來註冊 callback
         """螢幕調整方式"""
         win_move(self)
         win_full(self) # 設定全螢幕
@@ -42,15 +42,14 @@ class Main(QMainWindow):
         self.ui.slide_font_size.setValue(init_font_size)
         self.ui.slide_font_size.valueChanged.connect(lambda: self.Font.font_size_change(self.ui.slide_font_size.value()))
         self.stu_camera()
-        
-    def stu_camera(self):
-        self.camera.stu_login_video()
-        self.camera.timer.timeout.connect(self.check_login_result)
-        
-
+    
     def show_teacher_login(self): # 顯示教師登入介面
         self.teacher_login = Teacher_login()
         self.teacher_login.show()
+    
+    def stu_camera(self):
+        self.camera.stu_login_video()
+        self.camera.timer.timeout.connect(self.check_login_result)
     
     def check_login_result(self):
         """
@@ -88,9 +87,11 @@ class Main(QMainWindow):
         print("回到學生登入介面，準備下一位學生")
         self.camera.logged_in = False
         self.camera.decoder_text = None
-        self.ui.qr_camera_label.clear()  # 如果你有 QLabel 顯示相機畫面
+        self.camera.student_data = None           # ✅ 清除學生資料
+        self.camera.release_camera()              # ✅ 安全釋放上一輪攝影機
         self.show()
         self.stu_camera()
+
 
 
 # 教師登入介面

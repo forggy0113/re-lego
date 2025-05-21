@@ -1,4 +1,4 @@
-# main.py
+# project_main.py  -- Pygame 主程式（函式介面已改）
 import json
 import time
 import threading
@@ -13,30 +13,47 @@ from func.pygame_rt import (
     play_end_sound, play_error_sound
 )
 
-# ====== 讀取 script.json 取得音效路徑 =========================
-with open("func\script.json", "r", encoding="utf-8") as f:
+# ====== 讀取 script.json 取得音效路徑 ========================
+with open(r"func\script.json", "r", encoding="utf-8") as f:
     _cfg = json.load(f)
 INIT_AUDIO  = _cfg.get("init",  [{}])[0].get("audio", "")
 END_AUDIO   = _cfg.get("end",   [{}])[0].get("audio", "")
 ERROR_AUDIO = _cfg.get("error", [{}])[0].get("audio", "")
 # ============================================================
 
-# ===== 互動圓形按鈕設定 ======================================
+# ===== 互動圓形按鈕設定 =====================================
 BTN_RADIUS    = 40
 BTN_CENTERS   = [(140, 40), (1140, 40)]   # 若解析度改變記得調
 HOLD_SECONDS  = 1.0                       # 集氣滿格時間
 DECAY_SECONDS = 0.5                       # 離開後衰減到 0 的時間
 # ============================================================
 
-def main():
+
+def main(student_data: dict):
+    """
+    Pygame 組裝導引主迴圈
+
+    Parameters
+    ----------
+    student_data : dict
+        由 Camera 模組傳入的登入學生資訊（stu_name / stu_class / stu_seat_num / stu_uuid）
+
+    Returns
+    -------
+    float
+        遊玩秒數（用來回寫資料庫）
+    """
+    # ---------- 0. 開始計時 ---------------------------------
+    start_time = time.perf_counter()           # ★ 新增
+
     # ---------- 0. 音效：開場 / 結束 ------------------------
     init_sound_played = False
     end_sound_played  = False
 
-    # ---------- 1. 初始化模組 --------------------------------
-    hold_timer = [0.0] * len(BTN_CENTERS)   # 每顆按鈕累積停留秒數
-    ready_flag = [True] * len(BTN_CENTERS)  # True = 尚未觸發，可再次啟動
-    progress   = [0.0] * len(BTN_CENTERS)   # 0.0~1.0 充能百分比
+    # ---------- 1. 初始化模組 -------------------------------
+    hold_timer = [0.0] * len(BTN_CENTERS)      # 每顆按鈕累積停留秒數
+    ready_flag = [True]  * len(BTN_CENTERS)    # True = 尚未觸發，可再次啟動
+    progress   = [0.0] * len(BTN_CENTERS)      # 0.0‒1.0 充能百分比
 
     warp_proc = WarpProcessor(1280, 720, BTN_CENTERS, BTN_RADIUS)
 
@@ -48,7 +65,7 @@ def main():
         max_num_hands=2, model_complexity=1,
         detection_confidence=0.5, tracking_confidence=0.5
     )
-    step_guide = StepGuide("func\script.json")
+    step_guide = StepGuide(r"func\script.json")
 
     stop_event = threading.Event()
     pygame_thread = threading.Thread(
@@ -57,21 +74,20 @@ def main():
     )
     pygame_thread.start()
 
-    # ---------- 2. 開啟相機 ----------------------------------
+    # ---------- 2. 開啟相機 ---------------------------------
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        print("❌ 無法開啟相機")
-        return
+        print("❌ 無法開啟相機");  return 0.0
 
     print("▶️ 按 'r' 重新校正，按 'q' 離開")
     last_t = time.perf_counter()
 
-    # =========================================================
+    # ===================【主迴圈】============================
     while True:
         ret, frame = cap.read()
         if not ret:
             continue
-        frame = cv2.flip(frame, -1)                      # 鏡像
+        frame = cv2.flip(frame, -1)            # 鏡像
         cv2.imshow("Camera Debug", frame)
 
         # ---------- 2-1. 校正（只做一次） --------------------
@@ -140,7 +156,8 @@ def main():
                 if ready_flag[i]:
                     hold_timer[i] += dt
                     progress[i] = min(1.0, hold_timer[i] / HOLD_SECONDS)
-                    if hold_timer[i] >= HOLD_SECONDS:   # ---- 觸發驗證 ----
+                    # ---- 觸發驗證 -----------------------------------
+                    if hold_timer[i] >= HOLD_SECONDS:
                         if step_guide.check_assembly_complete(detections):
                             cur_step = step_guide.get_current_step()
                             if cur_step and cur_step.get("audio"):
@@ -164,8 +181,8 @@ def main():
         if draw_info['cuni_draw_pos'] and draw_info['cint_draw_pos']:
             guide_vis = draw_guidance_np_center(
                 guide_vis,
-                draw_info['cuni_draw_pos'], draw_info['cuni_draw_radius'],
-                draw_info['cint_draw_pos'], draw_info['cint_draw_radius']
+                draw_info['cuni_draw_pos'],  draw_info['cuni_draw_radius'],
+                draw_info['cint_draw_pos'],  draw_info['cint_draw_radius']
             )
 
         cur_step = step_guide.get_current_step()
@@ -175,7 +192,7 @@ def main():
         cv2.imshow("組裝導引", guide_vis)
         warp_proc.update_proj_draw_info(draw_info)
 
-        # ---------- 2-8. 全部完成？ ------------------------
+        # ---------- 2-8. 全部完成？ --------------------------
         if cur_step is None and not end_sound_played:
             play_end_sound(END_AUDIO)
             end_sound_played = True
@@ -183,7 +200,7 @@ def main():
             stop_event.set()
             break
 
-        # ---------- 2-9. 鍵盤控制 -------------------------
+        # ---------- 2-9. 鍵盤控制 ---------------------------
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             stop_event.set(); break
@@ -191,11 +208,17 @@ def main():
             print("🔁 重新觸發校正")
             warp_proc.calibrated = False
 
-    # ---------- 3. 收尾 ---------------------------------
+    # ---------- 3. 收尾 ------------------------------------
     cap.release()
     cv2.destroyAllWindows()
     pygame_thread.join()
-    
 
+    # ---------- 4. 回傳遊玩秒數 -----------------------------
+    play_time = time.perf_counter() - start_time   # ★ 新增
+    return play_time                               # ★ 新增
+
+
+# ==== 方便單獨執行測試 ======================================
 if __name__ == "__main__":
-    main()
+    # 沒有登入資料就傳空 dict
+    print("Play seconds =", main({}))

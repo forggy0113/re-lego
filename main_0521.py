@@ -1,22 +1,29 @@
-import sys
-from PyQt5.QtWidgets import QApplication
 from module.qt_main import Main
+from main import run_game  # ✅ 或 alias run_game = main
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QGuiApplication
+import sys
 
-if __name__ == '__main__':
+def handle_login_success(student_data):
+    print(f"✅ 登入成功: {student_data}")
+    play_time = run_game(student_data)
+    print(f"🎮 遊戲結束，遊玩時間：{play_time:.2f} 秒")
+    window.reset()  # 回到登入畫面
 
-
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = Main()          # 你的主視窗（原本就會呼叫 win_full 等函式）
+    window = Main()
+    window.on_login_success = handle_login_success
 
-    # === 把視窗放到第二顆螢幕（如果有）=============================
-    screens = app.screens()           # 依 OS 回傳所有螢幕，index 0 一般是主要
+    # 顯示在第二螢幕（如果有）
+    screens = QGuiApplication.screens()
     if len(screens) > 1:
-        second = screens[1]           # 第二顆螢幕（投影機）
-        geo = second.geometry()       # QRect：含 x/y/寬/高
-        window.setGeometry(geo)       # 把主視窗填滿那顆螢幕
-        window.showFullScreen()       # 無邊框全螢幕（你已經有 win_full，可擇一）
+        second_screen = screens[1]
+        geo = second_screen.geometry()
+        window.setGeometry(geo)
+        window.showFullScreen()
     else:
-        window.showFullScreen()       # 只有一顆螢幕就照原本方式顯示
-    # ============================================================
+        window.showFullScreen()
+        print("⚠️ 找不到第二螢幕，顯示在主螢幕")
 
     sys.exit(app.exec_())
