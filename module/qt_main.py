@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.ui.Ui_main import Ui_MainWindow as Main_Window
 from src.ui.Ui_login_resigert import Ui_MainWindow as Login_Resigert_Window
 from src.ui.Ui_teacher_mode import Ui_MainWindow as Teacher_Mode_Window
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QFont
 from src.func.window_change import *
 from src.func.font_change import Font
@@ -74,6 +74,7 @@ class Main(QMainWindow):
                 # 停止 QRCode 掃描與攝影機
                 self.camera.timer.stop()
                 self.camera.release_camera()
+
 
                 # 通知 controller 或主流程登入成功
                 if self.on_login_success:
@@ -160,6 +161,8 @@ class Teacher_mode(QMainWindow):
         self.ui.btn_filter.clicked.connect(lambda: self.stu_manager.filter_stu())
         # 初次載入資料
         self.update_student_display()
+        # self.show_teacher_game_records()
+        
     def add_stu_data(self):
         self.stu_manager.add_stu()
         self.stu_manager.clear_edit()
@@ -168,6 +171,7 @@ class Teacher_mode(QMainWindow):
         
     def update_student_display(self):
         self.stu_manager.display_students()
+        self.stu_manager.show_teacher_game_records()
     
     def add_csv_data(self):
         self.stu_manager.add_csv()

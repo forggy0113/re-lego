@@ -1,8 +1,10 @@
-# project_main.py  -- Pygame 主程式（函式介面已改）
-import json
 import time
-import threading
+import pygame
 import cv2
+import threading
+import json
+
+# 假設你已有這些模組
 from func.warp_rt import WarpProcessor
 from func.yolov7_rt import YoloV7Detector
 from func.mediapipe_rt import MediaPipeHandTracker
@@ -13,15 +15,14 @@ from func.pygame_rt import (
     play_end_sound, play_error_sound
 )
 
-# ====== 讀取 script.json 取得音效路徑 ========================
+# 讀取腳本配置（用於音效）
 with open(r"func\script.json", "r", encoding="utf-8") as f:
     _cfg = json.load(f)
 INIT_AUDIO  = _cfg.get("init",  [{}])[0].get("audio", "")
 END_AUDIO   = _cfg.get("end",   [{}])[0].get("audio", "")
 ERROR_AUDIO = _cfg.get("error", [{}])[0].get("audio", "")
-# ============================================================
 
-# ===== 互動圓形按鈕設定 =====================================
+# ===== 互動圓形按鈕設定 ======================================
 BTN_RADIUS    = 40
 BTN_CENTERS   = [(140, 40), (1140, 40)]   # 若解析度改變記得調
 HOLD_SECONDS  = 1.0                       # 集氣滿格時間
@@ -29,68 +30,81 @@ DECAY_SECONDS = 0.5                       # 離開後衰減到 0 的時間
 # ============================================================
 
 
-def main(student_data: dict):
+def run_game(student_data: dict, db) -> float:
     """
-    Pygame 組裝導引主迴圈
-
-    Parameters
-    ----------
-    student_data : dict
-        由 Camera 模組傳入的登入學生資訊（stu_name / stu_class / stu_seat_num / stu_uuid）
-
-    Returns
-    -------
-    float
-        遊玩秒數（用來回寫資料庫）
+    執行 Pygame 組裝遊戲主程式。
+    Args:
+        student_data (dict): 登入學生資訊（stu_name, stu_class, ...）
+    Returns:
+        float: 遊玩秒數
     """
-    # ---------- 0. 開始計時 ---------------------------------
-    start_time = time.perf_counter()           # ★ 新增
+    print(f"🎮 開始遊戲，玩家：{student_data}")
 
-    # ---------- 0. 音效：開場 / 結束 ------------------------
+    # ---------- 0. 初始化音效與時間計時 ----------
     init_sound_played = False
-    end_sound_played  = False
+    end_sound_played = False
 
-    # ---------- 1. 初始化模組 -------------------------------
-    hold_timer = [0.0] * len(BTN_CENTERS)      # 每顆按鈕累積停留秒數
-    ready_flag = [True]  * len(BTN_CENTERS)    # True = 尚未觸發，可再次啟動
-    progress   = [0.0] * len(BTN_CENTERS)      # 0.0‒1.0 充能百分比
+    # ---------- 1. 建立 stop_event for Pygame thread ----------
+    stop_event = threading.Event()  # 用來通知 show_aruco 執行緒結束
+
+    # ---------- 2. 初始化控制狀態與模組 ----------
+    hold_timer = [0.0] * len(BTN_CENTERS)
+    ready_flag = [True] * len(BTN_CENTERS)
+    progress   = [0.0] * len(BTN_CENTERS)
 
     warp_proc = WarpProcessor(1280, 720, BTN_CENTERS, BTN_RADIUS)
-
-    yolo = YoloV7Detector(
-        model_path=r"func\weight\exp_55best.pt",
-        class_path=r"func\all_step_class.txt"
-    )
+    yolo = YoloV7Detector(r"func\weight\exp_55best.pt", r"func\all_step_class.txt")
     mp_tracker = MediaPipeHandTracker(
         max_num_hands=2, model_complexity=1,
-        detection_confidence=0.5, tracking_confidence=0.5
+        detection_confidence=0.6, tracking_confidence=0.6
     )
     step_guide = StepGuide(r"func\script.json")
 
-    stop_event = threading.Event()
+    # ---------- 3. 文字顯示設定 ----------
+    text_settings = {
+        "font_path": r"src/ui/font/BpmfGenSenRounded-R.ttf",
+        "font_size": 40,
+        "color": (255, 255, 255),
+        "pos": {
+            "play_time": (200, 0),                                 # 左上角：遊玩時間
+            "step_id":    (warp_proc.SCREEN_WIDTH // 2, 0),       # 中上：當前步驟 ID
+            "stu_name":   (warp_proc.SCREEN_WIDTH - 200, 0)       # 右上：學生名稱
+        }
+    }
+
+    # ---------- 4. 啟動第二螢幕 Pygame 顯示 ----------
+    start_time = time.time()
     pygame_thread = threading.Thread(
         target=warp_proc.show_aruco_on_second_screen,
-        args=(stop_event,), daemon=True
+        args=(
+            stop_event,
+            student_data.get("stu_name", ""),
+            start_time,
+            text_settings
+        ),
+        daemon=True
     )
     pygame_thread.start()
 
-    # ---------- 2. 開啟相機 ---------------------------------
+    # ---------- 3. 啟動攝影機 ----------
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        print("❌ 無法開啟相機");  return 0.0
+        print("❌ 無法開啟相機")
+        return 0.0
 
     print("▶️ 按 'r' 重新校正，按 'q' 離開")
     last_t = time.perf_counter()
 
-    # ===================【主迴圈】============================
+    # ========== 4. 主處理迴圈（校正、引導、互動） ==========
     while True:
+        # ---------- 4-1. 讀取與顯示鏡像畫面 ----------
         ret, frame = cap.read()
         if not ret:
             continue
-        frame = cv2.flip(frame, -1)            # 鏡像
+        frame = cv2.flip(frame, -1)
         cv2.imshow("Camera Debug", frame)
 
-        # ---------- 2-1. 校正（只做一次） --------------------
+        # ---------- 4-2. 校正畫面 ----------
         if not warp_proc.calibrated:
             if warp_proc.calibrate_once(frame):
                 print("✅ 校正成功")
@@ -98,20 +112,17 @@ def main(student_data: dict):
                 stop_event.set(); break
             continue
 
-        # ---------- 2-2. 透視轉換 ---------------------------
+        # ---------- 4-3. 透視轉換 + YOLO 偵測 ----------
         warped = warp_proc.warp_frame(frame)
         if warped is None:
             continue
         guide_vis = warped.copy()
 
-        # ---------- 2-3. YOLO 偵測 --------------------------
-        # 遮蔽動畫區域避免誤偵測
         if warp_proc.current_animation_frames:
             ani_h = warp_proc.current_animation_frames[0].get_height()
             ani_w = warp_proc.current_animation_frames[0].get_width()
             x = (warp_proc.SCREEN_WIDTH - ani_w) // 2
-            cv2.rectangle(warped, (x, 10), (x+ani_w, 10+ani_h),
-                          (0, 0, 0), thickness=-1)
+            cv2.rectangle(warped, (x, 10), (x+ani_w, 10+ani_h), (0, 0, 0), -1)
 
         detections = yolo.detect(warped)
         for (xyxy, label) in detections:
@@ -120,17 +131,18 @@ def main(student_data: dict):
             cv2.putText(guide_vis, label, (x1, y1 - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
 
-        # ---------- 2-4. MediaPipe 手部 ---------------------
+        # ---------- 4-4. 手部追蹤 + 組裝步驟分析 ----------
         guide_vis, hand_lms, handed_list = mp_tracker.process_frame(
             guide_vis, draw_landmarks=True, debug_info=False
         )
-
-        # ---------- 2-5. StepGuide 更新 --------------------
         draw_info = step_guide.update_and_get_draw_info(
             detections, hand_lms, handed_list
         )
+        # 傳遞當前步驟 ID
+        cur = step_guide.get_current_step()
+        draw_info["step_id"] = cur.get("id") if cur else None
 
-        # 播放 init 音效
+        # ---------- 4-5. 播放首次 init 音效 ----------
         if (not init_sound_played
             and step_guide.current_index == 0
             and draw_info['cuni_bbox'] is not None
@@ -138,10 +150,9 @@ def main(student_data: dict):
             play_init_sound(INIT_AUDIO)
             init_sound_played = True
 
-        # ---------- 2-6. 按鈕集氣邏輯 -----------------------
+        # ---------- 4-6. 集氣按鈕邏輯 ----------
         dt = time.perf_counter() - last_t
         last_t = time.perf_counter()
-
         tips = [(pt[0], pt[1]) for hand in hand_lms for pt in hand] if hand_lms else []
 
         for i, center in enumerate(BTN_CENTERS):
@@ -149,14 +160,11 @@ def main(student_data: dict):
                 (tx - center[0])**2 + (ty - center[1])**2 <= BTN_RADIUS**2
                 for tx, ty in tips
             )
-
             if inside:
                 cv2.circle(guide_vis, center, BTN_RADIUS, (255, 255, 0), 2)
-
                 if ready_flag[i]:
                     hold_timer[i] += dt
                     progress[i] = min(1.0, hold_timer[i] / HOLD_SECONDS)
-                    # ---- 觸發驗證 -----------------------------------
                     if hold_timer[i] >= HOLD_SECONDS:
                         if step_guide.check_assembly_complete(detections):
                             cur_step = step_guide.get_current_step()
@@ -165,34 +173,31 @@ def main(student_data: dict):
                             step_guide.unlock_for_next_step()
                         else:
                             play_error_sound(ERROR_AUDIO)
-
                         ready_flag[i] = False
-                        hold_timer[i] = progress[i] = 1.0   # 集氣滿格
+                        hold_timer[i] = progress[i] = 1.0
             else:
                 hold_timer[i] = 0.0
                 ready_flag[i] = True
-                # 線性衰減
                 progress[i] = max(0.0, progress[i] - dt / DECAY_SECONDS)
 
-        # 把進度送到投影執行緒畫面
         warp_proc.update_button_progress(progress)
 
-        # ---------- 2-7. 視覺化導引 & 動畫 -------------------
+        # ---------- 4-7. 視覺化導引與動畫 ----------
         if draw_info['cuni_draw_pos'] and draw_info['cint_draw_pos']:
             guide_vis = draw_guidance_np_center(
                 guide_vis,
-                draw_info['cuni_draw_pos'],  draw_info['cuni_draw_radius'],
-                draw_info['cint_draw_pos'],  draw_info['cint_draw_radius']
+                draw_info['cuni_draw_pos'], draw_info['cuni_draw_radius'],
+                draw_info['cint_draw_pos'], draw_info['cint_draw_radius']
             )
 
         cur_step = step_guide.get_current_step()
         if cur_step and cur_step.get("animation"):
             warp_proc.update_animation(cur_step["animation"])
 
-        cv2.imshow("組裝導引", guide_vis)
+        cv2.imshow("build guide", guide_vis)
         warp_proc.update_proj_draw_info(draw_info)
 
-        # ---------- 2-8. 全部完成？ --------------------------
+        # ---------- 4-8. 全部完成 ----------
         if cur_step is None and not end_sound_played:
             play_end_sound(END_AUDIO)
             end_sound_played = True
@@ -200,7 +205,7 @@ def main(student_data: dict):
             stop_event.set()
             break
 
-        # ---------- 2-9. 鍵盤控制 ---------------------------
+        # ---------- 4-9. 手動鍵盤操作 ----------
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             stop_event.set(); break
@@ -208,17 +213,33 @@ def main(student_data: dict):
             print("🔁 重新觸發校正")
             warp_proc.calibrated = False
 
-    # ---------- 3. 收尾 ------------------------------------
+    # ---------- 5. 收尾處理（釋放資源） ----------
     cap.release()
     cv2.destroyAllWindows()
     pygame_thread.join()
 
-    # ---------- 4. 回傳遊玩秒數 -----------------------------
-    play_time = time.perf_counter() - start_time   # ★ 新增
-    return play_time                               # ★ 新增
+    play_time = time.time() - start_time
+    print(f"⏱️ 遊戲完成，遊玩時長：{play_time:.2f} 秒")
+    # ---------- 6. 寫入資料庫 Practice ----------
+    try:
+        stu_uuid     = student_data.get("stu_uuid")
+        stu_name     = student_data.get("stu_name")
 
+        # 時間資訊
+        start_dt = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
+        end_dt   = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+        play_sec = int(play_time)
 
-# ==== 方便單獨執行測試 ======================================
-if __name__ == "__main__":
-    # 沒有登入資料就傳空 dict
-    print("Play seconds =", main({}))
+        db.cursor.execute(
+            """
+            INSERT INTO Practice (stu_name, stu_uuid, game_time, practice_start_date, practice_end_date)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (stu_name, stu_uuid, play_sec, start_dt, end_dt)
+        )
+        db.conn.commit()
+        print("✅ 已寫入 Practice 遊玩紀錄")
+    except Exception as e:
+        print(f"❌ 寫入 Practice 時出錯: {e}")
+
+    return play_time

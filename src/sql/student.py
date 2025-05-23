@@ -411,3 +411,28 @@ class Stus:
         self.ui.table_stu.setColumnHidden(6, True)
         self.ui.table_stu.setColumnHidden(7, True)
         self.ui.table_stu.resizeRowsToContents()
+    
+    def show_teacher_game_records(self):
+        """
+        根據登入的 teacher_uuid 顯示所屬學生的遊玩紀錄（名稱與時間）
+        """
+        query = """
+            SELECT P.stu_name, P.game_time
+            FROM Practice P
+            JOIN Teacher_Student TS ON P.stu_uuid = TS.stu_uuid
+            WHERE TS.user_uuid = ?
+        """
+        self.db.cursor.execute(query, (self.teacher_uuid,))
+        rows = self.db.cursor.fetchall()
+
+        self.ui.table_game.setRowCount(len(rows))
+        self.ui.table_game.setColumnCount(2)
+        self.ui.table_game.setHorizontalHeaderLabels(["學生名稱", "遊玩時間（分鐘）"])
+
+        for row_idx, (stu_name, game_time_sec) in enumerate(rows):
+            mins = game_time_sec // 60
+            secs = game_time_sec % 60
+            game_time_min = f"{mins}分{secs}秒" if mins > 0 else f"{secs}秒"
+            # 將學生名稱與遊玩時間顯示在表格中
+            self.ui.table_game.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(stu_name))
+            self.ui.table_game.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(str(game_time_min)))

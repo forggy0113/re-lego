@@ -1,6 +1,6 @@
 import cv2
 from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QImage, QPixmap
+# from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QLabel, QMessageBox
 import sys
 import os
@@ -232,11 +232,12 @@ class Camera():
         隱藏主視窗、關閉攝影機，進入遊戲流程，結束後再顯示主視窗重新登入。
         """
         self.release_camera()
+        cv2.destroyAllWindows()  # 關閉所有 OpenCV 視窗
         self.main_window.hide()  # ← 不關掉整個 app，而是隱藏
         
-        from main import run_game  # 確保 run_game 接收 student_data 並回傳 play_time
+        from project_main import run_game  # 確保 run_game 接收 student_data 並回傳 play_time
         if hasattr(self, "student_data"):
-            play_time = run_game(self.student_data)
+            play_time = run_game(self.student_data, self.db)
             print(f"遊戲完成，遊玩時間：{play_time:.2f} 秒")
         
         # 準備下一位學生登入

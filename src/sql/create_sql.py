@@ -58,7 +58,7 @@ class CreateDataBase:
         self.cursor.execute('''
                             CREATE TABLE IF NOT EXISTS Practice(
                                 practice_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                stu_name stu_name TEXT NOT NULL,
+                                stu_name TEXT NOT NULL,
                                 stu_uuid INTEGER NOT NULL,
                                 game_time INTEGER NOT NULL,
                                 practice_start_date TIMESTAMP NOT NULL,

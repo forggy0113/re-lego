@@ -1,12 +1,11 @@
 from module.qt_main import Main
-from main import run_game  # ✅ 或 alias run_game = main
+from project_main import run_game  # ✅ 或 alias run_game = main
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QGuiApplication
 import sys
-
 def handle_login_success(student_data):
     print(f"✅ 登入成功: {student_data}")
-    play_time = run_game(student_data)
+    play_time = run_game(student_data, db = window.db)
     print(f"🎮 遊戲結束，遊玩時間：{play_time:.2f} 秒")
     window.reset()  # 回到登入畫面
 

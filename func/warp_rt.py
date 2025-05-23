@@ -85,7 +85,13 @@ class WarpProcessor:
             markers.append(surf)
         return markers
 
-    def show_aruco_on_second_screen(self, stop_event):
+    def show_aruco_on_second_screen(
+        self,
+        stop_event,
+        stu_name: str,
+        start_time: float,
+        text_settings: dict
+    ):
         """
         在第二螢幕持續顯示：
           • 四角 ArUco + 白框
@@ -94,7 +100,17 @@ class WarpProcessor:
           • 動畫
         """
         os.environ["SDL_VIDEO_WINDOW_POS"] = "1920,0"  # 讓視窗出現在右屏最左上
+        import time
         pygame.init()
+        # 初始化字體模組 & 字體
+        pygame.font.init()
+        # 如果有指定字體檔，就用 Font；否則 fallback 到 SysFont
+        font_path = text_settings.get("font_path")
+        font_size = text_settings["font_size"]
+        if font_path:
+            font = pygame.font.Font(font_path, font_size)
+        else:
+            font = pygame.font.SysFont(None, font_size)
         screen = pygame.display.set_mode(
             (self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.NOFRAME
         )
@@ -168,6 +184,29 @@ class WarpProcessor:
                 screen.blit(frame, (x, 10))
                 self.current_animation_idx = (
                     self.current_animation_idx + 1) % len(self.current_animation_frames)
+
+            # ---- 3. 顯示文字資訊 ----
+            # 遊玩時間 (mm:ss)
+            elapsed = time.time() - start_time
+            mins = int(elapsed // 60)
+            secs = int(elapsed % 60)
+            tm_str = f"{mins:02d}:{secs:02d}"
+            surf_time = font.render(tm_str, True, text_settings["color"])
+            screen.blit(surf_time, text_settings["pos"]["play_time"])
+
+            # 當前步驟 ID
+            sid = self.proj_draw_info.get("step_id")
+            if sid is not None:
+                surf_sid = font.render(str(sid), True, text_settings["color"])
+                rect_sid = surf_sid.get_rect()
+                rect_sid.midtop = text_settings["pos"]["step_id"]
+                screen.blit(surf_sid, rect_sid)
+
+            # 學生名稱
+            surf_name = font.render(stu_name, True, text_settings["color"])
+            rect_name = surf_name.get_rect()
+            rect_name.topright = text_settings["pos"]["stu_name"]
+            screen.blit(surf_name, rect_name)
 
             pygame.display.flip()
             clock.tick(30)
