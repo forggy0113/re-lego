@@ -1,6 +1,6 @@
 import cv2
 from PyQt5.QtCore import QTimer
-# from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QLabel, QMessageBox
 import sys
 import os
@@ -28,8 +28,8 @@ class Camera():
         self.logged_in = False 
         # self.timer.start(30)
         # ----加解密初始化-------
-        self.encrypted = Encrypted(private_key_path= "./src/sql/private.pem", public_key_path = "./src/sql/public.pem")
-        if not os.path.exists("./src/sql/private.pem") or not os.path.exists("./src/sql/public.pem"):
+        self.encrypted = Encrypted(private_key_path= "./src/sql/ecc_private.hex", public_key_path = "./src/sql/ecc_public.hex")
+        if not os.path.exists("./src/sql/ecc_private.hex") or not os.path.exists("./src/sql/ecc_public.hex"):
             self.encrypted.generate_keys()
 
         
@@ -247,31 +247,31 @@ class Camera():
         self.stu_login_video()  # 再次開啟攝影機
 
 
-    # def draw_cercent(self, image):
-    #     """
-    #     繪製白色定位十字線
-    #     Return: image 給 update_frame
-    #     """
-    #     height, width, _ = image.shape
-    #     center_x, center_y = width // 2, height // 2
-    #     cv2.line(image, (0, center_y), (width, center_y), (255, 255, 255), 2)
-    #     cv2.line(image, (center_x, 0), (center_x, height), (255, 255, 255), 2)
-    #     return image
+    def draw_cercent(self, image):
+        """
+        繪製白色定位十字線
+        Return: image 給 update_frame
+        """
+        height, width, _ = image.shape
+        center_x, center_y = width // 2, height // 2
+        cv2.line(image, (0, center_y), (width, center_y), (255, 255, 255), 2)
+        cv2.line(image, (center_x, 0), (center_x, height), (255, 255, 255), 2)
+        return image
 
-    # def display_image(self, image):
-    #     """
-    #     將 OpenCV 畫面轉為 QPixmap 並顯示於介面。
+    def display_image(self, image):
+        """
+        將 OpenCV 畫面轉為 QPixmap 並顯示於介面。
 
-    #     Args:
-    #         image (np.ndarray): BGR 格式的 OpenCV 畫面。
+        Args:
+            image (np.ndarray): BGR 格式的 OpenCV 畫面。
 
-    #     Returns:
-    #         None
-    #     """
-    #     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    #     h, w, ch = rgb_image.shape
-    #     bytes_per_line = ch * w
-    #     qimg = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
-    #     self.video_label.setPixmap(QPixmap.fromImage(qimg))
+        Returns:
+            None
+        """
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        h, w, ch = rgb_image.shape
+        bytes_per_line = ch * w
+        qimg = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
+        self.video_label.setPixmap(QPixmap.fromImage(qimg))
 
 

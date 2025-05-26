@@ -89,7 +89,7 @@ class WarpProcessor:
         self,
         stop_event,
         stu_name: str,
-        start_time: float,
+        start_time_holder,       # ← 改為接收 list，內容初始為 [None]
         text_settings: dict
     ):
         """
@@ -186,8 +186,11 @@ class WarpProcessor:
                     self.current_animation_idx + 1) % len(self.current_animation_frames)
 
             # ---- 3. 顯示文字資訊 ----
-            # 遊玩時間 (mm:ss)
-            elapsed = time.time() - start_time
+            # 遊玩時間 (mm:ss)，若 holder[0] 還未設定則維持 0
+            if start_time_holder[0] is None:
+                elapsed = 0.0
+            else:
+                elapsed = time.time() - start_time_holder[0]
             mins = int(elapsed // 60)
             secs = int(elapsed % 60)
             tm_str = f"{mins:02d}:{secs:02d}"

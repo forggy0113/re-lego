@@ -72,14 +72,14 @@ def run_game(student_data: dict, db) -> float:
         }
     }
 
-    # ---------- 4. 啟動第二螢幕 Pygame 顯示 ----------
-    start_time = time.time()
+    # ---------- 4. 啟動第二螢幕 Pygame 顯示 & 準備計時容器 ----------
+    start_time_holder = [None]    # ← list 共享開始時間，初值 None
     pygame_thread = threading.Thread(
         target=warp_proc.show_aruco_on_second_screen,
         args=(
             stop_event,
             student_data.get("stu_name", ""),
-            start_time,
+            start_time_holder,        # ← 傳入 list 而非 float
             text_settings
         ),
         daemon=True
@@ -142,13 +142,14 @@ def run_game(student_data: dict, db) -> float:
         cur = step_guide.get_current_step()
         draw_info["step_id"] = cur.get("id") if cur else None
 
-        # ---------- 4-5. 播放首次 init 音效 ----------
+        # ---------- 4-5. 播放首次 init 音效，並記錄計時起點 ----------
         if (not init_sound_played
             and step_guide.current_index == 0
             and draw_info['cuni_bbox'] is not None
             and draw_info['cint_bbox'] is not None):
             play_init_sound(INIT_AUDIO)
             init_sound_played = True
+            start_time_holder[0] = time.time()  # ← 在播放時立刻設定起點
 
         # ---------- 4-6. 集氣按鈕邏輯 ----------
         dt = time.perf_counter() - last_t
@@ -218,7 +219,11 @@ def run_game(student_data: dict, db) -> float:
     cv2.destroyAllWindows()
     pygame_thread.join()
 
-    play_time = time.time() - start_time
+    # 計算總遊玩時間，若從未設定過起點則回傳 0
+    if start_time_holder[0] is not None:
+        play_time = time.time() - start_time_holder[0]
+    else:
+        play_time = 0.0
     print(f"⏱️ 遊戲完成，遊玩時長：{play_time:.2f} 秒")
     # ---------- 6. 寫入資料庫 Practice ----------
     try:
@@ -226,7 +231,12 @@ def run_game(student_data: dict, db) -> float:
         stu_name     = student_data.get("stu_name")
 
         # 時間資訊
-        start_dt = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
+        end_dt   = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if start_time_holder[0] is not None:
+            start_dt = time.strftime("%Y-%m-%d %H:%M:%S",
+                                     time.localtime(start_time_holder[0]))
+        else:
+            start_dt = end_dt
         end_dt   = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
         play_sec = int(play_time)
 

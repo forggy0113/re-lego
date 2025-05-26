@@ -127,7 +127,7 @@ class Teacher_mode(QMainWindow):
         win_no_title_bar(self) # 隱藏視窗標題欄
         win_resize(self) # 設定視窗縮放
         
-        self.Encrypted = Encrypted(private_key_path= "./src/sql/private.pem", public_key_path = "./src/sql/public.pem")
+        self.Encrypted = Encrypted(private_key_path= "./src/sql/ecc_private.hex", public_key_path = "./src/sql/ecc_public.hex")
         # self.Encrypted.generate_keys()
         
         self.db = CreateDataBase()
