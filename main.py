@@ -1,143 +1,200 @@
-from ui.Ui_main import Ui_MainWindow as Main_Window
-from ui.Ui_login_resigert import Ui_MainWindow as Login_Resigert_Window
-from ui.Ui_teacher_mode import Ui_MainWindow as Teacher_Mode_Window
-from PyQt5.QtWidgets import QMainWindow, QApplication
-from PyQt5.QtGui import QFont
-import sys
-from function.window_change import *
-from function.font_change import Font
-from function.camera import Camera
-from sql.create_sql import CreateDataBase
-from sql.user_login import User
-from sql.student import Stus
-from sql.encrypted import Encrypted
-# 學生登入介面
-class Main(QMainWindow):
-    def __init__(self):
-        super().__init__() # 為衍生類別建構函數，調用父類QMainWindow
-        self.ui = Main_Window()
-        self.ui.setupUi(self) # 設定主視窗
-        self.db = CreateDataBase()
-        self.camera = Camera(db = self.db, ui=self.ui, main_window=self)
-        win_move(self)
-        # win_full(self) # 設定全螢幕
-        win_no_title_bar(self) # 隱藏視窗標題欄 
-        """ 初始化字體和設定字體大小"""
-        init_font_size = 20 # 初始化字體大小
-        self.Font = Font(self, self.ui, init_font_size) # 初始化字體
-        init_font = QFont(self.Font.font_family_1[0], init_font_size)
-        self.Font.font_all_change(init_font)
-        self.ui.txt_font_size.setText(f"字型大小：{init_font_size}") # 顯示字體大小提示
-        
-        self.ui.btn_close.clicked.connect(self.close) # 關閉視窗
-        self.ui.btn_teacher.clicked.connect(self.show_teacher_login) # 顯示教師登入介面
-        self.ui.btn_translate.clicked.connect(lambda: self.Font.font_change()) # 切換字體
-        
-        # 滑動條調整字體大小
-        self.ui.slide_font_size.setRange(10, 27)
-        self.ui.slide_font_size.setValue(init_font_size)
-        self.ui.slide_font_size.valueChanged.connect(lambda: self.Font.font_size_change(self.ui.slide_font_size.value()))
-        self.stu_camera()
-        
-    def stu_camera(self):
-        self.camera.stu_login_video()
-        
-    def show_teacher_login(self): # 顯示教師登入介面
-        self.teacher_login = Teacher_login()
-        self.teacher_login.show()
-    
-    
-# 教師登入介面
-class Teacher_login(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.ui = Login_Resigert_Window()
-        self.ui.setupUi(self)
-        self.DataBase = CreateDataBase()
-        self.User_login = User(db=self.DataBase, ui=self.ui, main_window=self)
-        
-        self.ui.register_correct.clicked.connect(lambda: self.User_login.Register_user())
-        self.ui.Login_correct.clicked.connect(lambda: self.User_login.login_user())
-        
-        win_move(self) # 設定視窗移動
-        win_no_title_bar(self) # 隱藏視窗標題欄
-        self.ui.toolButton.clicked.connect(self.close) # 關閉視窗
-        ### 切換頁面至登入、忘記密碼、註冊 ###
-        self.ui.Login_button.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(0))
-        self.ui.btn_find_password.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(1))
-        self.ui.Register_button.clicked.connect(lambda: self.ui.stackedWidget_2.setCurrentIndex(2))
-        ### 變更字體
-        self.Font = Font(self, self.ui, init_font_size=10)
-        font = QFont(self.Font.font_family_2[0])
-        self.Font.font_change_size_force(font)
-        
-class Teacher_mode(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.ui = Teacher_Mode_Window()
-        self.ui.setupUi(self)
-        win_no_title_bar(self) # 隱藏視窗標題欄
-        win_resize(self) # 設定視窗縮放
-        
-        self.Encrypted = Encrypted(private_key_path= "./sql/private.pem", public_key_path = "./sql/public.pem")
-        # self.Encrypted.generate_keys()
-        
-        self.db = CreateDataBase()
-        ### 變更字體
-        self.Font = Font(self, self.ui, init_font_size=10)
-        font = QFont(self.Font.font_family_2[0])
-        self.Font.font_change_size_force(font)
-        
-        self.ui.close_button.clicked.connect(self.close) # 關閉視窗
-        self.ui.min_button.clicked.connect(self.showMinimized) # 最小化視窗
-        self.ui.max_button.clicked.connect(lambda: max_win(self)) # 放大視窗
-        ### 切換菜單頁面 ###
-        self.ui.database_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
-        self.ui.database_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(0))
-        self.ui.analytics_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
-        self.ui.analytics_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(1))
-        self.ui.setting_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
-        self.ui.setting_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(2))
-        self.ui.home_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
-        self.ui.home_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(3))
-        self.ui.release_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
-        self.ui.release_2_button.clicked.connect(lambda: self.ui.stack_change_page.setCurrentIndex(4))
-        ### 切換新增學生頁面 ###
-        self.ui.btn_create_data.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(0))
-        self.ui.btn_create_file.clicked.connect(lambda: self.ui.stack_create_data.setCurrentIndex(1))
-        
-        """ 學生資料管理功能 """
-        self.stu_manager = Stus(self.db, self.ui, main_window=self, encrypted=self.Encrypted, folder_path='./qrcode')
-        ## 連接保存和刪除按鈕
-        self.ui.btn_save.clicked.connect(self.add_stu_data)
-        self.ui.btn_trash.clicked.connect(lambda: self.stu_manager.clear_edit())
-        self.update_student_display()
-        self.ui.btn_download_file.clicked.connect(lambda: self.stu_manager.create_download_csv())
-        self.ui.btn_import_csvfile.clicked.connect(self.add_csv_data)
-        self.update_student_display()
-        self.ui.btn_import_qrcode.clicked.connect(lambda: self.stu_manager.all_qrcode())
-        self.ui.btn_filter.clicked.connect(lambda: self.stu_manager.filter_stu())
-        
-    def add_stu_data(self):
-        self.stu_manager.add_stu()
-        self.stu_manager.clear_edit()
-        self.stu_manager.display_students()
-        self.stu_manager.load_class()
-        
-    def update_student_display(self):
-        self.stu_manager.display_students()
-    
-    def add_csv_data(self):
-        self.stu_manager.add_csv()
-        self.stu_manager.load_class()
-        self.stu_manager.display_students()
-        
-    def delect_stu_row(self):
-        self.stu_manager.delect_student_row()
+import time
+import pygame
+import cv2
+import threading
+import json
 
-    
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = Main()
-    window.show()
-    sys.exit(app.exec_())
+# 假設你已有這些模組
+from func.warp_rt import WarpProcessor
+from func.yolov7_rt import YoloV7Detector
+from func.mediapipe_rt import MediaPipeHandTracker
+from func.step_guide_rt import StepGuide
+from func.pygame_rt import (
+    draw_guidance_np_center,
+    play_init_sound, play_step_sound,
+    play_end_sound, play_error_sound
+)
+
+# 讀取腳本配置（用於音效）
+with open(r"func\script.json", "r", encoding="utf-8") as f:
+    _cfg = json.load(f)
+INIT_AUDIO  = _cfg.get("init",  [{}])[0].get("audio", "")
+END_AUDIO   = _cfg.get("end",   [{}])[0].get("audio", "")
+ERROR_AUDIO = _cfg.get("error", [{}])[0].get("audio", "")
+
+# ===== 互動圓形按鈕設定 ======================================
+BTN_RADIUS    = 40
+BTN_CENTERS   = [(140, 40), (1140, 40)]   # 若解析度改變記得調
+HOLD_SECONDS  = 1.0                       # 集氣滿格時間
+DECAY_SECONDS = 0.5                       # 離開後衰減到 0 的時間
+# ============================================================
+
+
+def run_game(student_data: dict) -> float:
+    """
+    執行 Pygame 組裝遊戲主程式。
+    Args:
+        student_data (dict): 登入學生資訊（stu_name, stu_class, ...）
+    Returns:
+        float: 遊玩秒數
+    """
+    print(f"🎮 開始遊戲，玩家：{student_data}")
+
+    # ---------- 0. 初始化音效與時間計時 ----------
+    init_sound_played = False
+    end_sound_played = False
+    start_time = time.time()
+
+    # ---------- 1. 初始化控制狀態與模組 ----------
+    hold_timer = [0.0] * len(BTN_CENTERS)
+    ready_flag = [True] * len(BTN_CENTERS)
+    progress   = [0.0] * len(BTN_CENTERS)
+
+    warp_proc = WarpProcessor(1280, 720, BTN_CENTERS, BTN_RADIUS)
+    yolo = YoloV7Detector(r"func\weight\exp_55best.pt", r"func\all_step_class.txt")
+    mp_tracker = MediaPipeHandTracker(
+        max_num_hands=2, model_complexity=1,
+        detection_confidence=0.5, tracking_confidence=0.5
+    )
+    step_guide = StepGuide(r"func\script.json")
+
+    # ---------- 2. 啟動第二螢幕 Pygame 顯示 ----------
+    stop_event = threading.Event()
+    pygame_thread = threading.Thread(
+        target=warp_proc.show_aruco_on_second_screen,
+        args=(stop_event,), daemon=True
+    )
+    pygame_thread.start()
+
+    # ---------- 3. 啟動攝影機 ----------
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("❌ 無法開啟相機")
+        return 0.0
+
+    print("▶️ 按 'r' 重新校正，按 'q' 離開")
+    last_t = time.perf_counter()
+
+    # ========== 4. 主處理迴圈（校正、引導、互動） ==========
+    while True:
+        # ---------- 4-1. 讀取與顯示鏡像畫面 ----------
+        ret, frame = cap.read()
+        if not ret:
+            continue
+        frame = cv2.flip(frame, -1)
+        cv2.imshow("Camera Debug", frame)
+
+        # ---------- 4-2. 校正畫面 ----------
+        if not warp_proc.calibrated:
+            if warp_proc.calibrate_once(frame):
+                print("✅ 校正成功")
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                stop_event.set(); break
+            continue
+
+        # ---------- 4-3. 透視轉換 + YOLO 偵測 ----------
+        warped = warp_proc.warp_frame(frame)
+        if warped is None:
+            continue
+        guide_vis = warped.copy()
+
+        if warp_proc.current_animation_frames:
+            ani_h = warp_proc.current_animation_frames[0].get_height()
+            ani_w = warp_proc.current_animation_frames[0].get_width()
+            x = (warp_proc.SCREEN_WIDTH - ani_w) // 2
+            cv2.rectangle(warped, (x, 10), (x+ani_w, 10+ani_h), (0, 0, 0), -1)
+
+        detections = yolo.detect(warped)
+        for (xyxy, label) in detections:
+            x1, y1, x2, y2 = map(int, xyxy)
+            cv2.rectangle(guide_vis, (x1, y1), (x2, y2), (255, 0, 0), 2)
+            cv2.putText(guide_vis, label, (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
+
+        # ---------- 4-4. 手部追蹤 + 組裝步驟分析 ----------
+        guide_vis, hand_lms, handed_list = mp_tracker.process_frame(
+            guide_vis, draw_landmarks=True, debug_info=False
+        )
+        draw_info = step_guide.update_and_get_draw_info(
+            detections, hand_lms, handed_list
+        )
+
+        # ---------- 4-5. 播放首次 init 音效 ----------
+        if (not init_sound_played
+            and step_guide.current_index == 0
+            and draw_info['cuni_bbox'] is not None
+            and draw_info['cint_bbox'] is not None):
+            play_init_sound(INIT_AUDIO)
+            init_sound_played = True
+
+        # ---------- 4-6. 集氣按鈕邏輯 ----------
+        dt = time.perf_counter() - last_t
+        last_t = time.perf_counter()
+        tips = [(pt[0], pt[1]) for hand in hand_lms for pt in hand] if hand_lms else []
+
+        for i, center in enumerate(BTN_CENTERS):
+            inside = any(
+                (tx - center[0])**2 + (ty - center[1])**2 <= BTN_RADIUS**2
+                for tx, ty in tips
+            )
+            if inside:
+                cv2.circle(guide_vis, center, BTN_RADIUS, (255, 255, 0), 2)
+                if ready_flag[i]:
+                    hold_timer[i] += dt
+                    progress[i] = min(1.0, hold_timer[i] / HOLD_SECONDS)
+                    if hold_timer[i] >= HOLD_SECONDS:
+                        if step_guide.check_assembly_complete(detections):
+                            cur_step = step_guide.get_current_step()
+                            if cur_step and cur_step.get("audio"):
+                                play_step_sound(cur_step["audio"])
+                            step_guide.unlock_for_next_step()
+                        else:
+                            play_error_sound(ERROR_AUDIO)
+                        ready_flag[i] = False
+                        hold_timer[i] = progress[i] = 1.0
+            else:
+                hold_timer[i] = 0.0
+                ready_flag[i] = True
+                progress[i] = max(0.0, progress[i] - dt / DECAY_SECONDS)
+
+        warp_proc.update_button_progress(progress)
+
+        # ---------- 4-7. 視覺化導引與動畫 ----------
+        if draw_info['cuni_draw_pos'] and draw_info['cint_draw_pos']:
+            guide_vis = draw_guidance_np_center(
+                guide_vis,
+                draw_info['cuni_draw_pos'], draw_info['cuni_draw_radius'],
+                draw_info['cint_draw_pos'], draw_info['cint_draw_radius']
+            )
+
+        cur_step = step_guide.get_current_step()
+        if cur_step and cur_step.get("animation"):
+            warp_proc.update_animation(cur_step["animation"])
+
+        cv2.imshow("組裝導引", guide_vis)
+        warp_proc.update_proj_draw_info(draw_info)
+
+        # ---------- 4-8. 全部完成 ----------
+        if cur_step is None and not end_sound_played:
+            play_end_sound(END_AUDIO)
+            end_sound_played = True
+            time.sleep(3)
+            stop_event.set()
+            break
+
+        # ---------- 4-9. 手動鍵盤操作 ----------
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            stop_event.set(); break
+        elif key == ord('r'):
+            print("🔁 重新觸發校正")
+            warp_proc.calibrated = False
+
+    # ---------- 5. 收尾處理（釋放資源） ----------
+    cap.release()
+    cv2.destroyAllWindows()
+    pygame_thread.join()
+
+    play_time = time.time() - start_time
+    print(f"⏱️ 遊戲完成，遊玩時長：{play_time:.2f} 秒")
+    return play_time

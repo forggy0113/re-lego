@@ -1,0 +1,136 @@
+{
+  "init" :[
+    {
+    "audio": "audio\\start.mp3"
+    }
+  ],
+  "steps": [
+    {
+     "id": "step_1",
+     "cuni": "rivet",
+     "cint": "frame",
+     "parts": ["rivet", "frame"],
+     "animation": "anim\\step_1.gif",
+     "success_message": "Step 1 completed!",
+     "audio": "audio\\1_step1.mp3"
+    },
+    {
+      "id": "step_2",
+      "cuni": "rivet",
+      "cint": "step_1",
+      "parts": ["rivet", "step_1"],
+      "animation": "anim\\step_2.gif",
+      "success_message": "Step 2 completed!",
+      "audio": "audio\\2_step2.mp3"
+    },
+    {
+      "id": "step_3",
+      "cuni": "rivet",
+      "cint": "step_2",
+      "parts": ["rivet", "step_2"],
+      "animation": "anim\\step_3.gif",
+      "success_message": "Step 3 completed!",
+      "audio": "audio\\3_step3.mp3"
+    },
+    {
+      "id": "step_4",
+      "cuni": "rivet",
+      "cint": "step_3",
+      "parts": ["rivet", "step_3"],
+      "animation": "anim\\step_4.gif",
+      "success_message": "Step 4 completed!",
+      "audio": "audio\\4_step4.mp3"
+    },
+    {
+      "id": "step_5",
+      "cuni": "rivet",
+      "cint": "step_4",
+      "parts": ["rivet", "step_4"],
+      "animation": "anim\\step_5.gif",
+      "success_message": "Step 5 completed!",
+      "audio": "audio\\5_step5.mp3"
+    },
+    {
+      "id": "step_6",
+      "cuni": "rivet",
+      "cint": "step_5",
+      "parts": ["rivet", "step_5"],
+      "animation": "anim\\step_6.gif",
+      "success_message": "Step 6 completed!",
+      "audio": "audio\\6_step6.mp3"
+    },
+    {
+      "id": "step_7",
+      "cuni": "bearing",
+      "cint": "step_6",
+      "parts": ["bearing", "step_6"],
+      "animation": "anim\\step_7.gif",
+      "success_message": "Step 7 completed!",
+      "audio": "audio\\7_step7.mp3"
+    },
+    {
+      "id": "step_8",
+      "cuni": "motor",
+      "cint": "step_7",
+      "parts": ["motor", "step_7"],
+      "animation": "anim\\step_8.gif",
+      "success_message": "Step 8 completed!",
+      "audio": "audio\\8_step8.mp3"
+    },
+    {
+      "id": "step_9",
+      "cuni": "motor",
+      "cint": "step_8",
+      "parts": ["motor", "step_8"],
+      "animation": "anim\\step_9.gif",
+      "success_message": "Step 9 completed!",
+      "audio": "audio\\9_step9.mp3"
+    },
+    {
+      "id": "step_10",
+      "cuni": "axis",
+      "cint": "step_9",
+      "parts": ["axis", "step_9"],
+      "animation": "anim\\step_10.gif",
+      "success_message": "Step 10 completed!",
+      "audio": "audio\\10_step10.mp3"
+    },
+    {
+      "id": "step_11",
+      "cuni": "axis",
+      "cint": "step_10",
+      "parts": ["axis", "step_10"],
+      "animation": "anim\\step_11.gif",
+      "success_message": "Step 11 completed!",
+      "audio": "audio\\11_step11.mp3"
+    },
+    {
+      "id": "step_12",
+      "cuni": "wheel",
+      "cint": "step_11",
+      "parts": ["wheel", "step_11"],
+      "animation": "anim\\step_12.gif",
+      "success_message": "Step 12 completed!",
+      "audio": "audio\\12_step12.mp3"
+    },
+    {
+      "id": "step_13",
+      "cuni": "wheel",
+      "cint": "step_12",
+      "parts": ["wheel", "step_12"],
+      "animation": "anim\\step_13.gif",
+      "success_message": "Step 13 completed!",
+      "audio": "audio\\13_assimbly complete.mp3"
+    }
+  ],
+  "end":[
+      {
+      "audio": ""
+      }
+    ],
+  "error":[
+    {
+      "audio": "audio\\assembly_error.mp3"
+    }
+  ]
+  }
