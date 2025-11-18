@@ -1,5 +1,5 @@
 from module.qt_main import Main
-from project_main import run_game  # ✅ 或 alias run_game = main
+from main import run_game  # ✅ 或 alias run_game = main
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QGuiApplication
 import sys

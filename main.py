@@ -30,7 +30,7 @@ DECAY_SECONDS = 0.5                       # 離開後衰減到 0 的時間
 # ============================================================
 
 
-def run_game(student_data: dict) -> float:
+def run_game(student_data: dict, db) -> float:
     """
     執行 Pygame 組裝遊戲主程式。
     Args:
@@ -43,9 +43,11 @@ def run_game(student_data: dict) -> float:
     # ---------- 0. 初始化音效與時間計時 ----------
     init_sound_played = False
     end_sound_played = False
-    start_time = time.time()
 
-    # ---------- 1. 初始化控制狀態與模組 ----------
+    # ---------- 1. 建立 stop_event for Pygame thread ----------
+    stop_event = threading.Event()  # 用來通知 show_aruco 執行緒結束
+
+    # ---------- 2. 初始化控制狀態與模組 ----------
     hold_timer = [0.0] * len(BTN_CENTERS)
     ready_flag = [True] * len(BTN_CENTERS)
     progress   = [0.0] * len(BTN_CENTERS)
@@ -54,15 +56,33 @@ def run_game(student_data: dict) -> float:
     yolo = YoloV7Detector(r"func\weight\exp_55best.pt", r"func\all_step_class.txt")
     mp_tracker = MediaPipeHandTracker(
         max_num_hands=2, model_complexity=1,
-        detection_confidence=0.5, tracking_confidence=0.5
+        detection_confidence=0.6, tracking_confidence=0.6
     )
     step_guide = StepGuide(r"func\script.json")
 
-    # ---------- 2. 啟動第二螢幕 Pygame 顯示 ----------
-    stop_event = threading.Event()
+    # ---------- 3. 文字顯示設定 ----------
+    text_settings = {
+        "font_path": r"src/ui/font/BpmfGenSenRounded-R.ttf",
+        "font_size": 40,
+        "color": (255, 255, 255),
+        "pos": {
+            "play_time": (200, 0),                                 # 左上角：遊玩時間
+            "step_id":    (warp_proc.SCREEN_WIDTH // 2, 0),       # 中上：當前步驟 ID
+            "stu_name":   (warp_proc.SCREEN_WIDTH - 200, 0)       # 右上：學生名稱
+        }
+    }
+
+    # ---------- 4. 啟動第二螢幕 Pygame 顯示 & 準備計時容器 ----------
+    start_time_holder = [None]    # ← list 共享開始時間，初值 None
     pygame_thread = threading.Thread(
         target=warp_proc.show_aruco_on_second_screen,
-        args=(stop_event,), daemon=True
+        args=(
+            stop_event,
+            student_data.get("stu_name", ""),
+            start_time_holder,        # ← 傳入 list 而非 float
+            text_settings
+        ),
+        daemon=True
     )
     pygame_thread.start()
 
@@ -118,14 +138,18 @@ def run_game(student_data: dict) -> float:
         draw_info = step_guide.update_and_get_draw_info(
             detections, hand_lms, handed_list
         )
+        # 傳遞當前步驟 ID
+        cur = step_guide.get_current_step()
+        draw_info["step_id"] = cur.get("id") if cur else None
 
-        # ---------- 4-5. 播放首次 init 音效 ----------
+        # ---------- 4-5. 播放首次 init 音效，並記錄計時起點 ----------
         if (not init_sound_played
             and step_guide.current_index == 0
             and draw_info['cuni_bbox'] is not None
             and draw_info['cint_bbox'] is not None):
             play_init_sound(INIT_AUDIO)
             init_sound_played = True
+            start_time_holder[0] = time.time()  # ← 在播放時立刻設定起點
 
         # ---------- 4-6. 集氣按鈕邏輯 ----------
         dt = time.perf_counter() - last_t
@@ -171,7 +195,7 @@ def run_game(student_data: dict) -> float:
         if cur_step and cur_step.get("animation"):
             warp_proc.update_animation(cur_step["animation"])
 
-        cv2.imshow("組裝導引", guide_vis)
+        cv2.imshow("build guide", guide_vis)
         warp_proc.update_proj_draw_info(draw_info)
 
         # ---------- 4-8. 全部完成 ----------
@@ -195,6 +219,37 @@ def run_game(student_data: dict) -> float:
     cv2.destroyAllWindows()
     pygame_thread.join()
 
-    play_time = time.time() - start_time
+    # 計算總遊玩時間，若從未設定過起點則回傳 0
+    if start_time_holder[0] is not None:
+        play_time = time.time() - start_time_holder[0]
+    else:
+        play_time = 0.0
     print(f"⏱️ 遊戲完成，遊玩時長：{play_time:.2f} 秒")
+    # ---------- 6. 寫入資料庫 Practice ----------
+    try:
+        stu_uuid     = student_data.get("stu_uuid")
+        stu_name     = student_data.get("stu_name")
+
+        # 時間資訊
+        end_dt   = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if start_time_holder[0] is not None:
+            start_dt = time.strftime("%Y-%m-%d %H:%M:%S",
+                                     time.localtime(start_time_holder[0]))
+        else:
+            start_dt = end_dt
+        end_dt   = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+        play_sec = int(play_time)
+
+        db.cursor.execute(
+            """
+            INSERT INTO Practice (stu_name, stu_uuid, game_time, practice_start_date, practice_end_date)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (stu_name, stu_uuid, play_sec, start_dt, end_dt)
+        )
+        db.conn.commit()
+        print("✅ 已寫入 Practice 遊玩紀錄")
+    except Exception as e:
+        print(f"❌ 寫入 Practice 時出錯: {e}")
+
     return play_time
